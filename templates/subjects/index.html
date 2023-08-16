@@ -16,7 +16,11 @@
             <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura...">
             <input type="submit" value="Buscar" class="search-btn">
         </form>
-        <span class="see-all" ><a href="{% url 'index' %}">Ver todas</a></span>
+        <div class="see-all">
+            <a href="{% url 'index' %}">
+                <button class="btn">Ver todas</button>
+            </a>
+        </div>
         <ul class="list">
             {% for subject in subjects %}
                 <a href="{% url 'detail' subject.id %}">

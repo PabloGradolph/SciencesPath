@@ -5,6 +5,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from datetime import datetime
+from .forms import CustomUserCreationForm
+import re
 
 current_year = datetime.now().year
 
@@ -16,24 +18,31 @@ def home(request):
 def about(request):
     return render(request, 'Sciences/about.html', {'current_year': current_year})
 
+@login_required(login_url='login')
+def profile(request):
+    username = request.user.username
+    context = {'current_year': current_year, 'username': username}
+    return render(request, 'Sciences/profile.html', context)
 
 def register(request):
     if request.method == 'GET':
-        return render(request, 'logs/register.html', {'form': UserCreationForm})
+        form = CustomUserCreationForm()
+        return render(request, 'logs/register.html', {'form': form})
     else:
+        form = CustomUserCreationForm()
         if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(username=request.POST['username'],
-                    password=request.POST['password1']
-                )
-                user.save()
-                login(request, user)
-                return redirect('home')
-            except IntegrityError:
-                return render(request, 'logs/register.html', {'form': UserCreationForm, 
-                    'error': 'El usuario ya existe'})
-        return render(request, 'logs/register.html', {'form': UserCreationForm, 
-                    'error': 'Las contraseñas no coinciden'})
+            username = request.POST['username']
+            if re.match(r'^[a-zA-Z]+$', username):
+                try:
+                    user = User.objects.create_user(username=username, password=request.POST['password1'])
+                    user.save()
+                    login(request, user)
+                    return redirect('home')
+                except IntegrityError:
+                    return render(request, 'logs/register.html', {'form': form, 'error': 'El usuario ya existe'})
+            else:
+                return render(request, 'logs/register.html', {'form': form, 'error': 'El nombre de usuario debe contener solo letras'})
+        return render(request, 'logs/register.html', {'form': form, 'error': 'Las contraseñas no coinciden'})
 
 
 def login_view(request):

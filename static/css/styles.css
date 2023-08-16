@@ -53,10 +53,22 @@ header {
     margin: 0 auto;
 }
 
-.logo {
+.logo-btn {
     display: flex;
     align-items: center;
-    justify-self: left;
+    text-decoration: none;
+    color: var(--color-text); /* Color del texto */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    padding: 5px 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logo-btn:hover {
+    background-color: #f1f1f1; /* Cambia el color al pasar el ratón */
+    color: #555; /* Cambia el color del texto al pasar el ratón */
 }
 
 .logo img {
@@ -65,9 +77,11 @@ header {
     margin-right: 10px;
 }
 
-.logo span {
+.home {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
     font-family: var(--font-main);
-    color: var(--color-text);
 }
 
 nav {

@@ -102,6 +102,11 @@ form button {
     cursor: pointer;
     width: 60%;
 }
+.form-container p {
+    text-align: center;
+    margin-top: 10px;
+    color: #000;
+}
 
 .form-container a {
     color: #008037;
