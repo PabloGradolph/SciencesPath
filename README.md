@@ -19,7 +19,6 @@ Empower your academic journey with SciencesPath, a dynamic platform designed to 
 - HTML5, CSS3, JavaScript
 - PostgreSQL Database
 - Heroku for deployment: coming soon.
-- [Additional Technology or Service]
 
 ## Screenshots 📷
 
@@ -40,7 +39,7 @@ Contributions are welcome! Feel free to open issues and submit pull requests.
 
 ## License 📜
 
-This project is licensed under the [MIT License](link_to_license).
+This project is licensed under the [MIT License](https://github.com/PabloGradolph/SciencesPath/blob/main/LICENSE).
 
 ---
 
