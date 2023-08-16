@@ -1,0 +1,38 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ subject.name }}
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="title">
+        <h1>{{ subject.name }}</h1>
+        <a class="guide-link" href="{{ subject.subject_url }}" target="_blank">Ver Guía Docente</a>
+    </div>
+    <div class="columns-container">
+        <div class="left-column">
+            <p><strong>Universidad:</strong> {{ subject.university }}</p>
+            <p><strong>Grado:</strong> {{ subject.degree }}</p>
+            <p><strong>Código:</strong> {{ subject.subject_key }}</p>
+            <p><strong>Requisitos previos:</strong> {{ subject.previous_requirements }}</p>
+        </div>
+        <div class="right-column">
+            <p><strong>Idioma:</strong> {{ subject.language }}</p>
+            <p><strong>Curso:</strong> {{ subject.year }}</p>
+            <p><strong>Cuatrimestre:</strong> {{ subject.semester }}</p>
+            <p><strong>Créditos:</strong> {{ subject.credits }}</p>
+            <p><strong>Coordinador/a:</strong> {{ subject.coordinator }}</p>
+        </div>
+    </div>
+    <div class="centered-content">
+        <h2>Programa</h2>
+        <p>{{ subject.content|linebreaksbr }}</p>
+    </div>
+</div>
+{% endblock %}

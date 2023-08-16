@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciencias | {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+
+<!-- Wrapper -->
+<div class="wrapper">
+
+    <!-- Header -->
+    <header>
+      <div class="header-container">
+          <div class="logo">
+              <img src="{% static 'img/microscopio.png' %}" alt="Logo">
+              <span>Grado en Ciencias</span>
+          </div>
+          <nav>
+              <ul>
+                  <li><a href="{% url 'home' %}">Inicio</a></li>
+                  <li><a href="{% url 'about' %}">Acerca de</a></li>
+                  {% if user.is_authenticated %}
+                      <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                  {% else %}
+                      <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+                  {% endif %}
+              </ul>
+          </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        <!-- Aquí se reemplazará el contenido específico de cada página -->
+        {% endblock %}
+    </main>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <p>© {{ current_year }} Pablo Gradolph Oliva - Todos los derechos reservados.</p>
+        <a href="https://www.flaticon.es/" title="iconos">Iconos creados por Freepik - Flaticon</a>
+    </div>
+</footer>
+
+</body>
+</html>
+<script>
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 0) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+</script>

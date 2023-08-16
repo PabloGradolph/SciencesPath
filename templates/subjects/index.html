@@ -1,0 +1,31 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}
+    Asignaturas
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Consulta de Asignaturas.</h1>
+        <form class="search" action="{% url 'index' %}" method="GET">
+            <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura...">
+            <input type="submit" value="Buscar" class="search-btn">
+        </form>
+        <span class="see-all" ><a href="{% url 'index' %}">Ver todas</a></span>
+        <ul class="list">
+            {% for subject in subjects %}
+                <a href="{% url 'detail' subject.id %}">
+                    <li>
+                        <span class="subject-name">{{ subject.name }}</span>
+                        <span class="university-name">{{ subject.university }}</span>
+                    </li>
+                </a>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

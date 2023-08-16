@@ -1,0 +1,16 @@
+{% extends 'Sciences/base.html' %}
+
+{% block title %}
+    Bienvenido a Ciencias
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Bienvenido a Ciencias</h1>
+        <p>¡Explora nuestro Grado Compartido en Ciencias!</p>
+        <p>En esta aplicación encontrarás información sobre las distintas áreas de estudio, los grados disponibles en las universidades UAM, UC3M y UAB, y las asignaturas que se imparten en cada uno.</p>
+        <div class="btn-container">
+            <a href="{% url 'index' %}" class="btn btn-primary">Ver Asignaturas</a>
+        </div>
+    </div>
+{% endblock %}

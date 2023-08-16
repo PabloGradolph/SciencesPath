@@ -1,0 +1,95 @@
+/* Estilos generales */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del formulario */
+.form-container h2 {
+    color: #353535;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Campos del formulario */
+.form-container label {
+    color: #444654;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 80%;
+}
+
+.form-container button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #008037;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 60%;
+}
+
+.form-container button:hover{
+    background-color: #005525;
+}
+
+/* Mensaje de error */
+.form-container p {
+    text-align: center;
+    margin-top: 10px;
+    color: #000;
+}
+
+/* Enlace a la página de registro */
+.form-container a {
+    color: #008037;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.form-container .center {
+    display: flex;
+    justify-content: center;
+}
+
+.form-container .register-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container .register-text a {
+    margin-left: 5px;
+    margin-bottom: 0; 
+    margin-top: 0; 
+}
+
+.form-container .register-text a:hover{
+    text-decoration: underline;
+}
+
+  

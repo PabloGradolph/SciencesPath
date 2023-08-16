@@ -1,0 +1,151 @@
+:root {
+    --color-primary: #008037;
+    --color-text: #fff;
+    --font-main: Fruta;
+    --font-text: Cafe;
+}
+
+/* Main settings */
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-text);
+    color: var(--color-text);
+}
+
+@font-face {
+    font-family: Cafe;
+    src: url(../fonts/LouisGeorgeCafe.ttf);
+}
+
+@font-face {
+    font-family: Fruta;
+    src: url(../fonts/FRESHFRUITPERSONALUSE-SVG.otf);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-main);
+}
+/* End main settings */
+
+/* Global Styles */
+body {
+    padding-top: 30px;
+    line-height: 1.6;
+    background-color: #353535;
+}
+
+header {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #008037;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-self: left;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo span {
+    font-family: var(--font-main);
+    color: var(--color-text);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    flex-grow: 1; /* Permite que el menú crezca y ocupe el espacio restante */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: var(--font-main);
+}
+
+/* Estilo para el header cuando se hace scroll */
+header.scrolled {
+    background-color: #008037;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    display: flex;
+    margin: 50px;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+  
+footer {
+    background-color: #008037;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+.btn-primary {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #008037;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 6vw;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background-color: #015827;
+}
+

@@ -1,0 +1,25 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}Inicio de Sesión{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/logs.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>Inicio de Sesión</h2>
+    <form method="post">
+        <p>{{ error }}</p>
+        {% csrf_token %}
+        <div>
+            {{ form.as_p }}
+        </div>
+        <div class="center">
+          <button type="submit">Iniciar Sesión</button>
+      </div>
+    </form>
+    <p class="register-text">¿No tienes una cuenta? <a href="{% url 'register' %}">Registrarse</a></p>
+  </div>
+{% endblock %}
