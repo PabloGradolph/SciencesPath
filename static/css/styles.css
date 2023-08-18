@@ -39,6 +39,10 @@ ul { list-style: none;}
 /* End main settings */
 
 /* Global Styles */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
 }
@@ -49,17 +53,17 @@ body {
     flex-direction: column;
 }
 
+/* Header */
 header {
     background-color: var(--color-primary);
 }
 
 .container {
-    max-width: 1400px;
     margin: auto;
+    max-width: 1200px;
 }
 
 .header-container {
-    max-width: 1400px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,6 +114,7 @@ header nav a:hover {
     text-decoration: underline;
 }
 
+/* Bienvenida */
 #welcome {
     display: flex;
     flex-direction: column;
@@ -156,6 +161,7 @@ header nav a:hover {
     background-color: #015827;
 }
 
+/* Quienes somos */
 #about .container {
     text-align: center;
     padding: 170px 12px;
@@ -180,8 +186,8 @@ header nav a:hover {
 #history {
     background-image: linear-gradient(
         0deg,
-        rgba(0,0,0,0.5),
-        rgba(0,0,0,0.5)
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
     )
     ,url("../img/MIHistoria.jpg");
     background-repeat: no-repeat;
@@ -197,8 +203,8 @@ header nav a:hover {
 #mission {
     background-image: linear-gradient(
         0deg,
-        rgba(0,0,0,0.5),
-        rgba(0,0,0,0.5)
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
     )
     ,url("../img/MiMision.webp");
     background-repeat: no-repeat;
@@ -221,27 +227,7 @@ header nav a:hover {
     font-weight: bold;
 }
 
-#history::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        0deg,
-        rgba(255, 255, 255, 0.2), /* Ajusta el valor de transparencia aquí */
-        rgba(255, 255, 255, 0.2)
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#history:hover::before {
-    opacity: 1;
-    cursor: pointer;
-}
-
+#history::before,
 #mission::before {
     content: "";
     position: absolute;
@@ -258,16 +244,89 @@ header nav a:hover {
     transition: opacity 0.3s ease;
 }
 
+#history:hover::before,
 #mission:hover::before {
     opacity: 1;
     cursor: pointer;
 }
 
+/* Más información */
+#information {
+    background-color: #2b2a2a;
+    text-align: center;
+}
+
+#information .container {
+    padding: 100px 12px;
+}
+
+#information h2 {
+    margin-top: 0;
+    color: white;
+    font-size:  3.5em;
+}
+
+#information h3 {
+    color: white;
+    font-weight: bold;
+}
+
+#information p {
+    display: none;
+}
+
+.carta-1 {
+    margin: 25px;
+    padding: 30px 10px;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    )
+    ,url("../img/campus-cantoblanco.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 10px;
+}
+
+.carta-2 {
+    margin: 25px;
+    padding: 30px 10px;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    )
+    ,url("../img/campus-uab.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 10px;
+}
+
+.carta-3 {
+    margin: 25px;
+    padding: 30px 10px;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    )
+    ,url("../img/campus-uc3m.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 10px;
+}
+
+/* Footer */
 footer {
     width: 100%;
     background-color: #333333;
-    margin-top: 10px;
     padding-top: 5px;
+    margin-top: 75px;
+    border-top: 1px solid black;
 }
 
 footer .group-1 {
@@ -320,4 +379,58 @@ footer .group-2 small, footer .group-2 b, footer .group-2 a{
 
 footer .group-2 a:hover{
     color: #ffffffcb;
+}
+
+/* Responsive */
+@media (min-width:720px) {
+    header {
+        position: fixed;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    header nav {
+        flex-direction: row;
+        padding-bottom: 0px;
+        padding-right: 20px;
+    }
+
+    #welcome {
+        padding: 5em;
+    }
+
+    #welcome h1{
+        font-size: 4.5em;
+    }
+    
+    #welcome p{
+        font-size: 1.5em;
+    }
+
+    #about .container {
+        padding: 170px 5em;
+    }
+
+    #about h2 {
+        font-size: 3em;
+    }
+
+    #history,
+    #mission {
+        padding: 15px;
+    }
+
+    #information {
+        padding: 100px 5em;
+    }
+
+    footer .group-2{
+        width: 100%;
+    }
 }
