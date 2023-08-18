@@ -10,58 +10,55 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
+    <div class="wrapper">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <a href="{% url 'home' %}" id="change" class="logo-btn">
+                        <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                        Grado en Ciencias
+                    </a>
+                </div>
+                <nav>
+                    <a href="#">Quienes Somos</a>
+                    <a href="#">Más Información</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Iniciar Sesión</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
 
-<!-- Wrapper -->
-<div class="wrapper">
-
-    <!-- Header -->
-    <header>
-      <div class="header-container">
-        <div class="logo">
-            <a href="{% url 'home' %}" class="logo-btn">
-                <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
-                Grado en Ciencias
-            </a>
-        </div>
-          <nav>
-              <ul>
-                  <li><a href="{% url 'profile' %}">Perfil</a></li>
-                  <li><a href="{% url 'about' %}">Acerca de</a></li>
-                  {% if user.is_authenticated %}
-                      <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
-                  {% else %}
-                      <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
-                  {% endif %}
-              </ul>
-          </nav>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        {% block content %}
-        <!-- Aquí se reemplazará el contenido específico de cada página -->
-        {% endblock %}
-    </main>
-</div>
-
+        <!-- Main Content -->
+        <main>
+            {% block content %}
+            <!-- Aquí se reemplazará el contenido específico de cada página -->
+            {% endblock %}
+        </main>
+    </div>
 <!-- Footer -->
 <footer>
-    <div class="footer-content">
-        <p>© {{ current_year }} Pablo Gradolph Oliva - Todos los derechos reservados.</p>
-        <a href="https://www.flaticon.es/" title="iconos">Iconos creados por Freepik - Flaticon</a>
+    
+    <div class="container">
+        <div class="group-1">
+            <div class="box">
+                <p>Sciences<span>Path!</span></p>
+            </div>
+            <div class="box">
+                <h4>Sígueme en:</h4>
+                <a href="https://www.linkedin.com/in/pablo-gradolph-oliva-958791250/"><img src="{% static 'img/Linkedin.webp' %}" alt="Linkedin"/></a>
+                <a href="https://github.com/PabloGradolph"><img src="{% static 'img/GitHub-Mark.png' %}" alt="GitHub"/></a>
+            </div>
+        </div>
+        <div class="group-2">
+            <small> © {{ current_year }} <b>Pablo Gradolph Oliva</b> - Todos los derechos reservados.</small>
+            <a href="https://www.flaticon.es/" title="iconos">Iconos creados por Freepik - Flaticon</a>
+        </div>  
     </div>
 </footer>
 
 </body>
 </html>
-<script>
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('header');
-        if (window.scrollY > 0) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-</script>

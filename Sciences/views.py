@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -10,13 +10,13 @@ import re
 
 current_year = datetime.now().year
 
-@login_required(login_url='login')
 def home(request):
     return render(request, 'Sciences/home.html', {'current_year': current_year})
 
 @login_required(login_url='login')
-def about(request):
-    return render(request, 'Sciences/about.html', {'current_year': current_year})
+def main(request):
+    context = {'current_year': current_year}
+    return render(request, 'Sciences/main.html', context)
 
 @login_required(login_url='login')
 def profile(request):
