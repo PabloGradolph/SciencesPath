@@ -1,4 +1,71 @@
-{% comment %} <div class="btn-container">
-    <a href="{% url 'index' %}" ><button class="btn-primary">Ver Asignaturas</button></a>
-</div> {% endcomment %}
-<h1>Prueba</h1>
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}
+    Página Principal
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% endblock %}
+
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    Grado en Ciencias
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'profile' %}">Mi Perfil</a>
+                <a href="#questions">Preguntas Frecuentes</a>
+                <a href="#comunity">Comunidad</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+    <section id="explore">
+        <div class="container">
+            <h1>Explora nuestro portal de información</h1>
+            <div class="btn-container">
+                <a href="{% url 'index' %}" target="_blank"><button class="btn-primary">Ver Información</button></a>
+            </div>
+        </div>
+    </section>
+
+    <section id="questions">
+        <div class="container">
+            <h1>Preguntas Frecuentes</h1>
+            {% for faq in faqs %}
+                <div class="faq">
+                    <div class="question">
+                        <h3>{{ faq.question }}</h3>
+                        <svg width="15" height="10" viewBox="0 0 42 25">
+                            <path d="M3 3L21 21L39 3" stroke"white" stroke-width="7" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="answer">
+                        <p>{{ faq.answer|linebreaksbr }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="portal">
+                <h3>Accede a nuestro portal de preguntas</h3>
+                <p>Encuentra la respuesta a muchas otras preguntas, resuelve las de tus compañeros o deja una nueva.</p>
+                <div class="btn-container">
+                    <a href="#" target="_blank"><button class="btn-primary">Ver Portal</button></a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="{% static 'js/faq.js' %}"></script>
+{% endblock %}

@@ -7,6 +7,29 @@
 <link rel="stylesheet" href="{% static 'css/logs.css' %}">
 {% endblock %}
 
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    Grado en Ciencias
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'main' %}">Comenzar</a>
+                <a href="#about">Quienes Somos</a>
+                <a href="#information">Más Información</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
 {% block content %}
   <div class="form-container">
     <h2>Inicio de Sesión</h2>
@@ -17,7 +40,7 @@
             {{ form.as_p }}
         </div>
         <div class="center">
-          <button type="submit">Iniciar Sesión</button>
+          <button type="submit" class="btn-primary">Iniciar Sesión</button>
       </div>
     </form>
     <p class="register-text">¿No tienes una cuenta? <a href="{% url 'register' %}">Registrarse</a></p>

@@ -5,6 +5,29 @@
     Bienvenido a Ciencias
 {% endblock %}
 
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    Grado en Ciencias
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'main' %}">Comenzar</a>
+                <a href="#about">Quienes Somos</a>
+                <a href="#information">Más Información</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
 {% block content %}
     <section id="welcome">
         <div class="container">
@@ -34,7 +57,7 @@
                 </div>
                 <div id="mission" class="expandable">
                     <h3>Mi Misión</h3>
-                    <div class="mission-full-description">
+                    <div id="mission-full-description" class="full-description">
                         <p>Mi principal misión es facilitar el camino a todos esos alumnos que llegan detrás de mi en sus años de universidad. </p>
                         <p>Para ello, aquí encontrarás información de todas las asignaturas que se pueden cursar, con sus planes de estudio y características principales </p>
                         <p>Encontrarás horarios, información de las distintas universidades, la posibilidad de contacar con otros estudiantes, entre otras muchas cosas. </p>

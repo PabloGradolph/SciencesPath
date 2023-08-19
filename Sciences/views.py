@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from datetime import datetime
 from .forms import CustomUserCreationForm
+from faq.models import FAQ
 import re
 
 current_year = datetime.now().year
@@ -15,7 +16,8 @@ def home(request):
 
 @login_required(login_url='login')
 def main(request):
-    context = {'current_year': current_year}
+    faqs = FAQ.objects.all()
+    context = {'current_year': current_year, 'faqs': faqs}
     return render(request, 'Sciences/main.html', context)
 
 @login_required(login_url='login')
@@ -37,7 +39,7 @@ def register(request):
                     user = User.objects.create_user(username=username, password=request.POST['password1'])
                     user.save()
                     login(request, user)
-                    return redirect('home')
+                    return redirect('main')
                 except IntegrityError:
                     return render(request, 'logs/register.html', {'form': form, 'error': 'El usuario ya existe'})
             else:
@@ -58,7 +60,7 @@ def login_view(request):
             )
         else:
             login(request, user)
-            return redirect('home')
+            return redirect('main')
 
 
 def logout_view(request):

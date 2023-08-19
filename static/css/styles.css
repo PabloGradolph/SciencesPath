@@ -121,7 +121,7 @@ header nav a:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 90vh;
+    height: 95vh;
     background-image: linear-gradient(
         0deg,
         rgba(0,0,0,0.7),
@@ -172,10 +172,6 @@ header nav a:hover {
 }
 
 #about .full-description {
-    display: none;
-}
-
-#about .mission-full-description {
     display: none;
 }
 
@@ -237,7 +233,7 @@ header nav a:hover {
     height: 100%;
     background: linear-gradient(
         0deg,
-        rgba(255, 255, 255, 0.2), /* Ajusta el valor de transparencia aquí */
+        rgba(255, 255, 255, 0.2),
         rgba(255, 255, 255, 0.2)
     );
     opacity: 0;
@@ -329,6 +325,10 @@ footer {
     border-top: 1px solid black;
 }
 
+footer .container {
+    max-width: none;
+}
+
 footer .group-1 {
     padding: 10px;
     display: flex;
@@ -401,6 +401,10 @@ footer .group-2 a:hover{
         padding-right: 20px;
     }
 
+    header nav a {
+        margin-right: 25px;
+    }
+
     #welcome {
         padding: 5em;
     }
@@ -421,9 +425,21 @@ footer .group-2 a:hover{
         font-size: 3em;
     }
 
+    #about .about {
+        display: flex;
+        justify-content: center;
+    }
+
+    #history:hover::before,
+    #mission:hover::before {
+        opacity: 0;
+        cursor: initial;
+    }
+
     #history,
     #mission {
         padding: 15px;
+        width: 100%;
     }
 
     #information {

@@ -1,0 +1,123 @@
+/* Bienvenida */
+#explore {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 95vh;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0,0,0,0.77),
+        rgba(0,0,0,0.77)
+    )
+    ,url("../img/gestion-informatica-actual.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+#explore h1{
+    color: white;
+    font-weight: bold;
+}
+
+#questions .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 170px 30px;
+}
+
+#questions h1 {
+    text-align: center;
+}
+
+#questions .faq {
+    max-width: 700px;
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid black;
+    cursor: pointer;
+}
+
+#questions .question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0;
+}
+
+#questions .question h3{
+    margin-bottom: 0;
+    font-size: 1.9em;
+}
+
+#questions .answer {
+    padding-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1.4s ease;
+}
+
+#questions .answer p{
+    padding-top: 1rem;
+    line-height: 1.6;
+}
+
+#questions .faq.active .answer {
+    max-height: 300px;
+    animation: fade 0.3s ease-in-out;
+}
+
+#questions .faq.active svg {
+    transform: rotate(180deg);
+}
+
+#questions svg {
+    transition: transform 0.3s ease-in;
+}
+
+#questions .portal {
+    max-width: 700px;
+    padding: 30px;
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-image: linear-gradient(
+        0deg,
+        rgba(0,0,0,0.7),
+        rgba(0,0,0,0.7)
+    )
+    ,url("../img/preguntas.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+#questions .portal h3{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #fff;
+}
+
+#questions .portal p{
+    color: #fff;
+}
+
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
