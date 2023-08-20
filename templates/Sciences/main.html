@@ -20,8 +20,8 @@
             </div>
             <nav>
                 <a href="{% url 'profile' %}">Mi Perfil</a>
-                <a href="#questions">Preguntas Frecuentes</a>
                 <a href="#comunity">Comunidad</a>
+                <a href="#questions">Preguntas Frecuentes</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}">Cerrar Sesión</a>
                 {% else %}
@@ -42,6 +42,20 @@
         </div>
     </section>
 
+    <section id="comunity">
+        <div class="container">
+            <div class="img-container"></div>
+            <div class="text">
+                <h2>Comunidad Sciences<span class="color-path">Path!</span></h2>
+                <p>Sumérgete en la red de Sciences<span class="color-path">Path!</span></p>
+                <p>Conecta con otros estudiantes apasionados de nuestro Grado en Ciencias, comparte ideas, información, conocimiento, haz preguntas o resuelve las de otros y forma parte de una comunidad en constante crecimiento.</p>
+                <div class="btn-container">
+                    <a href="" target="_blank"><button class="btn-primary">Ver Comunidad</button></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="questions">
         <div class="container">
             <h1>Preguntas Frecuentes</h1>
@@ -50,7 +64,7 @@
                     <div class="question">
                         <h3>{{ faq.question }}</h3>
                         <svg width="15" height="10" viewBox="0 0 42 25">
-                            <path d="M3 3L21 21L39 3" stroke"white" stroke-width="7" stroke-linecap="round"/>
+                            <path d="M3 3L21 21L39 3" stroke="white" stroke-width="7" stroke-linecap="round"/>
                         </svg>
                     </div>
                     <div class="answer">
@@ -59,10 +73,10 @@
                 </div>
             {% endfor %}
             <div class="portal">
-                <h3>Accede a nuestro portal de preguntas</h3>
-                <p>Encuentra la respuesta a muchas otras preguntas, resuelve las de tus compañeros o deja una nueva.</p>
+                <h3>Accede a nuestros documentos</h3>
+                <p>Encuentra la respuesta a muchas otras preguntas leyendo la información que estás buscando. Aquí encontrarás todos los documentos relevantes de nuestro grado clasificados en secciones.</p>
                 <div class="btn-container">
-                    <a href="#" target="_blank"><button class="btn-primary">Ver Portal</button></a>
+                    <a href="#" target="_blank"><button class="btn-primary">Ver Documentos</button></a>
                 </div>
             </div>
         </div>

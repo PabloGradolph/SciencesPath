@@ -18,8 +18,24 @@
 }
 
 #explore h1{
-    color: white;
+    color: #fff;
     font-weight: bold;
+}
+
+/* Comunidad */
+#comunity .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 170px 30px;
+    height: 100vh;
+}
+
+/* Preguntas */
+#questions {
+    background-color: #2b2a2a;
 }
 
 #questions .container {
@@ -32,13 +48,14 @@
 
 #questions h1 {
     text-align: center;
+    color: #fff;
 }
 
 #questions .faq {
     max-width: 700px;
     margin-top: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid #fff;
     cursor: pointer;
 }
 
@@ -52,6 +69,7 @@
 #questions .question h3{
     margin-bottom: 0;
     font-size: 1.9em;
+    color: #fff;
 }
 
 #questions .answer {
@@ -64,6 +82,7 @@
 #questions .answer p{
     padding-top: 1rem;
     line-height: 1.6;
+    color: #fff;
 }
 
 #questions .faq.active .answer {
@@ -76,6 +95,7 @@
 }
 
 #questions svg {
+    color: #fff;
     transition: transform 0.3s ease-in;
 }
 
@@ -119,5 +139,31 @@
     to {
         opacity: 1;
         transform: translateY(0px);
+    }
+}
+
+/* Responsive */
+@media (min-width: 900px){
+    #comunity .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #comunity .text {
+        width: 50%;
+        padding: 0px 30px;
+    }
+
+    #comunity .img-container {
+        margin-right: 10px;
+        background-image: url("../img/Comunidad-digital.jpg");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        border-radius: 50%;
+        height: 500px;
+        width: 500px;
     }
 }
