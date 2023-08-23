@@ -1,0 +1,39 @@
+{% extends 'social/layout.html' %}
+
+{% block content %}
+
+<div id="main" class="container-fluid d-flex">
+    <div class="">
+        <div id="inputTweetArea" class="tweet-wrap2">
+            <div class="d-flex">
+                <div class="col-xs">
+                    <!-- Image form -->
+                    <img src="../../static/img/tony.jpg" alt="" class="avator">
+                    <!-- Formulario -->
+                </div>
+
+                <!-- Formulario -->
+                <form class="col pr-0" method="post" enctype="multipart/form-data">
+                    <div class="input-wrapper">
+                        <label>Nombre</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="user-name-id">Username</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <label>Bio</label>
+                    </div>
+                    <div class="input-wrapper">
+                    </div>
+
+                    <button class="twitter-btn">Actualizar</button>
+                </form>
+                <!-- Formulario -->
+
+            </div>
+        </div>
+    </div>
+    <!-- End Center -->
+</div>
+
+{% endblock content %}

@@ -36,15 +36,15 @@ def register(request):
             username = request.POST['username']
             if re.match(r'^[a-zA-Z]+$', username):
                 try:
-                    user = User.objects.create_user(username=username, password=request.POST['password1'])
+                    user = User.objects.create_user(username=username, email=request.POST['email'], password=request.POST['password1'])
                     user.save()
                     login(request, user)
                     return redirect('main')
                 except IntegrityError:
-                    return render(request, 'logs/register.html', {'form': form, 'error': 'El usuario ya existe'})
+                    return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El usuario ya existe'})
             else:
-                return render(request, 'logs/register.html', {'form': form, 'error': 'El nombre de usuario debe contener solo letras'})
-        return render(request, 'logs/register.html', {'form': form, 'error': 'Las contraseñas no coinciden'})
+                return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El nombre de usuario debe contener solo letras'})
+        return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'Las contraseñas no coinciden'})
 
 
 def login_view(request):
@@ -55,7 +55,7 @@ def login_view(request):
             password=request.POST['password']
         )
         if user is None:
-            return render(request, 'logs/login.html', {'form': AuthenticationForm,
+            return render(request, 'logs/login.html', {'current_year': current_year, 'form': AuthenticationForm,
                 'error': 'Usuario o contraseña incorrectos'}
             )
         else:
