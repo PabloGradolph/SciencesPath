@@ -21,9 +21,10 @@ def main(request):
     return render(request, 'Sciences/main.html', context)
 
 @login_required(login_url='login')
-def profile(request):
-    username = request.user.username
-    context = {'current_year': current_year, 'username': username}
+def profile(request, username):
+    user = User.objects.get(username=username)
+    posts = user.posts.all()
+    context = {'current_year': current_year, 'user': user, 'posts':posts}
     return render(request, 'Sciences/profile.html', context)
 
 def register(request):

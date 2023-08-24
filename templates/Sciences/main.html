@@ -19,7 +19,7 @@
                 </a>
             </div>
             <nav>
-                <a href="{% url 'profile' %}">Mi Perfil</a>
+                <a href="{% url 'profile' request.user %}">Mi Perfil</a>
                 <a href="#comunity">Comunidad</a>
                 <a href="#questions">Preguntas Frecuentes</a>
                 {% if user.is_authenticated %}

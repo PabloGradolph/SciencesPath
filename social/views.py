@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
-from .models import Profile, Post
-from .forms import PostForm
+from django.urls import reverse
+from django.contrib.auth.models import User
+from .models import Profile, Post, Relationship
+from .forms import PostForm, UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth.decorators import login_required
 
+
+@login_required(login_url='login')
 def home(request):
     posts = Post.objects.all()
     if request.method == 'POST':
@@ -18,7 +23,55 @@ def home(request):
     return render(request, 'social/newsfeed.html', context)
 
 
+@login_required(login_url='login')
 def delete(request, post_id):
     post = Post.objects.get(id=post_id)
     post.delete()
-    return redirect('community_home')
+    
+    # Obtén la URL de la página anterior
+    referer = request.META.get('HTTP_REFERER')
+        
+    if 'profile' in referer:
+        username = request.user.username
+        profile_url = reverse('profile', kwargs={'username': username})
+        return redirect(profile_url)
+    else:
+        return redirect('community_home')
+
+
+@login_required(login_url='login')
+def edit(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect('community_home')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm()
+        
+    context = {'u_form': u_form, 'p_form': p_form}
+    return render(request, 'social/editar.html', context)
+
+@login_required(login_url='login')
+def follow(request, username):
+    current_user = request.user
+    to_user = User.objects.get(username=username)
+    to_user_id = to_user
+    rel = Relationship(from_user=current_user, to_user=to_user_id)
+    rel.save()
+    profile_url = reverse('profile', kwargs={'username': username})
+    return redirect(profile_url)
+
+
+@login_required(login_url='login')
+def unfollow(request, username):
+    current_user = request.user
+    to_user = User.objects.get(username=username)
+    rel = Relationship.objects.get(from_user=current_user.id, to_user=to_user.id)
+    rel.delete()
+    profile_url = reverse('profile', kwargs={'username': username})
+    return redirect(profile_url)

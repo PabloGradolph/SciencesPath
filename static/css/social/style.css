@@ -156,6 +156,48 @@ a:link {
     background-color: #71C4FF;
     color: white;
 }
+
+.input-wrapper{
+    margin-bottom: 15px;
+}
   
+.input-wrapper label,
+.input-wrapper input{
+    width: 100%;
+    display: block;
+}
+  
+.input-wrapper input{
+    border: none;
+    background-color: #eee;
+    padding: 10px;
+    font-size: 20px;
+    border-bottom: 3px solid #6a6a6a;
+}
+  
+.input-wrapper input[type="password"]{
+    border-bottom: 3px solid red;
+}
+  
+.input-wrapper input:focus{
+    outline: none;
+}
+  
+.input-wrapper label{
+    background-color: #eee;
+    padding: 10px;
+    color: #6a6a6a;
+}
+  
+.twitter-btn{
+    background-color: #1E96EB;
+    border: none;
+    width: 100%;
+    padding: 15px;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+}
   
   
