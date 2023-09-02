@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     posts = Post.objects.all()
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user

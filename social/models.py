@@ -24,6 +24,7 @@ class Post(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     content = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    image = models.ImageField(blank=True, null=True)
 
     class Meta:
         ordering = ['-timestamp']

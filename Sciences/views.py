@@ -33,11 +33,17 @@ def register(request):
         return render(request, 'logs/register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
-        if request.POST['password1'] == request.POST['password2']:
-            username = request.POST['username']
+        username = request.POST['username']
+        email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        if password1 == password2:
             if re.match(r'^[a-zA-Z]+$', username):
+                if User.objects.filter(email=email).exists():
+                    return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El email ya está registrado.'})
                 try:
-                    user = User.objects.create_user(username=username, email=request.POST['email'], password=request.POST['password1'])
+                    user = User.objects.create_user(username=username, email=email, password=password1)
                     user.save()
                     login(request, user)
                     return redirect('main')

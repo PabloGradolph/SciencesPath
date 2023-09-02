@@ -9,8 +9,31 @@
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
 
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    SciencesPath!
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+                <a href="#comunity">Comunidad</a>
+                <a href="#questions">Preguntas Frecuentes</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
+    <div class="container2">
         <h1>Consulta de Asignaturas.</h1>
         <form class="search" action="{% url 'index' %}" method="GET">
             <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura...">
@@ -18,18 +41,56 @@
         </form>
         <div class="see-all">
             <a href="{% url 'index' %}">
-                <button class="btn">Ver todas</button>
+                <button class="btn-primary">Ver todas</button>
             </a>
         </div>
-        <ul class="list">
-            {% for subject in subjects %}
-                <a href="{% url 'detail' subject.id %}">
-                    <li>
-                        <span class="subject-name">{{ subject.name }}</span>
-                        <span class="university-name">{{ subject.university }}</span>
-                    </li>
-                </a>
-            {% endfor %}
-        </ul>
+        <div class="content-wrapper">
+            <div class="filter-column">
+                <h2>Filtrar Asignaturas:</h2>
+                <form class="filter-form" action="{% url 'index' %}" method="GET">
+                    {{ filter_form.as_p }}
+                    <input type="submit" value="Aplicar Filtros" class="filter-btn">
+                </form>
+            </div>
+            <div class="content-column">
+                <div class="table-container">
+                    <table class="subject-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Grado</th>
+                                <th>Curso</th>
+                                <th>Cuatrimestre</th>
+                                <th>Universidad</th>
+                                <th>Créditos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in page_subjects %}
+                                <tr class="table-row" onclick="window.location='{% url 'detail' subject.id %}'">
+                                    <td>{{ subject.name }}</td>
+                                    <td>{{ subject.degree }}</td>
+                                    <td>{{ subject.year }}</td>
+                                    <td>{{ subject.semester}}</td>
+                                    <td>{{ subject.university }}</td>
+                                    <td>{{ subject.credits }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    {% if page_subjects.has_previous %}
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page=1">Primera</a>
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.previous_page_number }}">Anterior</a>
+                    {% endif %}
+                    <span class="current-page">{{ page_subjects.number }}</span>
+                    {% if page_subjects.has_next %}
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.next_page_number }}">Siguiente</a>
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.paginator.num_pages }}">Última</a>
+                    {% endif %}
+                </div>                                           
+            </div>
+        </div>
     </div>
 {% endblock %}

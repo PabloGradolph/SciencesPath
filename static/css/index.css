@@ -1,18 +1,113 @@
-.container {
+:root {
+    --color-primary: #008037;
+    --color-text: #fff;
+    --font-main: Fruta;
+    --font-text: Cafe;
+    --background-dark: #353535;
+}
+
+/* Main settings */
+* {
+    box-sizing: border-box;
+    font-family: var(--font-text);
+    color: var(--color-text);
+}
+
+@font-face {
+    font-family: Cafe;
+    src: url(../fonts/LouisGeorgeCafe.ttf);
+}
+
+@font-face {
+    font-family: Fruta;
+    src: url(../fonts/FRESHFRUITPERSONALUSE-SVG.otf);
+}
+
+.container2 {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    margin-top: 90px;
+    background-color: var(--background-dark); /* Fondo oscuro */
+    color: var(--color-text);
+    padding-bottom: 30px;
 }
-  
+
 .container h1 {
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 20px;
 }
-  
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-left: 50px;
+}
+
+/* Estilos para el formulario de filtrado */
+.filter-column {
+    text-align: center;
+    width: 30%;
+    padding: 20px;
+    background-color: #414040;
+    border-radius: 10px;
+    border: #000 solid 2px;
+    margin-right: 20px; /* Agrega espacio a la derecha */
+}
+
+.filter-column h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.filter-column label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-text);
+}
+
+.filter-column select,
+.filter-column input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filter-column select option {
+    background-color: var(--background-dark); /* Fondo oscuro */
+    color: var(--color-text);
+}
+
+.filter-btn {
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #00672e;
+}
+
+.content-column {
+    width: 68%; /* Ajusta según tus necesidades */
+    /* Resto de tus estilos */
+}
+
 /* Estilos para el formulario */
 form.search {
     display: flex;
@@ -21,19 +116,24 @@ form.search {
     margin: 20px;
     width: 50%;
 }
-  
+
 /* Estilos para el campo de búsqueda */
 form.search .search-bar {
     padding: 10px 15px;
     border: 2px solid #fff;
     background-color: transparent;
-    color: #fff;
     border-radius: 5px;
     font-size: 16px;
     width: 100%;
     max-width: 40em;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text); 
 }
-  
+
+form.search .search-bar::placeholder {
+    color: var(--color-text);
+}
+
 /* Estilos para el botón de búsqueda */
 form.search .search-btn {
     padding: 10px 20px;
@@ -53,63 +153,160 @@ form.search .search-btn:hover {
 }
 
 .see-all {
-    text-align: center;
-    margin-bottom: 20px;
-    width: 15%;
+    width: 30%;
 }
 
-.see-all a {
-    text-decoration: none;
+.btn-primary {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    width: 100%;
 }
 
-.btn {
-    padding: 10px 15px;
-    background-color: #008037;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%; 
-    transition: background-color 0.3s ease;
+.table-container {
+    width: 80%;
+    overflow-x: auto; /* Agrega scroll horizontal si la tabla es muy ancha */
 }
 
-.btn:hover {
-    background-color: #00672e;
+.subject-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.container ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-}
-  
-.container li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.subject-table th,
+.subject-table td {
     padding: 10px;
-    border: 1px solid #fff;
-    border-radius: 10px;
+    text-align: left;
 }
 
-.container li:hover {
-    background-color: #444654;
+.subject-table th {
+    background-color: #fff;
+    color: var(--background-dark);
 }
-  
+
+.subject-table tr {
+    border-radius: 2px;
+    background-color: var(--background-dark);
+    color: var(--color-text);
+}
+
+.subject-table tbody tr:hover {
+    cursor: pointer;
+    background-color: #444654;
+    border: 2px solid #444654;
+}
+
 .subject-name {
     font-weight: bold;
 }
-  
+
 .university-name {
     margin-left: auto;
 }
 
 a {
-    text-decoration: none; 
+    text-decoration: none;
     color: inherit;
-  }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pagination a:hover {
+    background-color: #008037;
+    color: #fff;
+}
+
+.pagination .current-page {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #008037;
+    color: #fff;
+    border-radius: 3px;
+}
+
+/* Footer */
+footer {
+    width: 100%;
+    background-color: #333333;
+    padding: 0;
+    margin-top: 75px;
+    border-top: 1px solid black;
+}
+
+footer .container {
+    max-width: none;
+}
+
+footer .group-1 {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+}
+
+footer .group-1 .box p{
+    margin: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+footer .group-1 .box span{
+    color: var(--color-primary)
+}
+
+footer .group-1 .box img {
+    justify-content: space-between;
+    width: 4em;
+    height: 4em;
+    border-radius: 5px;
+}
+
+footer .group-1 .box h4 {
+    color: #fff;
+
+}
+
+footer .group-2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: #2b2a2a;
+}
+
+footer .group-2 small, footer .group-2 b, footer .group-2 a{
+    color: #fff;
+}
+
+footer .group-2 a:hover{
+    color: #ffffffcb;
+}
+
+@media (min-width:720px) {
+    footer .group-2{
+        width: 100%;
+    }
+}

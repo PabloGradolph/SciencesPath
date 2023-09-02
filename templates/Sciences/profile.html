@@ -62,6 +62,9 @@
                         </a>
                         <span>{{ post.timestamp|naturaltime }}</span>
                         <p>{{ post.content }}</p>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="" class="post-image">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="tweet-info-counts">

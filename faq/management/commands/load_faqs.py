@@ -17,7 +17,7 @@ class Command(BaseCommand):
             {'question': "¿Cuándo debo saber el tema y tutor de mi TFG?",
             'answer': "Por lo general, es conveniente comunicar al coordinador de las prácticas de tu universidad tanto el tema como el tutor de TFG antes de matricularte de la asignatura aqunque podría haber excepciones. Recuerda que tienes que tener superados un mínimo de 150 créditos para poder matrícularte de la asignatura de TFG."},
             {'question': "¿Qué universidad gestiona las prácticas externas?",
-            'answer': "Aunque la matrícula la hagas por la UAM, si perteneces a la UC3M o UAB, generan una copia en dichas universidades. Podrás realizar tus prácticas a través de la OPE de tu universidad y con un tutor académico de prácticas de tu universidad."}
+            'answer': "Aunque pertenezcas a las universidades UC3M o UAB, la gestión de las prácticas externas se hará por la OPE de la UAM, ellos llevarán a cabo todos los procedimientos y tu tutor académico deberá ser también de la UAM. En caso de ser curriculares, también se evaluará allí tu asignatura."}
         ]
 
         for question in questions:

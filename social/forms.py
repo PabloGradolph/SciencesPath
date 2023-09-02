@@ -8,9 +8,13 @@ class PostForm(forms.ModelForm):
         'placeholder': '¿Qué está ocurriendo?'
     }))
 
+    image = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={
+        'class': 'form-control-file',
+    }))
+
     class Meta:
         model = Post
-        fields = ['content']
+        fields = ['content', 'image']
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

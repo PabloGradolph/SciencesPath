@@ -27,7 +27,8 @@ def load_subjects_from_json(file_path: str):
             )
 
             for key2, value2 in value.items():
-                key2 = key2.lower().capitalize()
+                if university == "UAM":
+                    key2 = key2.lower().capitalize()
                 subject_data = {
                     'name': key2,
                     'subject_key': value2['Codigo'] if 'Codigo' in value2 else \

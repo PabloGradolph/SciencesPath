@@ -3,9 +3,9 @@
 {% block content %}
 <div id="main" class="container-fluid d-flex">
     <!-- Barra Izquierda -->
-    <div class="sidebar m-5 d-none d-md-block">
-        <div class="">
-            <div class="card " style="width: 18rem; text-align:center;border-radius: 20px;">
+    <div class="sidebar m-5 d-none d-md-block" style="margin-top: 20px;">
+        <div class="" >
+            <div class="card" style="width: 18rem; text-align:center; border-radius: 20px; ">
                 <img class="card-img-top rounded-circle"
                     style="width:60%; position: relative;left: 62px;padding-top: 20px;"
                     src="{{ request.user.profile.image.url }}" alt="Card image cap">
@@ -31,7 +31,7 @@
     <!-- End Barra Izquierda -->
 
     <!-- Center -->
-    <div class="content">
+    <div class="content" style="margin-top: 20px;">
 
         <div id="inputTweetArea" class="tweet-wrap">
             <div class="d-flex">
@@ -43,19 +43,13 @@
                 </div>
 
                 <!-- Formulario -->
-                <form class="col pr-0" method="post">
+                <form class="col pr-0" method="post", enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.content }}
+                    {{ form.image }}
                     <div class="container d-flex" style="padding: 1rem 0 0 0;">
-                        <div id="leftBtn">
-                            <div id="charBadge" class="badge badge-pill badge-primary ml-2"
-                                style="display: flex;align-items: center;width: 50%;justify-content: center;">
-                                <div id="charCountArea">140</div>
-                            </div>
-                        </div>
-
                         <div id="rightBtn">
-                            <button class="btn rounded-pill" style="width: 100%;">Tweet</button>
+                            <button class="btn rounded-pill" style="width: 100%;", type='submit'>Publicar</button>
                         </div>
                     </div>
                 </form>
@@ -80,6 +74,9 @@
                             </a>
                             <span>{{ post.timestamp|naturaltime }}</span>
                             <p>{{ post.content }}</p>
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="" class="post-image">
+                            {% endif %}
                         </div>
                     </div>
                     <div class="tweet-info-counts">
@@ -149,7 +146,7 @@
 
     <!-- Barra Derecha -->
     <div class="sidebar m-5 d-none d-xl-block">
-        <div class="card" style="width: 18rem;">
+        <div class="card" style="width: 18rem; margin-top: 20px;">
             <div class="card-header">
                 Who to Follow
             </div>
