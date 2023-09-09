@@ -35,12 +35,12 @@
 {% block content %}
     <div class="container2">
         <h1>Consulta de Asignaturas.</h1>
-        <form class="search" action="{% url 'index' %}" method="GET">
+        <form class="search" action="{% url 'index' %}#content-column" method="GET">
             <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura...">
             <input type="submit" value="Buscar" class="search-btn">
         </form>
         <div class="see-all">
-            <a href="{% url 'index' %}">
+            <a href="{% url 'index' %}#content-column">
                 <button class="btn-primary">Ver todas</button>
             </a>
         </div>
@@ -52,7 +52,7 @@
                     <input type="submit" value="Aplicar Filtros" class="filter-btn">
                 </form>
             </div>
-            <div class="content-column">
+            <div id="content-column" class="content-column">
                 <div class="table-container">
                     <table class="subject-table">
                         <thead>
@@ -78,6 +78,18 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                <div class="subject-list">
+                    <ul class="list">
+                        {% for subject in page_subjects %}
+                            <a href="{% url 'detail' subject.id %}">
+                                <li>
+                                    <span class="subject-name">{{ subject.name }}</span>
+                                    <span class="university-name">{{ subject.university }}</span>
+                                </li>
+                            </a>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <div class="pagination">
                     {% if page_subjects.has_previous %}

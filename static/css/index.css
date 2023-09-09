@@ -39,7 +39,7 @@
 .container h1 {
     font-size: 32px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 100px;
 }
 
 .content-wrapper {
@@ -191,7 +191,7 @@ form.search .search-btn:hover {
 
 .subject-table tbody tr:hover {
     cursor: pointer;
-    background-color: #444654;
+    background-color: #008037;
     border: 2px solid #444654;
 }
 
@@ -206,6 +206,10 @@ form.search .search-btn:hover {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+.subject-list {
+    display: none;
 }
 
 .pagination {
@@ -309,4 +313,109 @@ footer .group-2 a:hover{
     footer .group-2{
         width: 100%;
     }
+    .container2 h1 {
+        text-align: center;
+    }
 }
+
+@media (max-width: 720px) {
+    .container2 {
+        margin-top: 0px;
+    }
+
+    .container2 h1 {
+        text-align: center;
+    }
+
+    .table-container {
+        display: none;
+    }
+
+    .subject-list {
+        display: block;
+        list-style: none; 
+        padding: 0; 
+        margin: 0;
+        width: 90%;
+        text-align: center;
+    }
+
+    .subject-list a {
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+
+    .subject-list a:hover {
+        background-color: #008037; 
+        color: #fff; 
+    }
+
+    .subject-name {
+        display: block;
+    }
+
+    .university-name {
+        margin-top: 3px;
+        display: block;
+    }
+}
+
+/* Estilos para pantallas más pequeñas (ancho máximo de 1230px) */
+@media (max-width: 1230px) {
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin-left: 0px;
+    }
+
+    .filter-column {
+        padding: 0px;
+        margin-bottom: 20px;
+        width: 90%;
+        margin-right: 0px;
+    }
+
+    .filter-column h2 {
+        margin-bottom: 5px;
+    }
+
+    .filter-column label {
+        margin-bottom: 2px;
+    }
+
+    .filter-column select,
+    .filter-column input {
+        width: calc(50% - 30px);;
+        padding: 3px;
+        margin-bottom: 5px;
+    }
+
+    .filter-form {
+        margin-bottom: 5px;
+    }
+
+    .filter-form p {
+        padding-left: 0px;
+        margin: 8px;
+    }
+
+    .content-column {
+        width: 90%;
+    }
+    
+    .table-container {
+        width: 100%;
+    }
+}
+
+
+
+
+

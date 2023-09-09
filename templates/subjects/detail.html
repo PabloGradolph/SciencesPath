@@ -9,11 +9,37 @@
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
 {% endblock %}
 
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    SciencesPath!
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+                <a href="#comunity">Comunidad</a>
+                <a href="#questions">Preguntas Frecuentes</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="title">
         <h1>{{ subject.name }}</h1>
-        <a class="guide-link" href="{{ subject.subject_url }}" target="_blank">Ver Guía Docente</a>
+        <div class="buttons">
+            <a class="btn-primary" href="{{ subject.subject_url }}" target="_blank">Ver Guía Docente</a>
+            <a class="btn-primary" href="{{ subject.subject_url }}" target="_blank">Ver Horario</a>
+        </div>
     </div>
     <div class="columns-container">
         <div class="left-column">
@@ -34,5 +60,59 @@
         <h2>Programa</h2>
         <p>{{ subject.content|linebreaksbr }}</p>
     </div>
+    <div class="rating-area">
+        <h2>Valoraciones y Reseñas</h2>
+        <div class="avg_rating">
+            <p class="avg_rating">{{ subject.avg_rating }}</p>
+            <div class="rating">
+                {% for i in rating_range %}
+                    <span class="star{% if i <= subject.avg_rating %} active{% endif %}">&#9733;</span>
+                {% endfor %}
+            </div>
+        </div>
+        <button class="btn-primary" id="show-review-form">Valorar</button>
+        <form method="post" style="display: none;">
+            {% csrf_token %}
+            <label for="rating">Tu valoración:</label>
+            <p class="clasificacion">
+                <input id="radio1" type="radio" name="rating" value="5">
+                <label class="star" for="radio1">★</label>
+                <input id="radio2" type="radio" name="rating" value="4">
+                <label class="star" for="radio2">★</label>
+                <input id="radio3" type="radio" name="rating" value="3">
+                <label class="star" for="radio3">★</label>
+                <input id="radio4" type="radio" name="rating" value="2">
+                <label class="star" for="radio4">★</label>
+                <input id="radio5" type="radio" name="rating" value="1">
+                <label class="star" for="radio5">★</label>
+            </p>
+            <label for="comment">Tu comentario:</label>
+            <textarea name="comment" id="comment"></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+        {% for review in ratings %}
+            <div class="review">
+                <div class="user-info">
+                    <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
+                    <p>{{ review.user.username }}</p>
+                </div>
+                <div class="rating-comment">
+                    <p>Rating: {{ review.rating }}/5</p>
+                    <p>Comentario: {{ review.comment }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const showReviewButton = document.getElementById("show-review-form");
+        const reviewForm = document.querySelector("form");
+
+        showReviewButton.addEventListener("click", function () {
+            // Muestra el formulario cuando se hace clic en el botón
+            reviewForm.style.display = "block";
+        });
+    });
+</script>
 {% endblock %}

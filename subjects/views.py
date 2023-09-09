@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import QueryDict
 from django.core.paginator import Paginator
-from .models import Subject
+from .models import Subject, SubjectRating
 from django.db.models import Q
+from django.contrib import messages
 from datetime import datetime
 from .forms import SubjectFilterForm
 
@@ -66,5 +67,28 @@ def index(request):
 @login_required(login_url='login')
 def detail(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
-    context = {'subject': subject, 'current_year': current_year}
+    ratings = SubjectRating.objects.filter(subject=subject)
+    user_rating = SubjectRating.objects.filter(subject=subject, user=request.user).first()
+    
+    if request.method == 'POST':
+        rating_value = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        if rating_value and 1 <= int(rating_value) <= 5:
+            if user_rating:
+                user_rating.rating = rating_value
+                user_rating.comment = comment
+                user_rating.save()
+            else:
+                SubjectRating.objects.create(user=request.user, subject=subject, rating=rating_value, comment=comment)
+            messages.success(request, 'Tu valoración ha sido registrada.')
+            return redirect('detail', subject_id=subject_id)
+    
+    rating_range = range(1,6)
+    context = {
+        'subject': subject, 
+        'current_year': current_year,
+        'ratings': ratings,
+        'user_rating': user_rating,
+        'rating_range': rating_range,
+    }
     return render(request, 'subjects/detail.html', context)

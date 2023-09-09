@@ -1,8 +1,11 @@
 .container {
-    width: 90vw;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 90px;
+    background-color: #353535;
+    width: 100%;
+    max-width: none;
 }
 
 .title {
@@ -10,10 +13,19 @@
     margin-bottom: 20px;
 }
 
+.title h1 {
+    color: #fff;
+}
+
 .columns-container {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 70%;
+}
+
+.columns-container p strong,
+.columns-container p{
+    color: #fff;
 }
 
 .left-column, .right-column {
@@ -22,10 +34,17 @@
 
 .centered-content {
     margin-top: 20px;
+    width: 70%;
+    margin-bottom: 50px;
 }
 
 .centered-content h2 {
     text-align: center;
+    color: #fff;
+}
+
+.centered-content p {
+    color: #fff;
 }
 
 .guide-link {
@@ -48,3 +67,170 @@
     font-size: 18px; 
     margin-bottom: 5px; 
 }
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttons a {
+    margin: 5px;
+}
+
+.rating-area {
+    display: flex;
+    margin-top: 0;
+    flex-direction: column;
+    margin-bottom: 50px;
+    text-align: center;
+    align-items: center;
+}
+
+.rating-area h2 {
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.rating-area p {
+    color: #fff;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.rating-area button {
+    width: 50%;
+    margin-bottom: 30px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    color: #ffd700; 
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.star {
+    cursor: pointer;
+}
+
+.star.active {
+    color: #ffd700;
+}
+
+form {
+    display: none;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+label[for="rating"],
+label[for="comment"] {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+select[name="rating"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+textarea[name="comment"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.star{ color:grey;}
+input[type = "radio"]{ display:none;}
+
+.clasificacion {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+}
+
+.star:hover,
+.star:hover ~ label{
+    color:#ffd700;
+}
+input[type = "radio"]:checked ~ label{color:#ffd700;}
+
+button[type="submit"] {
+    background-color: #008037;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+    background-color: #00672e;
+}
+
+.review {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.user-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.user-info img {
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%; 
+    margin-right: 10px;
+}
+
+.rating-comment {
+    flex: 3;
+    padding: 5px;
+}
+
+.rating-comment p {
+    margin: 0;
+    padding: 5px;
+}
+
+footer {
+    width: 100%;
+    background-color: #333333;
+    padding: 0;
+    margin-top: 75px;
+    border-top: 1px solid black;
+}
+
+footer .container {
+    max-width: none;
+    margin-top: 0;
+}
+
+@media (max-width: 720px) {
+    .container {
+        margin-top: 0px;
+    }
+}
+
