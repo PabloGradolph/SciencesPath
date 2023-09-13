@@ -63,11 +63,17 @@
     <div class="rating-area">
         <h2>Valoraciones y Reseñas</h2>
         <div class="avg_rating">
-            <p class="avg_rating">{{ subject.avg_rating }}</p>
+            <p class="avg_rating">
+                {% if avg_rating == 0.0 %}
+                   <span> Sin Valorar </span>
+                {% else %}
+                    {{ avg_rating }}
+                {% endif %}
+            </p>
             <div class="rating">
-                {% for i in rating_range %}
-                    <span class="star{% if i <= subject.avg_rating %} active{% endif %}">&#9733;</span>
-                {% endfor %}
+                <div class="stars-outer">
+                    <div class="stars-inner"></div>
+                </div>
             </div>
         </div>
         <button class="btn-primary" id="show-review-form">Valorar</button>
@@ -97,9 +103,18 @@
                     <p>{{ review.user.username }}</p>
                 </div>
                 <div class="rating-comment">
-                    <p>Rating: {{ review.rating }}/5</p>
-                    <p>Comentario: {{ review.comment }}</p>
+                    <div class="rating">
+                        {% for i in rating_range %}
+                            <span class="star{% if i <= review.rating %} active{% endif %}">&#9733;</span>
+                        {% endfor %}
+                    </div>
                 </div>
+                <svg width="15" height="10" viewBox="0 0 42 25">
+                    <path d="M3 3L21 21L39 3" stroke="white" stroke-width="7" stroke-linecap="round"/>
+                </svg>
+                <div class="answer">
+                    <p>Comentario: {{ review.comment }}</p>
+                </div>     
             </div>
         {% endfor %}
     </div>
@@ -115,4 +130,10 @@
         });
     });
 </script>
+<script>
+    const starPercentageRounded = {{ avg_rating_percentage_rounded }};
+    document.querySelector('.stars-inner').style.width = starPercentageRounded + "%";
+</script>
+
+<script src="https://kit.fontawesome.com/f2b3d089f6.js" crossorigin="anonymous"></script>
 {% endblock %}

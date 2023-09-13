@@ -66,10 +66,23 @@ def index(request):
 
 @login_required(login_url='login')
 def detail(request, subject_id):
+    star_total = 5
     subject = get_object_or_404(Subject, id=subject_id)
     ratings = SubjectRating.objects.filter(subject=subject)
     user_rating = SubjectRating.objects.filter(subject=subject, user=request.user).first()
     
+    possible_ratings = [1, 2, 3, 4, 5]
+    ratings_count = []
+    for rating in possible_ratings:
+        quantity = 0
+        for r in ratings:
+            if r == rating:
+                quantity += 1
+        quantity = (quantity / star_total) * 100
+        quantity = round((quantity / 10) * 10)
+        quantity = str(quantity) + "%"
+        ratings_count.append(quantity)
+
     if request.method == 'POST':
         rating_value = request.POST.get('rating')
         comment = request.POST.get('comment')
@@ -83,6 +96,9 @@ def detail(request, subject_id):
             messages.success(request, 'Tu valoración ha sido registrada.')
             return redirect('detail', subject_id=subject_id)
     
+    avg_rating = subject.avg_rating()
+    avg_rating_percentage = (avg_rating / star_total) * 100
+    avg_rating_percentage_rounded = round((avg_rating_percentage / 10)*10)
     rating_range = range(1,6)
     context = {
         'subject': subject, 
@@ -90,5 +106,12 @@ def detail(request, subject_id):
         'ratings': ratings,
         'user_rating': user_rating,
         'rating_range': rating_range,
+        'avg_1': ratings_count[0],
+        'avg_2': ratings_count[1],
+        'avg_3': ratings_count[2],
+        'avg_4': ratings_count[3],
+        'avg_5': ratings_count[4],
+        'avg_rating': avg_rating,
+        'avg_rating_percentage_rounded': avg_rating_percentage_rounded,
     }
     return render(request, 'subjects/detail.html', context)

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Profile(models.Model):
@@ -18,6 +20,15 @@ class Profile(models.Model):
     def followers(self):
         user_ids = Relationship.objects.filter(to_user=self.user).values_list('from_user_id', flat=True)
         return User.objects.filter(id__in=user_ids)
+
+
+# A profile is generated automatically, when a user is registered.
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
 
 
 class Post(models.Model):
