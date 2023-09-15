@@ -38,6 +38,9 @@ def register(request):
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
+        if len(username) > 35:
+            return render(request, 'logs/register.html', {'form': form, 'error': 'El nombre de usuario es demasiado largo.'})
+        
         if password1 == password2:
             if re.match(r'^[a-zA-Z]+$', username):
                 if User.objects.filter(email=email).exists():

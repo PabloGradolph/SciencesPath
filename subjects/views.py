@@ -63,6 +63,11 @@ def index(request):
     }
     return render(request, 'subjects/index.html', context)
 
+@login_required(login_url='login')
+def delete_review(request, review_id, subject_id):
+    review = SubjectRating.objects.get(id=review_id)
+    review.delete()
+    return redirect('detail', subject_id=subject_id)
 
 @login_required(login_url='login')
 def detail(request, subject_id):

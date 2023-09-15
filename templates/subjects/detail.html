@@ -60,63 +60,72 @@
         <h2>Programa</h2>
         <p>{{ subject.content|linebreaksbr }}</p>
     </div>
-    <div class="rating-area">
-        <h2>Valoraciones y Reseñas</h2>
-        <div class="avg_rating">
-            <p class="avg_rating">
-                {% if avg_rating == 0.0 %}
-                   <span> Sin Valorar </span>
-                {% else %}
-                    {{ avg_rating }}
-                {% endif %}
-            </p>
-            <div class="rating">
-                <div class="stars-outer">
-                    <div class="stars-inner"></div>
-                </div>
-            </div>
-        </div>
-        <button class="btn-primary" id="show-review-form">Valorar</button>
-        <form method="post" style="display: none;">
-            {% csrf_token %}
-            <label for="rating">Tu valoración:</label>
-            <p class="clasificacion">
-                <input id="radio1" type="radio" name="rating" value="5">
-                <label class="star" for="radio1">★</label>
-                <input id="radio2" type="radio" name="rating" value="4">
-                <label class="star" for="radio2">★</label>
-                <input id="radio3" type="radio" name="rating" value="3">
-                <label class="star" for="radio3">★</label>
-                <input id="radio4" type="radio" name="rating" value="2">
-                <label class="star" for="radio4">★</label>
-                <input id="radio5" type="radio" name="rating" value="1">
-                <label class="star" for="radio5">★</label>
-            </p>
-            <label for="comment">Tu comentario:</label>
-            <textarea name="comment" id="comment"></textarea>
-            <button type="submit">Enviar</button>
-        </form>
-        {% for review in ratings %}
-            <div class="review">
-                <div class="user-info">
-                    <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
-                    <p>{{ review.user.username }}</p>
-                </div>
-                <div class="rating-comment">
-                    <div class="rating">
-                        {% for i in rating_range %}
-                            <span class="star{% if i <= review.rating %} active{% endif %}">&#9733;</span>
-                        {% endfor %}
+    
+    <div class="container">
+        <div class="rating-area">
+            <h2>Valoraciones y Reseñas</h2>
+            <div class="avg_rating">
+                <p class="avg_rating">
+                    {% if avg_rating == 0.0 %}
+                    <span> Sin Valorar </span>
+                    {% else %}
+                        {{ avg_rating }}
+                    {% endif %}
+                </p>
+                <div class="rating">
+                    <div class="stars-outer">
+                        <div class="stars-inner"></div>
                     </div>
                 </div>
-                <svg width="15" height="10" viewBox="0 0 42 25">
-                    <path d="M3 3L21 21L39 3" stroke="white" stroke-width="7" stroke-linecap="round"/>
-                </svg>
-                <div class="answer">
-                    <p>Comentario: {{ review.comment }}</p>
-                </div>     
             </div>
-        {% endfor %}
+            <button class="btn-primary" id="show-review-form">Valorar</button>
+            <form method="post" style="display: none;">
+                {% csrf_token %}
+                <label for="rating">Tu valoración:</label>
+                <p class="clasificacion">
+                    <input id="radio1" type="radio" name="rating" value="5">
+                    <label class="star" for="radio1">★</label>
+                    <input id="radio2" type="radio" name="rating" value="4">
+                    <label class="star" for="radio2">★</label>
+                    <input id="radio3" type="radio" name="rating" value="3">
+                    <label class="star" for="radio3">★</label>
+                    <input id="radio4" type="radio" name="rating" value="2">
+                    <label class="star" for="radio4">★</label>
+                    <input id="radio5" type="radio" name="rating" value="1">
+                    <label class="star" for="radio5">★</label>
+                </p>
+                <label for="comment">Tu comentario:</label>
+                <textarea name="comment" id="comment"></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+            <div class="faqs">
+                {% for review in ratings %}
+                    <div class="faq">
+                        <div class="question">
+                            <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
+                            <div class="user-info">
+                                <a class="link1" href="{% url 'profile' review.user %}">
+                                    <p>{{ review.user.username }}</p>
+                                </a>
+                            </div>
+                            <div class="stars">
+                                {% for i in rating_range %}
+                                    <span class="star2{% if i <= review.rating %} active{% endif %}">&#9733;</span>
+                                {% endfor %}
+                            </div>
+                            {% if review.user == request.user %}
+                                <a class="link2" href="{% url 'delete_review' review.id subject.id %}" style="background: #353535; border: none; display: block;">
+                                    <i class="fa fa-trash-o" style="color:#fff; font-size: 32px"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="answer">
+                            <p>{{ review.comment }}</p>
+                        </div>     
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -134,6 +143,6 @@
     const starPercentageRounded = {{ avg_rating_percentage_rounded }};
     document.querySelector('.stars-inner').style.width = starPercentageRounded + "%";
 </script>
-
+<script src="{% static 'js/faq.js' %}"></script>
 <script src="https://kit.fontawesome.com/f2b3d089f6.js" crossorigin="anonymous"></script>
 {% endblock %}
