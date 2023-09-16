@@ -65,7 +65,7 @@
         <div class="rating-area">
             <h2>Valoraciones y Reseñas</h2>
             <div class="avg_rating">
-                <p class="avg_rating">
+                <p>
                     {% if avg_rating == 0.0 %}
                     <span> Sin Valorar </span>
                     {% else %}
@@ -99,30 +99,87 @@
                 <button type="submit">Enviar</button>
             </form>
             <div class="faqs">
+                {% with user_review=None %}
+                    {% for review in ratings %}
+                        {% if review.user == request.user %}
+                            {% with user_review=review %}
+                                <div class="faq">
+                                    <div class="question">
+                                        <img src="{{ user_review.user.profile.image.url }}" alt="{{ user_review.user.username }}">
+                                        <div class="user-info">
+                                            <a class="link1" href="{% url 'profile' user_review.user %}">
+                                                <p>{{ user_review.user.username }}</p>
+                                            </a>
+                                        </div>
+                                        <div class="stars">
+                                            {% for i in rating_range %}
+                                                <span class="star2{% if i <= user_review.rating %} active{% endif %}">&#9733;</span>
+                                            {% endfor %}
+                                        </div>
+                                        <a href="{% url 'delete_review' user_review.id subject.id %}" style="margin-left:10px; background: #353535; border: none; display: block;">
+                                            <i class="fa fa-trash-o" style="color:#fff; font-size: 32px"></i>
+                                        </a>
+                                    </div>
+                                    <div class="answer">
+                                        <p>{{ user_review.comment }}</p>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
                 {% for review in ratings %}
-                    <div class="faq">
-                        <div class="question">
-                            <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
-                            <div class="user-info">
-                                <a class="link1" href="{% url 'profile' review.user %}">
-                                    <p>{{ review.user.username }}</p>
-                                </a>
+                    {% if review.user != request.user %}
+                        {% if forloop.counter < 5 %}
+                            <div class="faq">
+                                <div class="question">
+                                    <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
+                                    <div class="user-info">
+                                        <a class="link1" href="{% url 'profile' review.user %}">
+                                            <p>{{ review.user.username }}</p>
+                                        </a>
+                                    </div>
+                                    <div class="stars">
+                                        {% for i in rating_range %}
+                                            <span class="star2{% if i <= review.rating %} active{% endif %}">&#9733;</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="answer">
+                                    <p>{{ review.comment }}</p>
+                                </div>     
                             </div>
-                            <div class="stars">
-                                {% for i in rating_range %}
-                                    <span class="star2{% if i <= review.rating %} active{% endif %}">&#9733;</span>
-                                {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if ratings|length > 4 %}
+                    <button id="ver-mas" class="btn-primary" style="margin-top: 10px;">Ver Más</button>
+                {% endif %}
+
+                {% for review in ratings %}
+                    {% if forloop.counter > 4 %}
+                        {% if review.user != request.user %}
+                            <div class="faq" style="display: none;">
+                                <div class="question">
+                                    <img src="{{ review.user.profile.image.url }}" alt="{{ review.user.username }}">
+                                    <div class="user-info">
+                                        <a class="link1" href="{% url 'profile' review.user %}">
+                                            <p>{{ review.user.username }}</p>
+                                        </a>
+                                    </div>
+                                    <div class="stars">
+                                        {% for i in rating_range %}
+                                            <span class="star2{% if i <= review.rating %} active{% endif %}">&#9733;</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="answer">
+                                    <p>{{ review.comment }}</p>
+                                </div>
                             </div>
-                            {% if review.user == request.user %}
-                                <a class="link2" href="{% url 'delete_review' review.id subject.id %}" style="background: #353535; border: none; display: block;">
-                                    <i class="fa fa-trash-o" style="color:#fff; font-size: 32px"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="answer">
-                            <p>{{ review.comment }}</p>
-                        </div>     
-                    </div>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -136,6 +193,22 @@
         showReviewButton.addEventListener("click", function () {
             // Muestra el formulario cuando se hace clic en el botón
             reviewForm.style.display = "block";
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const verMasButton = document.getElementById("ver-mas");
+        const valoracionesAdicionales = document.querySelectorAll(".faq:nth-child(n+6)");
+    
+        verMasButton.addEventListener("click", function () {
+            // Muestra las valoraciones adicionales
+            valoracionesAdicionales.forEach(function (valoracion) {
+                valoracion.style.display = "block";
+            });
+    
+            // Oculta el botón "Ver Más" después de mostrar todas las valoraciones
+            verMasButton.style.display = "none";
         });
     });
 </script>

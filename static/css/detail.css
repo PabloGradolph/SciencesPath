@@ -109,7 +109,7 @@
 }
 
 .avg_rating p {
-    font-size: 36px;
+    font-size: 42px;
     margin: 10px 0;
     color: #fff;
     font-weight: bold;
@@ -344,6 +344,10 @@ svg {
     color: #fff;
     margin-left: 10px;
     transition: transform 0.5s ease-in;
+}
+
+.faq:nth-child(n+6) {
+    display: none;
 }
 
 footer {
