@@ -184,6 +184,14 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <h2 class="material-title">Apuntes, Exámenes y Ejercicios</h2>
+        <div class="material">
+            <p>Consulta si alguien ha subido previamente algún tipo de material para la asignatura
+            o sube tu el tuyo para ayudar a tus compañeros pulsando en el siguiente botón.</p>
+            <a href="{% url 'upload_material' subject.id %}" target="blank_" class="btn-primary">Material</a>
+        </div>
+    </div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {

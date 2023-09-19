@@ -55,3 +55,25 @@ class SubjectRating(models.Model):
 
     class Meta:
         unique_together = ('user', 'subject')
+
+
+class Schedules(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    schedule_url = models.URLField(null=True)
+
+
+class SubjectMaterial(models.Model):
+    MATERIAL_TYPES = (
+        ('Apuntes', 'Apuntes'),
+        ('Ejercicios', 'Ejercicios'),
+        ('Examenes', 'Exámenes'),
+    )
+
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    material_type = models.CharField(max_length=20, choices=MATERIAL_TYPES, default='Apuntes')
+    file = models.FileField(upload_to='subject_materials/')
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

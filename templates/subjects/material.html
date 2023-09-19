@@ -1,0 +1,37 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}
+    Material
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/material.css' %}">
+{% endblock %}
+
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    SciencesPath!
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+                <a href="#comunity">Comunidad</a>
+                <a href="#questions">Preguntas Frecuentes</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+    <p>Prueba</p>
+{% endblock %}

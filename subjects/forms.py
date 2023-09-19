@@ -1,5 +1,5 @@
 from django import forms
-from .models import Degree, University, Subject
+from .models import Degree, University, Subject, SubjectMaterial
 
 class SubjectFilterForm(forms.Form):
     degree = forms.ModelChoiceField(queryset=Degree.objects.all(), required=False, empty_label="Todos", label="Grado")
@@ -31,3 +31,8 @@ class SubjectFilterForm(forms.Form):
             year_choices.remove(('', ''))
         year_choices.insert(0, ('', 'Todos'))
         return year_choices
+
+class SubjectMaterialForm(forms.ModelForm):
+    class Meta:
+        model = SubjectMaterial
+        fields = ['title', 'material_type', 'file']

@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import QueryDict
 from django.core.paginator import Paginator
-from .models import Subject, SubjectRating
+from .models import Subject, SubjectRating, SubjectMaterial
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
-from .forms import SubjectFilterForm
+from .forms import SubjectFilterForm, SubjectMaterialForm
 
 current_year = datetime.now().year
 
@@ -120,3 +120,19 @@ def detail(request, subject_id):
         'avg_rating_percentage_rounded': avg_rating_percentage_rounded,
     }
     return render(request, 'subjects/detail.html', context)
+
+@login_required(login_url='login')
+def upload_material(request, subject_id):
+    subject = get_object_or_404(Subject, pk=subject_id)
+    
+    if request.method == 'POST':
+        form = SubjectMaterialForm(request.POST, request.FILES)
+        if form.is_valid():
+            material = form.save(commit=False)
+            material.subject = subject
+            material.save()
+            return redirect('detail', subject_id=subject_id)
+    else:
+        form = SubjectMaterialForm()
+    
+    return render(request, 'subjects/material.html', {'form': form, 'subject': subject})
