@@ -135,4 +135,4 @@ def upload_material(request, subject_id):
     else:
         form = SubjectMaterialForm()
     
-    return render(request, 'subjects/material.html', {'form': form, 'subject': subject})
+    return render(request, 'subjects/material.html', {'form': form, 'subject': subject, 'current_year': current_year})

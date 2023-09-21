@@ -372,6 +372,10 @@ svg {
     background-position: center center;
 }
 
+.material-title {
+    margin-top: 0px;
+}
+
 .material-title,
 .material p {
     text-align: center;
@@ -403,6 +407,7 @@ footer .container {
     .faq {
         margin-bottom: 0;
     }
+    
     .question {
         flex-direction: column;
         align-items: center;
