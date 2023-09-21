@@ -2,11 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import QueryDict
 from django.core.paginator import Paginator
-from .models import Subject, SubjectRating, SubjectMaterial
+from .models import Subject, SubjectRating, SubjectMaterial, TimeTable
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
 from .forms import SubjectFilterForm, SubjectMaterialForm
+from icalendar import Calendar
+import pytz
+from datetime import datetime
+import json
 
 current_year = datetime.now().year
 
@@ -106,7 +110,7 @@ def detail(request, subject_id):
     avg_rating_percentage_rounded = round((avg_rating_percentage / 10)*10)
     rating_range = range(1,6)
     context = {
-        'subject': subject, 
+        'subject': subject,
         'current_year': current_year,
         'ratings': ratings,
         'user_rating': user_rating,
@@ -136,3 +140,46 @@ def upload_material(request, subject_id):
         form = SubjectMaterialForm()
     
     return render(request, 'subjects/material.html', {'form': form, 'subject': subject, 'current_year': current_year})
+
+@login_required(login_url='login')
+def horario(request, subject_id):
+    subject = get_object_or_404(Subject, pk=subject_id)
+    try:
+        schedule = TimeTable.objects.get(subject=subject)
+    except TimeTable.DoesNotExist:
+        schedule = None
+    
+    if schedule is not None:
+        if subject.university.name == 'UAM':
+            c = Calendar.from_ical(schedule.schedule_file_uam.read())
+        elif subject.university.name == 'UC3M':
+            c = Calendar.from_ical(schedule.schedule_file_uc3m.read())
+        elif subject.university.name == 'UAB':
+            c = Calendar.from_ical(schedule.schedule_file_uab.read())
+        else:
+            pass
+    
+    local_timezone = pytz.timezone('Europe/Madrid')
+    events = []
+    for event in c.walk('vevent'):
+
+        dtstart_utc = event.decoded('dtstart')
+        dtend_utc = event.decoded('dtend')
+        dtstart_local = dtstart_utc.astimezone(local_timezone)
+        dtend_local = dtend_utc.astimezone(local_timezone)
+
+        formatted_event = {
+            'title': event.get('summary'),
+            'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
+            'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+            'location': event.get('location'),
+        }
+        events.append(formatted_event)
+    events_json = json.dumps(events)
+
+    return render(request, 'subjects/horarios.html', {
+        'subject': subject,
+        'current_year': current_year,
+        'schedule': schedule,
+        'events_json': events_json,
+        })

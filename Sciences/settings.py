@@ -51,6 +51,13 @@ LOGOUT_REDIRECT_URL = 'login'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+from django.core.files.storage import FileSystemStorage
+
+# Ubicaciones para los horarios
+ICAL_STORAGE_UAB = FileSystemStorage(location=os.path.join(BASE_DIR, 'media/UAB'), base_url='media/UAB')
+ICAL_STORAGE_UAM = FileSystemStorage(location=os.path.join(BASE_DIR, 'media/UAM'), base_url='media/UAM')
+ICAL_STORAGE_UC3M = FileSystemStorage(location=os.path.join(BASE_DIR, 'media/UC3M'), base_url='media/UC3M')
+
 ROOT_URLCONF = 'Sciences.urls'
 
 TEMPLATES = [

@@ -1,0 +1,53 @@
+body {
+    background-color: #353535;
+}
+
+header {
+    z-index: 10;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 90px;
+    background-color: #353535;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.container h1 {
+    color: #fff;
+    text-align: center;
+}
+
+/* Estilo del fondo */
+#calendar {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+
+footer {
+    width: 100%;
+    background-color: #333333;
+    padding: 0;
+    margin-top: 75px;
+    border-top: 1px solid black;
+}
+
+footer .container {
+    max-width: none;
+    margin-top: 0;
+}
+
+@media (max-width: 720px) {
+    .container {
+        margin-top: 0px;
+    }
+}

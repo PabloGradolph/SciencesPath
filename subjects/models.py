@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from datetime import datetime
-
+import os
+from django.conf import settings
 
 class University(models.Model):
     name = models.TextField(max_length=10000)
@@ -57,9 +58,11 @@ class SubjectRating(models.Model):
         unique_together = ('user', 'subject')
 
 
-class Schedules(models.Model):
+class TimeTable(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    schedule_url = models.URLField(null=True)
+    schedule_file_uab = models.FileField(storage=settings.ICAL_STORAGE_UAB, null=True)
+    schedule_file_uam = models.FileField(storage=settings.ICAL_STORAGE_UAM, null=True)
+    schedule_file_uc3m = models.FileField(storage=settings.ICAL_STORAGE_UC3M, null=True)
 
 
 class SubjectMaterial(models.Model):

@@ -1,0 +1,82 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+
+{% block title %}
+    Material
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/horarios.css' %}">
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.js"></script>
+{% endblock %}
+
+{% block header %}
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}" id="change" class="logo-btn">
+                    <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                    SciencesPath!
+                </a>
+            </div>
+            <nav>
+                <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+                <a href="#comunity">Comunidad</a>
+                <a href="#questions">Preguntas Frecuentes</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Horarios de {{ subject.name }}</h1>
+        <div id="calendar"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var events = {{ events_json|safe }};
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    omitZeroMinute: false,
+                    hour12: false,
+                },
+                events: events,
+                editable: false,
+                allDaySlot: false,
+                slotMinTime: '07:00:00',
+                slotMaxTime: '22:00:00',
+                eventClick: function(info) {
+                    // Aquí puedes personalizar la acción al hacer clic en un evento.
+                    // Por ejemplo, puedes mostrar información en un modal o ventana emergente.
+                    alert('Información: ' + info.event.title + '\n' +
+                    'Inicio: ' + info.event.start + '\n' +
+                    'Fin: ' + info.event.end + '\n' +
+                    'Ubicación: ' + info.event.location);
+                }
+            });
+        
+            calendar.render();
+        });
+    </script>
+{% endblock %}
