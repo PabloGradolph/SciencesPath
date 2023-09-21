@@ -27,12 +27,10 @@ def profile(request, username):
     context = {'current_year': current_year, 'user': user, 'posts':posts}
     return render(request, 'Sciences/profile.html', context)
 
-
 @login_required(login_url='login')
 def documents(request):
     context = {'current_year': current_year}
     return render(request, 'Sciences/documents.html', context)
-
 
 def register(request):
     if request.method == 'GET':
