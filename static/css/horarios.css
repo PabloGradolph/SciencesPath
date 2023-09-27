@@ -23,13 +23,26 @@ header {
 
 /* Estilo del fondo */
 #calendar {
-    background-color: #fff;
-    border: 1px solid #000;
+    width: 95%;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
     border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Sombra suave */
 }
 
+/* Estilos para los eventos */
 .fc-event {
     cursor: pointer;
+    background-color: #007bff; /* Color de fondo para los eventos */
+    color: #ffffff; /* Color del texto en los eventos */
+    border: 1px solid #0056b3; /* Borde de los eventos */
+    border-radius: 3px;
+}
+
+/* Estilos para los eventos al pasar el cursor */
+.fc-event:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el cursor */
+    border: 1px solid #00387a; /* Borde al pasar el cursor */
 }
 
 

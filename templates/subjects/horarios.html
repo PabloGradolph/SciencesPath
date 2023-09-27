@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Material
+    Horario
 {% endblock %}
 
 {% block styles %}
@@ -49,11 +49,19 @@
             var events = {{ events_json|safe }};
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'es',
+                timeZone: 'local',
                 initialView: 'timeGridWeek',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'timeGridWeek,timeGridDay'
+                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
                 },
                 slotLabelFormat: {
                     hour: '2-digit',
@@ -61,7 +69,9 @@
                     omitZeroMinute: false,
                     hour12: false,
                 },
+                dayHeaderFormat: { weekday: 'short' },
                 events: events,
+                firstDay: 1,
                 editable: false,
                 allDaySlot: false,
                 slotMinTime: '07:00:00',

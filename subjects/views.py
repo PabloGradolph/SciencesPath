@@ -19,7 +19,7 @@ def index(request):
     search_query = request.GET.get('search', '').strip()
     subjects = Subject.objects.filter(
         Q(name__icontains=search_query) | Q(university__name__icontains=search_query)
-        | Q(degree__name__icontains=search_query)
+        | Q(subject_key__icontains=search_query)
     )
 
     filter_form = SubjectFilterForm(request.GET)  # Crear el formulario con los datos de la solicitud GET
@@ -149,6 +149,7 @@ def horario(request, subject_id):
     except TimeTable.DoesNotExist:
         schedule = None
     
+    events = []
     if schedule is not None:
         if subject.university.name == 'UAM':
             c = Calendar.from_ical(schedule.schedule_file_uam.read())
@@ -159,22 +160,22 @@ def horario(request, subject_id):
         else:
             pass
     
-    local_timezone = pytz.timezone('Europe/Madrid')
-    events = []
-    for event in c.walk('vevent'):
+        local_timezone = pytz.timezone('Europe/Madrid')
+        for event in c.walk('vevent'):
 
-        dtstart_utc = event.decoded('dtstart')
-        dtend_utc = event.decoded('dtend')
-        dtstart_local = dtstart_utc.astimezone(local_timezone)
-        dtend_local = dtend_utc.astimezone(local_timezone)
+            dtstart_utc = event.decoded('dtstart')
+            dtend_utc = event.decoded('dtend')
+            dtstart_local = dtstart_utc.astimezone(local_timezone)
+            dtend_local = dtend_utc.astimezone(local_timezone)
 
-        formatted_event = {
-            'title': event.get('summary'),
-            'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
-            'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
-            'location': event.get('location'),
-        }
-        events.append(formatted_event)
+            formatted_event = {
+                'title': event.get('summary'),
+                'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                'location': event.get('location'),
+            }
+            events.append(formatted_event)
+            
     events_json = json.dumps(events)
 
     return render(request, 'subjects/horarios.html', {
