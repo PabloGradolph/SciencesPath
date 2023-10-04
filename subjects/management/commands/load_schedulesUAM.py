@@ -18,11 +18,14 @@ class Command(BaseCommand):
 
 def main_function():
 
-    with open('subjects/Data/schedule_UAM.json', 'r') as json_file:
-        schedule_info = json.load(json_file)
+    try:
+        with open('subjects/Data/schedules_UAM.json', 'r') as json_file:
+            schedule_info = json.load(json_file)
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
+        schedule_info = {}
 
     downloads_path = "C:\\Users\\Pablo\\OneDrive\\Documentos\\1Programacion\\TFG\\media\\UAM"
-    subjects_uam = list(Subject.objects.filter(university=2))
+    subjects_uam = list(Subject.objects.filter(university__name='UAM'))
     chrome_options = Options()
     # chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option("prefs", {"download.default_directory": downloads_path})
