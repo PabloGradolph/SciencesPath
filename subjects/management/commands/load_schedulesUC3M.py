@@ -8,8 +8,6 @@ from icalendar import Calendar, Event
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
-import time
-import os
 import json
 from django.core.management.base import BaseCommand
 from ...models import Subject, TimeTable
@@ -137,10 +135,14 @@ def main_function():
                         try:
                             fecha_inicio = f'{fechas_divididas[0]}.{año_actual}'
                             fecha_fin = f'{fechas_divididas[1]}.{año_actual}'
-                            if fecha_inicio == '29.feb.2023':
-                                fecha_inicio = '01.mar.2023'
-                            if fecha_fin == '29.feb.2023':
-                                fecha_fin = '01.mar.2023'
+
+                            # Verifica si la fecha está después del 1 de enero
+                            fecha_inicio_obj = datetime.strptime(fecha_inicio, '%d.%b.%Y')
+                            if 1 <= fecha_inicio_obj.month <= 8:
+                                año_actual = 2024
+                                fecha_inicio = f'{fechas_divididas[0]}.{año_actual}'
+                                fecha_fin = f'{fechas_divididas[1]}.{año_actual}'
+
                             fecha_inicio = datetime.strptime(fecha_inicio, '%d.%b.%Y')
                             fecha_fin = datetime.strptime(fecha_fin, '%d.%b.%Y')
                             delta = timedelta(days=7)
@@ -169,9 +171,13 @@ def main_function():
                             evento.add('description', f' {grupos}')
                         else:
                             evento.add('description', f' {grupos}')
+
                         fecha = f'{fecha}.{año_actual}'
-                        if fecha == '29.feb.2023':
-                            fecha = '01.mar.2023'
+                        fecha_inicio_obj = datetime.strptime(fecha, '%d.%b.%Y')
+                        if 1 <= fecha_inicio_obj.month <= 8:
+                            año_actual = 2024
+                            fecha = f'{fechas_divididas[0]}.{año_actual}'
+
                         evento.add('dtstart', datetime.strptime(fecha, '%d.%b.%Y').replace(hour=int(hora_inicio.split(':')[0]), minute=int(hora_inicio.split(':')[1])))
                         evento.add('dtend', datetime.strptime(fecha, '%d.%b.%Y').replace(hour=int(hora_fin.split(':')[0]), minute=int(hora_fin.split(':')[1])))
                         evento.add('location', ubicacion[1:])
