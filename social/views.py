@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from .models import Profile, Post, Relationship
 from .forms import PostForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from django import template
+from django.core.cache import cache
+from datetime import datetime, timedelta
 
 
 @login_required(login_url='login')
@@ -20,7 +23,7 @@ def home(request):
         form = PostForm()
 
     context = {'posts': posts, 'form': form}
-    return render(request, 'social/newsfeed.html', context)
+    return render(request, 'social/communityhome.html', context)
 
 
 @login_required(login_url='login')
