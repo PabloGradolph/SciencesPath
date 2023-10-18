@@ -231,3 +231,88 @@ nav {
     top: unset;
     bottom: 5px;
 }
+
+.story-gallery {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.story {
+    flex-basis: 18%;
+    padding-top: 32%;
+    position: relative;
+    background-position: center;
+    background-size: cover;
+    border-radius: 10px;
+}
+
+.story img {
+    position: absolute;
+    width: 45px;
+    border-radius: 50%;
+    top: 10px;
+    left: 10px;
+    border: 5px solid #008037;
+}
+
+.story p {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+.story1 {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.5)),var(--background-image-url);
+}
+.story2 {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.5)),url(../../img/member-1.png);
+}
+.story3 {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.5)),url(../../img/member-2.png);
+}
+.story4 {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.5)),url(../../img/member-3.png);
+}
+.story5 {
+    background-image: linear-gradient(transparent, rgba(0,0,0,0.5)),url(../../img/member-4.png);
+}
+.story.story1 img {
+    top: unset;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+    border: 0;
+    width: 35px;
+}
+
+.write-post-container {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    color: #626262;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.user-profile img {
+    width: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-profile p {
+    margin-bottom: -5px;
+    font-weight: 500;
+    color: #626262;
+}
+.user-profile small {
+    font-size: 12px;
+}

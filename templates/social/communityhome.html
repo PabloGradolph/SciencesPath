@@ -8,6 +8,11 @@
     <title>SciencesPath! | Community</title>
     <link rel="stylesheet" href="{% static 'css/social/community_home.css' %}">
     <script src="https://kit.fontawesome.com/f2b3d089f6.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+          --background-image-url: url("{{ request.user.profile.image.url }}");
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper">
@@ -54,7 +59,42 @@
                 </div>
                 {% comment %} Main-Content {% endcomment %}
                 <div class='main-content'>
+                    <div class='story-gallery'>
+                        <div class='story story1'>
+                            <img src="{% static 'img/upload.png' %}">
+                            <p>Post Story</p>
+                        </div>
+                        <div class='story story2'>
+                            <img src="{% static 'img/member-1.png' %}">
+                            <p>Alison</p>
+                        </div>
+                        <div class='story story3'>
+                            <img src="{% static 'img/member-2.png' %}">
+                            <p>Jackson</p>
+                        </div>
+                        <div class='story story4'>
+                            <img src="{% static 'img/member-3.png' %}">
+                            <p>Samona</p>
+                        </div>
+                        <div class='story sotry5'>
+                            <img src="{% static 'img/member-4.png' %}">
+                            <p>Post Story</p>
+                        </div>
+                    </div>
 
+                    <div class='write-post-container'>
+                        <div class='user-profile'>
+                            <img src="{{ request.user.profile.image.url }}">
+                            <div>
+                                <p>{{ request.user.username }}</p>
+                                <small>Public <i class="fas fa-caret-down"></i></small>
+                            </div>
+                        </div>
+
+                        <div class='post-input-container'>
+                            
+                        </div>
+                    </div>
                 </div>
                 {% comment %} Right-Sidebar {% endcomment %}
                 <div class='right-sidebar'>
