@@ -27,7 +27,7 @@ Empower your academic journey with SciencesPath, a dynamic platform designed to 
 
 ## Getting Started 🚀
 
-1. Clone the repository: `git clone https://github.com/your-username/SciencesPath.git`
+1. Clone the repository: `git clone https://github.com/PabloGradolph/SciencesPath.git`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Configure your database settings in `settings.py`.
 4. Apply migrations: `python manage.py migrate`
