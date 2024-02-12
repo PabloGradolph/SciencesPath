@@ -1,16 +1,21 @@
+from django.http import HttpRequest, HttpResponse
+from typing import Union
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import Profile, Post, Relationship
+from .models import Post, Relationship
 from .forms import PostForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
-from django import template
-from django.core.cache import cache
-from datetime import datetime, timedelta
 
 
 @login_required(login_url='login')
-def home(request):
+def home(request: HttpRequest) -> HttpResponse:
+    """
+    Renders the home page with all posts and a form to create a new post.
+    
+    If the request method is POST, it processes the submitted form for a new post.
+    Otherwise, it displays a blank form along with existing posts.
+    """
     posts = Post.objects.all()
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
@@ -27,7 +32,12 @@ def home(request):
 
 
 @login_required(login_url='login')
-def delete(request, post_id):
+def delete(request: HttpRequest, post_id: int) -> HttpResponse:
+    """
+    Deletes a post by its ID and redirects to the previous page or community home.
+    
+    The function retrieves the post by its ID and deletes it. Then, it checks the referer URL to decide where to redirect the user.
+    """
     post = Post.objects.get(id=post_id)
     post.delete()
     
@@ -43,7 +53,13 @@ def delete(request, post_id):
 
 
 @login_required(login_url='login')
-def edit(request):
+def edit(request: HttpRequest) -> HttpResponse:
+    """
+    Renders a page for editing user and profile information.
+    
+    On POST request, it updates the user and profile information if the submitted forms are valid.
+    On GET request, it displays the forms for editing with the current information.
+    """
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
@@ -60,7 +76,12 @@ def edit(request):
     return render(request, 'social/editar.html', context)
 
 @login_required(login_url='login')
-def follow(request, username):
+def follow(request: HttpRequest, username: str) -> HttpResponse:
+    """
+    Creates a follow relationship between the current user and another user.
+    
+    Redirects to the followed user's profile page upon completion.
+    """
     current_user = request.user
     to_user = User.objects.get(username=username)
     to_user_id = to_user
@@ -71,7 +92,12 @@ def follow(request, username):
 
 
 @login_required(login_url='login')
-def unfollow(request, username):
+def unfollow(request: HttpRequest, username: str) -> HttpResponse:
+    """
+    Deletes a follow relationship between the current user and another user.
+    
+    Redirects to the unfollowed user's profile page upon completion.
+    """
     current_user = request.user
     to_user = User.objects.get(username=username)
     rel = Relationship.objects.get(from_user=current_user.id, to_user=to_user.id)

@@ -29,10 +29,10 @@ def main_function():
     url = "https://web01.uab.es:31501/pds/consultaPublica/look%5Bconpub%5DInicioPubHora?entradaPublica=true&idioma=ca&pais=ES"
     
     pos = 0
-    # for subject in subjects_uab:
-    #     if subject.subject_key == 18445:
-    #         pos = subjects_uam.index(subject)
-    #         print(pos)
+    for subject in subjects_uab:
+        if subject.subject_key == 101894:
+            pos = subjects_uab.index(subject)
+            print(pos)
 
     for subject in subjects_uab[pos:]:
         calendario = Calendar()

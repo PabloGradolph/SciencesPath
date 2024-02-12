@@ -1,3 +1,4 @@
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -12,7 +13,7 @@ import re
 # Global variable
 current_year = datetime.now().year
 
-def home(request):
+def home(request: HttpRequest) -> HttpResponse:
     """
     Renders the home page of the site's Science section.
 
@@ -25,7 +26,7 @@ def home(request):
     return render(request, 'Sciences/home.html', {'current_year': current_year})
 
 @login_required(login_url='login')
-def main(request):
+def main(request: HttpRequest) -> HttpResponse:
     """
     Renders the main page of the Science section, requiring authentication.
 
@@ -54,7 +55,7 @@ def documents(request):
     context = {'current_year': current_year}
     return render(request, 'Sciences/documents.html', context)
 
-def register(request):
+def register(request: HttpRequest) -> HttpResponse:
     """
     Handles user registration using a custom user creation form.
 
@@ -107,7 +108,7 @@ def register(request):
         return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'Las contraseñas no coinciden'})
 
 
-def login_view(request):
+def login_view(request: HttpRequest) -> HttpResponse:
     """
     Handles the user login process.
 
@@ -139,7 +140,7 @@ def login_view(request):
             return redirect('main')
 
 
-def logout_view(request):
+def logout_view(request: HttpRequest) -> HttpResponseRedirect:
     """
     Logs out the current user and redirects to the home page.
 

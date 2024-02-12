@@ -1,10 +1,23 @@
 from django.core.management.base import BaseCommand
 from ...models import FAQ
+from typing import Any
 
 class Command(BaseCommand):
+    """Loads predefined FAQ data into the database."""
+
     help = 'Loading FAQ in the database'
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
+        """
+        Executes the command to load FAQs into the database.
+
+        Args:
+            *args: Variable length argument list, not used in this command.
+            **options: Arbitrary keyword options, not used in this command.
+
+        Returns:
+            None
+        """
         questions = [
             {'question': '¿A qué universidad voy después del segundo cuatrimestre de 2º?', 
             'answer': 'Una vez terminado el segundo cuatrimestre de 2º, cada alumno continuará sus estudios en la universidad en la que fue aceptado. Sin embargo, existe la posibilidad de solicitar un traslado de universidad.'},

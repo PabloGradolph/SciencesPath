@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from .models import Post, Profile
 
 class PostForm(forms.ModelForm):
+    """Form for creating or updating a Post instance."""
+    
     content = forms.CharField(widget=forms.Textarea(attrs={
         'class': 'form-control w-100', 'id': 'contentsBox', 'rows': '3',
         'placeholder': '¿Qué está ocurriendo?'
@@ -17,11 +19,15 @@ class PostForm(forms.ModelForm):
         fields = ['content', 'image']
 
 class UserUpdateForm(forms.ModelForm):
+    """Form for updating User information."""
+
     class Meta:
         model = User
         fields = ['first_name', 'username']
 
 class ProfileUpdateForm(forms.ModelForm):
+    """Form for updating user Profile information."""
+    
     class Meta:
         model = Profile
         fields = ['image', 'bio']
