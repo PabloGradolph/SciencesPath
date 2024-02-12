@@ -30,8 +30,9 @@ def main_function():
     
     pos = 0
     for subject in subjects_uab:
-        if subject.subject_key == 101894:
+        if subject.subject_key == 105033:
             pos = subjects_uab.index(subject)
+            print(len(subjects_uab))
             print(pos)
 
     for subject in subjects_uab[pos:]:
