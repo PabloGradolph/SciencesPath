@@ -30,6 +30,7 @@ def main_function():
     chrome_options = Options()
     # chrome_options.add_argument("--headless")
 
+    print(len(subjects_uc3m))
     pos = 0
     for subject in subjects_uc3m:
         if subject.subject_key == 15976:
@@ -201,6 +202,8 @@ def main_function():
             driver.quit()
 
     filename = 'subjects\\Data\\schedule_UC3M.json'
-    json_data = json.dumps(schedule_info)
     with open(filename, 'w') as json_file:
+        for subject in subjects_uc3m:
+            schedule_info[subject.subject_key] = f"{str(subject.subject_key)}_UC3M_calendario.ics"
+        json_data = json.dumps(schedule_info)
         json_file.write(json_data)

@@ -18,21 +18,17 @@ class Command(BaseCommand):
         main_function()
 
 def main_function():
-    try:
-        with open('subjects/Data/schedules_UAB.json', 'r') as json_file:
-            schedule_info = json.load(json_file)
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        schedule_info = {}
 
+    schedule_info = {}
     subjects_uab = list(Subject.objects.filter(university__name='UAB'))
 
     url = "https://web01.uab.es:31501/pds/consultaPublica/look%5Bconpub%5DInicioPubHora?entradaPublica=true&idioma=ca&pais=ES"
     
+    print(len(subjects_uab))
     pos = 0
     for subject in subjects_uab:
         if subject.subject_key == 105033:
             pos = subjects_uab.index(subject)
-            print(len(subjects_uab))
             print(pos)
 
     for subject in subjects_uab[pos:]:
@@ -120,11 +116,12 @@ def main_function():
         else:
             schedule_instance = TimeTable(subject=subject_instance, schedule_file_uab=filename)
             schedule_instance.save() 
-        schedule_info[subject.subject_key] = filename 
     
     filename = 'subjects\\Data\\schedule_UAB.json'
-    json_data = json.dumps(schedule_info)
     with open(filename, 'w') as json_file:
+        for subject in subjects_uab:
+            schedule_info[subject.subject_key] = f"{str(subject.subject_key)}_UAB_calendario.ics"
+        json_data = json.dumps(schedule_info)
         json_file.write(json_data)
 
 

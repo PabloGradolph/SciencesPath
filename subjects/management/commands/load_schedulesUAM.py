@@ -18,12 +18,7 @@ class Command(BaseCommand):
 
 def main_function():
 
-    try:
-        with open('subjects/Data/schedules_UAM.json', 'r') as json_file:
-            schedule_info = json.load(json_file)
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        schedule_info = {}
-
+    schedule_info = {}
     downloads_path = "C:\\Users\\Pablo\\OneDrive\\Documentos\\1Programacion\\TFG\\media\\UAM"
     subjects_uam = list(Subject.objects.filter(university__name='UAM'))
     chrome_options = Options()
@@ -31,6 +26,7 @@ def main_function():
     chrome_options.add_experimental_option("prefs", {"download.default_directory": downloads_path})
     url = "https://secretaria-virtual.uam.es/pds/consultaPublica/look%5Bconpub%5DInicioPubHora?entradaPublica=true&idiomaPais=es.ES"
     
+    print(len(subjects_uam))
     pos = 0
     # for subject in subjects_uam:
     #     if subject.subject_key == 18445:
@@ -84,7 +80,7 @@ def main_function():
         # Save the info in the dictionary and in the database.
         files = os.listdir(downloads_path)
         newest_file = max(files, key=lambda x: os.path.getctime(os.path.join(downloads_path, x)))
-        new_file_name = f"{str(subject.subject_key)}_{newest_file}"
+        new_file_name = f"{str(subject.subject_key)}_UAM_calendario.ics"
         os.rename(os.path.join(downloads_path, newest_file), os.path.join(downloads_path, new_file_name))
         subject_instance = Subject.objects.get(id=subject.id)
         schedule_instance = TimeTable.objects.filter(subject=subject_instance).first()
@@ -95,10 +91,11 @@ def main_function():
         else:
             schedule_instance = TimeTable(subject=subject_instance, schedule_file_uam=new_file_name)
             schedule_instance.save()
-        schedule_info[subject.subject_key] = new_file_name
         driver.quit()
     
-    filename = 'schedule_UAM.json'
-    json_data = json.dumps(schedule_info)
+    filename = 'subjects\\Data\\schedule_UAM.json'
     with open(filename, 'w') as json_file:
+        for subject in subjects_uam:
+            schedule_info[subject.subject_key] = f"{str(subject.subject_key)}_UAM_calendario.ics"
+        json_data = json.dumps(schedule_info)
         json_file.write(json_data)
