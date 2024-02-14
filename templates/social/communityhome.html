@@ -1,168 +1,129 @@
+{% extends 'Sciences/base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SciencesPath! | Community</title>
-    <link rel="stylesheet" href="{% static 'css/social/community_home.css' %}">
-    <script src="https://kit.fontawesome.com/f2b3d089f6.js" crossorigin="anonymous"></script>
-    <style>
-        :root {
-          --background-image-url: url("{{ request.user.profile.image.url }}");
-        }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <!-- Header -->
-        <header>
-            <nav>
-                <div class='nav-left'>
-                    <img src="{% static 'img/logo.png' %}" alt='Logo' class='logo'>
-                    <ul>
-                        <li><img src="{% static 'img/notification.png' %}"></li>
-                        <li><img src="{% static 'img/inbox.png' %}"></li>
-                        <li><img src="{% static 'img/video.png' %}"></li>
-                    </ul>
-                </div>
-                <div class='nav-right'>
-                    <div class='search-box'>
-                        <img src="{% static 'img/search.png' %}" alt='Search'>
-                        <input type='text' placeholder='Search'>
-                    </div>
-                    <div class="nav-user-icon {% if request.user.is_authenticated %}online{% endif %}">
-                        <img src="{{ request.user.profile.image.url }}" alt='user image'>
-                    </div>
-                </div>
-            </nav>
+{% block title %}
+    Inicio
+{% endblock %}
 
-            <div class='container'>
-                {% comment %} Left-Sidebar {% endcomment %}
-                <div class='left-sidebar'>
-                    <div class='imp-links'>
-                        <a href='#'><img src="{% static 'img/news.png' %}">Latest News</a>
-                        <a href='#'><img src="{% static 'img/friends.png' %}">Friends</a>
-                        <a href='#'><img src="{% static 'img/group.png' %}">Group</a>
-                        <a href='#'><img src="{% static 'img/marketplace.png' %}">Marketplace</a>
-                        <a href='#'><img src="{% static 'img/watch.png' %}">Watch</a>
-                        <a href='#'>See More</a>
-                    </div>
-                    <div class='shortcuts-links'>
-                        <p>Your Shortcuts</p>
-                        <a href='#'><img src="{% static 'img/shortcut-1.png' %}">Web Developers</a>
-                        <a href='#'><img src="{% static 'img/shortcut-2.png' %}">Web Design Course</a>
-                        <a href='#'><img src="{% static 'img/shortcut-3.png' %}">Full Stack Development</a>
-                        <a href='#'><img src="{% static 'img/shortcut-4.png' %}">Website Experts</a>
-                    </div>
-                </div>
-                {% comment %} Main-Content {% endcomment %}
-                <div class='main-content'>
-                    <div class='story-gallery'>
-                        <div class='story story1'>
-                            <img src="{% static 'img/upload.png' %}">
-                            <p>Post Story</p>
-                        </div>
-                        <div class='story story2'>
-                            <img src="{% static 'img/member-1.png' %}">
-                            <p>Alison</p>
-                        </div>
-                        <div class='story story3'>
-                            <img src="{% static 'img/member-2.png' %}">
-                            <p>Jackson</p>
-                        </div>
-                        <div class='story story4'>
-                            <img src="{% static 'img/member-3.png' %}">
-                            <p>Samona</p>
-                        </div>
-                        <div class='story sotry5'>
-                            <img src="{% static 'img/member-4.png' %}">
-                            <p>Post Story</p>
-                        </div>
-                    </div>
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/social/community_home.css' %}">
+{% endblock %}
 
-                    <div class='write-post-container'>
-                        <div class='user-profile'>
-                            <img src="{{ request.user.profile.image.url }}">
-                            <div>
-                                <p>{{ request.user.username }}</p>
-                                <small>Public <i class="fas fa-caret-down"></i></small>
-                            </div>
-                        </div>
+{% block header %}
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}" id="change" class="logo-btn">
+                <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                SciencesPath!
+            </a>
+        </div>
+        <nav>
+            <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+            <a href="#comunity">Comunidad</a>
+            <a href="#questions">Preguntas Frecuentes</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+{% endblock %}
 
-                        <div class='post-input-container'>
-                            
-                        </div>
-                    </div>
+{% block content %}
+<div class="container">
+    <!-- Barra Izquierda -->
+    <div class="left-bar">
+        <div class="card">
+            <img class="card-img" src="{{ request.user.profile.image.url }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">@{{ request.user }}</h5>
+                <p class="card-text">{{ request.user.profile.bio }}</p>
+                <h6 class="card-title font-weight-bold">
+                    {{ request.user.profile.followers.count }} Followers
+                    {{ request.user.profile.following.count }} Following
+                </h6>
+                <a href="{% url 'profile' request.user %}" class="profile-btn">Mi perfil</a>
+            </div>
+        </div>
+        <div class="btn-container">
+            <a href="{% url 'edit' %}" ><button class="btn-primary">Editar mi perfil</button></a>
+        </div>
+    </div>
+
+    <!-- Centro -->
+    <div class="center-bar">
+        <!-- Formulario -->
+        <form class="post-form" method="post", enctype="multipart/form-data">
+            <p>{{ error }}</p>
+            {% csrf_token %}
+            <input type="hidden" name="transaction_type" id="transaction_type" value="">
+            {{ form.content }}
+            {{ form.image }}
+            <div class="btn-container">
+                <button class="btn btn-primary" type="button" onclick="setTransactionType('enviar_dinero')">Enviar Dinero</button>
+                <button class="btn btn-primary" type="button" onclick="setTransactionType('solicitar_dinero')">Solicitar Dinero</button>
+            </div>
+        </form>
+
+        <!-- Transactions -->
+        <h3 class="transactions-title">Últimas Transacciones</h3>
+        {% comment %} {% for transaction in transactions %}
+        <div class="transaction-card">
+            <div class="transaction-header">
+                <img src="{{ transaction.user.profile.image.url}}" alt="User Image" class="user-img">
+                <div class="transaction-header-info">
+                    <a href="{% url 'profile' transaction.user %}">
+                        <span>@{{ transaction.user.username }}</span>
+                    </a>
+                    <span class="time-ago">{{ transaction.timestamp|naturaltime }}</span>
+                    {% if transaction.transaction_type == 'enviar_dinero'%}
+                    <p>
+                        <a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a>
+                        envía {{ transaction.amount }}€ a
+                        <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a>
+                    </p>
+                    {% elif transaction.transaction_type == 'solicitar_dinero'%}
+                    <p>
+                        <a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a>
+                        solicita {{ transaction.amount }}€ a
+                        <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a>
+                    </p>
+                    {% endif %}
+                </div> {% endcomment %}
+                <div class="transaction-message">
+                    <p>Mensaje: </p>
+                    {% comment %} <p>Mensaje: {{ transaction.transaction_message }}</p> {% endcomment %}
                 </div>
-                {% comment %} Right-Sidebar {% endcomment %}
-                <div class='right-sidebar'>
-                    <div class='sidebar-title'>
-                        <h4>Events</h4>
-                        <a href='#'>See All</a>
-                    </div>
-                    <div class='event'>
-                        <div class='left-event'>
-                            <h3>18</h3>
-                            <span>March</span>
-                        </div>
-                        <div class='right-event'>
-                            <h4>Social Media</h4>
-                            <p><i class="fas fa-map-marker-alt"></i>Willson Tech Park</p>
-                            <a href='#'>More Info</a>
-                        </div>
-                    </div>
-                    <div class='event'>
-                        <div class='left-event'>
-                            <h3>22</h3>
-                            <span>June</span>
-                        </div>
-                        <div class='right-event'>
-                            <h4>Mobile Marketing</h4>
-                            <p><i class="fas fa-map-marker-alt"></i>Willson Tech Park</p>
-                            <a href='#'>More Info</a>
-                        </div>
-                    </div>
-                    <div class='sidebar-title'>
-                        <h4>Advertisement</h4>
-                        <a href='#'>Close</a>
-                    </div>
-                    <img src="{% static 'img/advertisement.png' %}" class='sidebar-ads'>
-                    <div class='sidebar-title'>
-                        <h4>Conversation</h4>
-                        <a href='#'>Hide Chat</a>
-                    </div>
-                    <div class='online-list'>
-                        <div class='online'>
-                            <img src="{{ request.user.profile.image.url }}">
-                        </div>
-                        <p>{{ request.user.username }}</p>
-                    </div>
-                    <div class='online-list'>
-                        <div class='online'>
-                            <img src="{{ request.user.profile.image.url }}">
-                        </div>
-                        <p>{{ request.user.username }}</p>
-                    </div>
-                    <div class='online-list'>
-                        <div class='online'>
-                            <img src="{{ request.user.profile.image.url }}">
-                        </div>
-                        <p>{{ request.user.username }}</p>
-                    </div>
+            {% comment %} </div>
+        </div>
+        {% endfor %} {% endcomment %}
+    </div>
+
+            <!-- Barra Derecha -->
+            <div class="right-bar">
+                <div class="top-users">
+                    <h3>Usuarios a quien seguir:</h3>
+                    {% comment %} <ul>
+                        {% for user in top_users %}
+                            {% if user != request.user and user.is_authenticated %} <!-- Para que solo muestre otros users -->
+                                <li>
+                                    <a href="{% url 'profile' user %}" class="user-link">
+                                        <img src="{{ user.profile.image.url }}" class="user-img"><span class="user-name">{{ user.username }}</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul> {% endcomment %}
+                </div>
+                <div class="user-amount">
+                    <h3>Este es tu saldo acutal en la aplicación:</h3>
+                    {% comment %} <p>{{ user_balance }}€</p> {% endcomment %}
                 </div>
             </div>
-        </header>
-        
-
-        <!-- Main Content -->
-        <main>
-        </main>
+        </div>
     </div>
-<!-- Footer -->
-<footer>  
-    <div class="container"></div>
-</footer>
-</body>
-</html>
+</div>
+{% endblock content %}
