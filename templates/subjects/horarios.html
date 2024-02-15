@@ -77,12 +77,18 @@
                 slotMinTime: '07:00:00',
                 slotMaxTime: '22:00:00',
                 eventClick: function(info) {
-                    // Aquí puedes personalizar la acción al hacer clic en un evento.
-                    // Por ejemplo, puedes mostrar información en un modal o ventana emergente.
+                    
+                    var startDate = new Date(info.event.start);
+                    var endDate = new Date(info.event.end);
+
+                    var startStr = startDate.getDate() + '/' + (startDate.getMonth() + 1) + '/' + startDate.getFullYear() + ' - ' + startDate.getHours() + ':' + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+                    var endStr = endDate.getDate() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getFullYear() + ' - ' + endDate.getHours() + ':' + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+
+
                     alert('Información: ' + info.event.title + '\n' +
-                    'Inicio: ' + info.event.start + '\n' +
-                    'Fin: ' + info.event.end + '\n' +
-                    'Ubicación: ' + info.event.location);
+                    'Inicio: ' + startStr + '\n' +
+                    'Fin: ' + endStr + '\n' +
+                    'Ubicación: ' + (info.event.extendedProps.location || 'Ubicación no especificada'));
                 }
             });
         

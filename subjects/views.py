@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import QueryDict
 from django.core.paginator import Paginator
 from .models import Subject, SubjectRating, SubjectMaterial, TimeTable
 from django.db.models import Q
@@ -11,6 +10,7 @@ from icalendar import Calendar
 import pytz
 from datetime import datetime
 import json
+import html
 
 current_year = datetime.now().year
 
@@ -146,37 +146,41 @@ def horario(request, subject_id):
     subject = get_object_or_404(Subject, pk=subject_id)
     try:
         schedule = TimeTable.objects.get(subject=subject)
+        c = None
+
+        # Intenta leer el archivo de horario adecuado según la universidad
+        try:
+            if subject.university.name == 'UAM':
+                c = Calendar.from_ical(schedule.schedule_file_uam.read())
+            elif subject.university.name == 'UC3M':
+                c = Calendar.from_ical(schedule.schedule_file_uc3m.read())
+            elif subject.university.name == 'UAB':
+                c = Calendar.from_ical(schedule.schedule_file_uab.read())
+        except FileNotFoundError:
+            return render(request, 'subjects/error.html', {'error': 'No se ha encontrado un horario para esta asignatura.', 'subject_url': subject.subject_url})
+    
+        events = []
+        if c is not None:
+        
+            local_timezone = pytz.timezone('Europe/Madrid')
+            for event in c.walk('vevent'):
+                dtstart_utc = event.decoded('dtstart')
+                dtend_utc = event.decoded('dtend')
+                dtstart_local = dtstart_utc.astimezone(local_timezone)
+                dtend_local = dtend_utc.astimezone(local_timezone)
+
+                formatted_event = {
+                    'title': html.unescape(event.get('summary')),
+                    'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'location': html.unescape(event.get('location', 'Ubicación no especificada')),
+                }
+                events.append(formatted_event)
+                
+        events_json = json.dumps(events)
+    
     except TimeTable.DoesNotExist:
-        schedule = None
-    
-    events = []
-    if schedule is not None:
-        if subject.university.name == 'UAM':
-            c = Calendar.from_ical(schedule.schedule_file_uam.read())
-        elif subject.university.name == 'UC3M':
-            c = Calendar.from_ical(schedule.schedule_file_uc3m.read())
-        elif subject.university.name == 'UAB':
-            c = Calendar.from_ical(schedule.schedule_file_uab.read())
-        else:
-            pass
-    
-        local_timezone = pytz.timezone('Europe/Madrid')
-        for event in c.walk('vevent'):
-
-            dtstart_utc = event.decoded('dtstart')
-            dtend_utc = event.decoded('dtend')
-            dtstart_local = dtstart_utc.astimezone(local_timezone)
-            dtend_local = dtend_utc.astimezone(local_timezone)
-
-            formatted_event = {
-                'title': event.get('summary'),
-                'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
-                'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
-                'location': event.get('location'),
-            }
-            events.append(formatted_event)
-            
-    events_json = json.dumps(events)
+        return render(request, 'subjects/error.html', {'error': 'No se ha encontrado un horario para esta asignatura.', 'subject_url': subject.subject_url})
 
     return render(request, 'subjects/horarios.html', {
         'subject': subject,
