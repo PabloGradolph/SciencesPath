@@ -17,12 +17,15 @@ current_year = datetime.now().year
 @login_required(login_url='login')
 def index(request):
     search_query = request.GET.get('search', '').strip()
-    subjects = Subject.objects.filter(
-        Q(name__icontains=search_query) | Q(university__name__icontains=search_query)
-        | Q(subject_key__icontains=search_query)
-    )
+    filter_form = SubjectFilterForm(request.GET)
+    subjects = Subject.objects.all()
 
-    filter_form = SubjectFilterForm(request.GET)  # Crear el formulario con los datos de la solicitud GET
+    if search_query:
+        subjects = Subject.objects.filter(
+            Q(name__icontains=search_query) | 
+            Q(university__name__icontains=search_query) | 
+            Q(subject_key__icontains=search_query)
+        )
 
     if filter_form.is_valid():
         degree = filter_form.cleaned_data.get('degree')
@@ -57,6 +60,7 @@ def index(request):
     form_data = request.GET.copy()
     if 'page' in form_data:
         del form_data['page']
+    form_data['search_filter'] = search_query
 
     context = {
         'page_subjects': page,
@@ -125,6 +129,7 @@ def detail(request, subject_id):
     }
     return render(request, 'subjects/detail.html', context)
 
+# TODO terminar esta view.
 @login_required(login_url='login')
 def upload_material(request, subject_id):
     subject = get_object_or_404(Subject, pk=subject_id)

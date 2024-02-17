@@ -6,6 +6,7 @@ class SubjectFilterForm(forms.Form):
     university = forms.ModelChoiceField(queryset=University.objects.all(), required=False, empty_label="Todas", label="Universidad")
     credits = forms.ChoiceField(choices=[], required=False, label="Créditos")
     year = forms.ChoiceField(choices=[], required=False, label="Curso")
+    search_filter = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     SEMESTER_CHOICES = [
         ('', 'Todos'),

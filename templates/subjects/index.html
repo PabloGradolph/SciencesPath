@@ -35,8 +35,8 @@
 {% block content %}
     <div class="container2">
         <h1>Consulta de Asignaturas.</h1>
-        <form class="search" action="{% url 'index' %}#content-column" method="GET">
-            <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura...">
+        <form id="search-form" class="search" action="{% url 'index' %}#content-column" method="GET">
+            <input type="text" name="search" class="search-bar" placeholder="Buscar asignatura..." value="{{ search_query }}">
             <input type="submit" value="Buscar" class="search-btn">
         </form>
         <div class="see-all">
@@ -47,7 +47,9 @@
         <div class="content-wrapper">
             <div class="filter-column">
                 <h2>Filtrar Asignaturas:</h2>
-                <form class="filter-form" action="{% url 'index' %}" method="GET">
+                <form id="filter-form" class="filter-form" action="{% url 'index' %}#content-column" method="GET">
+                    <!-- Campo oculto para la consulta de búsqueda -->
+                    {% comment %} <input type="hidden" name="search_filter" value="{{ search_query }}"> {% endcomment %}
                     {{ filter_form.as_p }}
                     <input type="submit" value="Aplicar Filtros" class="filter-btn">
                 </form>
@@ -93,16 +95,64 @@
                 </div>
                 <div class="pagination">
                     {% if page_subjects.has_previous %}
-                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page=1">Primera</a>
-                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.previous_page_number }}">Anterior</a>
+                        <a href="?{{ form_data.urlencode }}&page=1">Primera</a>
+                        <a href="?{{ form_data.urlencode }}&page={{ page_subjects.previous_page_number }}">Anterior</a>
                     {% endif %}
                     <span class="current-page">{{ page_subjects.number }}</span>
                     {% if page_subjects.has_next %}
-                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.next_page_number }}">Siguiente</a>
-                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{{ form_data.urlencode }}&page={{ page_subjects.paginator.num_pages }}">Última</a>
+                        <a href="?{{ form_data.urlencode }}&page={{ page_subjects.next_page_number }}">Siguiente</a>
+                        <a href="?{{ form_data.urlencode }}&page={{ page_subjects.paginator.num_pages }}">Última</a>
                     {% endif %}
-                </div>                                           
+                </div>                                       
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        document.getElementById('search-form').addEventListener('submit', function() {
+            var searchValue = document.querySelector('.search-bar').value;
+            var hiddenSearchInput = document.querySelector('.filter-form input[type="hidden"][name="search_filter"]');
+            if (hiddenSearchInput) {
+                hiddenSearchInput.value = searchValue;
+            }
+        });
+
+        // Selecciona ambos formularios
+        var searchForm = document.getElementById('search-form');
+        var filterForm = document.getElementById('filter-form');
+    
+        function submitForms(event) {
+            // Previene el envío normal del formulario
+            event.preventDefault();
+    
+            // Obtiene los datos de ambos formularios
+            var searchFormData = new FormData(searchForm);
+            var filterFormData = new FormData(filterForm);
+    
+            // Crea los parámetros de la URL
+            var params = new URLSearchParams();
+    
+            // Añade los parámetros de la búsqueda
+            for (var pair of searchFormData.entries()) {
+                if (pair[1]) {
+                    params.set(pair[0], pair[1]);
+                }
+            }
+    
+            // Añade los parámetros de los filtros
+            for (var pair of filterFormData.entries()) {
+                if (pair[1]) { // Solo añade si el filtro tiene un valor
+                    params.set(pair[0], pair[1]);
+                }
+            }
+    
+            // Realiza la petición al servidor con todos los parámetros
+            window.location.href = '{% url 'index' %}?' + params.toString();
+        }
+    
+        // Evento de envío para el formulario de búsqueda
+        searchForm.addEventListener('submit', submitForms);
+    
+        // Evento de envío para el formulario de filtros
+        filterForm.addEventListener('submit', submitForms);
+    </script>
 {% endblock %}
