@@ -19,15 +19,21 @@ class PostForm(forms.ModelForm):
         fields = ['content', 'image']
 
 class UserUpdateForm(forms.ModelForm):
-    """Form for updating User information."""
-
+    """
+    Form for updating user information.
+    """
     class Meta:
         model = User
         fields = ['first_name', 'username']
 
+
 class ProfileUpdateForm(forms.ModelForm):
-    """Form for updating user Profile information."""
-    
+    """
+    Form for updating user profile.
+    """
     class Meta:
         model = Profile
         fields = ['image', 'bio']
+        widgets = {
+            'image': forms.FileInput(attrs={'class': 'hide-current-image'})
+        }

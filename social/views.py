@@ -67,13 +67,15 @@ def edit(request: HttpRequest) -> HttpResponse:
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            return redirect('community_home')
+            username = request.user.username
+            profile_url = reverse('profile', kwargs={'username': username})
+            return redirect(profile_url)
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm()
+        p_form = ProfileUpdateForm(instance=request.user.profile)
         
     context = {'u_form': u_form, 'p_form': p_form}
-    return render(request, 'social/editar.html', context)
+    return render(request, 'social/edit.html', context)
 
 @login_required(login_url='login')
 def follow(request: HttpRequest, username: str) -> HttpResponse:

@@ -31,19 +31,14 @@ def main_function() -> None:
     url = "https://secretaria-virtual.uam.es/pds/consultaPublica/look%5Bconpub%5DInicioPubHora?entradaPublica=true&idiomaPais=es.ES"
     
     # Piece of code executed in case we want execute starting from a specific subject.
-    print(f"Cantidad de asignaturas -> {len(subjects_uam)}")
     pos = 0
     # for subject in subjects_uam:
-    #     if subject.subject_key == 16371:
+    #     if subject.subject_key == 18440:
     #         pos = subjects_uam.index(subject)
     #         print(f"Posicion -> {pos}")
-    i = pos
     
     # Start the loop from the position of the subject we want (0 in case we want to execute the hole script)
     for subject in subjects_uam[pos:]:
-        print(f"Asignatura -> {subject.subject_key}")
-        print(f"Vuelta -> {i}")
-        i += 1
 
         # Initialize the driver going to the url and send the keys of the subject in the correct academic year.
         driver = webdriver.Chrome(options=chrome_options)

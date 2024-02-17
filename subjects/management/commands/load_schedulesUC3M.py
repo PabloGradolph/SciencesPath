@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
 import json
+import os
 from django.core.management.base import BaseCommand
 from ...models import Subject, TimeTable
 
@@ -20,27 +21,27 @@ class Command(BaseCommand):
         main_function()
 
 def main_function():
-    try:
-        with open('subjects/Data/schedules_UC3M.json', 'r') as json_file:
-            schedule_info = json.load(json_file)
-    except (FileNotFoundError, json.decoder.JSONDecodeError):
-        schedule_info = {}
-    
+
+    # Main variables initialized.
+    schedule_info = {}
     subjects_uc3m = list(Subject.objects.filter(university__name='UC3M'))
     chrome_options = Options()
     # chrome_options.add_argument("--headless")
 
-    print(len(subjects_uc3m))
+    print(f"Number of subjects -> {len(subjects_uc3m)}")
     pos = 0
     for subject in subjects_uc3m:
-        if subject.subject_key == 15976:
+        if subject.subject_key == 15508:
             pos = subjects_uc3m.index(subject)
-            print(pos)
+            print(f"Position -> {pos}")
 
+    j = pos
     for subject in subjects_uc3m[pos:]:
-        print(subject.subject_key)
-        print(subject.name)
-        print(subject.degree)
+        print(f"Subject -> {subject.subject_key}")
+        print(f"Loop -> {j}")
+        j += 1
+
+        # We go into the url and into the section we are interested in.
         url = subject.subject_url
         driver = webdriver.Chrome(options=chrome_options)
         driver.get(url)
@@ -52,13 +53,15 @@ def main_function():
         if img:
             img.click()
         
-        ventanas = driver.window_handles
-        driver.switch_to.window(ventanas[-1])
-        try:
-            elemento = driver.find_element(By.XPATH, "//span[contains(text(), 'Asignatura sin horarios definidos para el curso 2023/2024')]")
+        windows = driver.window_handles
+        driver.switch_to.window(windows[-1]) # We are here in Leganes shcedules.
+
+        try: # If we don't find the schedule or it is not published.
+            element = driver.find_element(By.XPATH, "//span[contains(text(), 'Asignatura sin horarios definidos para el curso 2023/2024')]")
             driver.quit()
             continue
-        except NoSuchElementException:
+
+        except NoSuchElementException: # In case there is an schedule for the subject.
             button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.LINK_TEXT, 'horario completo.'))
             )
@@ -67,127 +70,140 @@ def main_function():
             tbody_element = driver.find_element(By.TAG_NAME, "tbody")
             tbody_html = tbody_element.get_attribute("outerHTML")
             
+            # We have here the html so we initialize the calendar -> Necesary to change the year for future versions.
             soup = BeautifulSoup(tbody_html, 'html.parser')
-            calendario = Calendar()
-            año_actual = datetime.now().year
-            lista_eventos = []
-            eventos = soup.find_all('td', class_="celdaConSesion")
+            calendar = Calendar()
+            current_year = 2023
 
-            for evento in eventos:
-                info_evento = {}
-                info = evento.text.strip()
-                titulo_evento = info.split(',')[0]
-                hora_inicio = re.search(r'(\d{2}:\d{2})\s*a', info).group(1)
-                hora_fin = re.search(r'a\s*(\d{2}:\d{2})', info).group(1)
-                grupos_pattern = re.compile(f'{re.escape(titulo_evento)}(.+?){hora_inicio}')
-                grupos_match = grupos_pattern.search(info)
-                grupos = grupos_match.group(1).strip() if grupos_match else "No especificado"
-                grupos = grupos[2:]
-                if '⊕' in grupos:
-                    patron = r'(grp\.\d+(?:⊕)?|⊕)'
-                    coincidencia = re.findall(patron, grupos)
-                    grupos = list(coincidencia) if coincidencia else "No especificado"
-                elif '(' in grupos:
-                    patron = r'\((.*?)\)'
-                    coincidencia = re.search(patron, grupos)
-                    grupos = str(coincidencia.group(1)) if coincidencia else "No especificado"
+            # Info of events we want to save.
+            events = soup.find_all('td', class_="celdaConSesion")
+
+            for event in events:
+
+                # We get the interesting information for each event.
+                info = event.text.strip()
+                event_title = info.split(',')[0]
+                start_hour = re.search(r'(\d{2}:\d{2})\s*a', info).group(1)
+                end_hour = re.search(r'a\s*(\d{2}:\d{2})', info).group(1)
+                groups_pattern = re.compile(f'{re.escape(event_title)}(.+?){start_hour}')
+                groups_mathc = groups_pattern.search(info)
+                groups = groups_mathc.group(1).strip() if groups_mathc else "No especificado"
+                groups = groups[2:]
+                if '⊕' in groups:
+                    pattern = r'(grp\.\d+(?:⊕)?|⊕)'
+                    coincidence = re.findall(pattern, groups)
+                    groups = list(coincidence) if coincidence else "No especificado"
+                elif '(' in groups:
+                    pattern = r'\((.*?)\)'
+                    coincidence = re.search(pattern, groups)
+                    groups = str(coincidence.group(1)) if coincidence else "No especificado"
                 else:
-                    patron = r'grp\.\d+'
-                    coincidencia = re.findall(patron, grupos)
-                    grupos = list(coincidencia) if coincidencia else "No especificado"
+                    pattern = r'grp\.\d+'
+                    coincidence = re.findall(pattern, groups)
+                    groups = list(coincidence) if coincidence else "No especificado"
                 
-                fechas_ubicaciones = info.split(hora_fin)[-1]
-                numero_fechas = len(fechas_ubicaciones.split(':')) - 1
-                patron = r'\d{2}\.\w{3}(?:-\d{2}\.\w{3})?(?::(?:Aula|Aula INF|LAB) \d+\.\d+\.\w\d+\.\d+)?'
+                # We are saving here the locations with their dates.
+                location_dates = info.split(end_hour)[-1]
+                pattern = r'\d{2}\.\w{3}(?:-\d{2}\.\w{3})?(?::(?:Aula|Aula INF|LAB) \d+\.\d+\.\w\d+\.\d+)?'
 
-                fechas = re.findall(patron, fechas_ubicaciones)
-                ubicaciones = []
-                for i in range(len(fechas) - 1):
-                    fecha_actual = fechas[i]
-                    fecha_siguiente = fechas[i + 1]
-                    patron = re.escape(fecha_actual) + r'(.*?)' + re.escape(fecha_siguiente)
-                    coincidencia = re.search(patron, fechas_ubicaciones, re.DOTALL)
-                    if coincidencia:
-                        ubicaciones.append(coincidencia.group(1).strip())
+                dates = re.findall(pattern, location_dates)
+                locations = []
+                for i in range(len(dates) - 1):
+                    current_date = dates[i]
+                    next_date = dates[i + 1]
+                    pattern = re.escape(current_date) + r'(.*?)' + re.escape(next_date)
+                    coincidence = re.search(pattern, location_dates, re.DOTALL)
+                    if coincidence:
+                        locations.append(coincidence.group(1).strip())
                         
-                ultima_fecha = fechas[-1]
-                patron_ultima_fecha = re.escape(ultima_fecha) + r'(.*?)$'
-                coincidencia_ultima_fecha = re.search(patron_ultima_fecha, fechas_ubicaciones, re.DOTALL)
-                if coincidencia_ultima_fecha:
-                    ubicaciones.append(coincidencia_ultima_fecha.group(1).strip())
+                last_date = dates[-1]
+                pattern_last_date = re.escape(last_date) + r'(.*?)$'
+                coincidence_last_date = re.search(pattern_last_date, location_dates, re.DOTALL)
+                if coincidence_last_date:
+                    locations.append(coincidence_last_date.group(1).strip())
                 
-                reemplazos = {
+                # We replaze the months into english lenguage.
+                replacements = {
                     'ene': 'jan',
                     'abr': 'apr',
                     'ago': 'aug',
                     'dic': 'dec'
                 }
-                for i, fecha in enumerate(fechas):
-                    for abreviacion, reemplazo in reemplazos.items():
-                        fecha = fecha.replace(abreviacion, reemplazo)
-                    fechas[i] = fecha
+                for i, date in enumerate(dates):
+                    for abbreviation, reemplazo in replacements.items():
+                        date = date.replace(abbreviation, reemplazo)
+                    dates[i] = date
                     
-                for i, fecha in enumerate(fechas):
-                    ubicacion = ubicaciones[i]
+                for i, date in enumerate(dates):
+                    location = locations[i]
+                    split_dates = date.split('-')
                     
-                    fechas_divididas = fecha.split('-')
-                    
-                    if len(fechas_divididas) == 2:
+                    # We have events with a start date and an end date -> Events that repeat every 7 days.
+                    if len(split_dates) == 2:
                         try:
-                            fecha_inicio = f'{fechas_divididas[0]}.{año_actual}'
-                            fecha_fin = f'{fechas_divididas[1]}.{año_actual}'
+                            start_date = f'{split_dates[0]}.{current_year}'
+                            end_date = f'{split_dates[1]}.{current_year}'
 
-                            # Verifica si la fecha está después del 1 de enero
-                            fecha_inicio_obj = datetime.strptime(fecha_inicio, '%d.%b.%Y')
-                            if 1 <= fecha_inicio_obj.month <= 8:
-                                año_actual = 2024
-                                fecha_inicio = f'{fechas_divididas[0]}.{año_actual}'
-                                fecha_fin = f'{fechas_divididas[1]}.{año_actual}'
+                            # Verify if the date is after first of January.
+                            start_date_obj = datetime.strptime(start_date, '%d.%b.%Y')
+                            if 1 <= start_date_obj.month <= 8:
+                                current_year = 2024
+                                start_date = f'{split_dates[0]}.{current_year}'
+                                end_date = f'{split_dates[1]}.{current_year}'
 
-                            fecha_inicio = datetime.strptime(fecha_inicio, '%d.%b.%Y')
-                            fecha_fin = datetime.strptime(fecha_fin, '%d.%b.%Y')
+                            start_date = datetime.strptime(start_date, '%d.%b.%Y')
+                            end_date = datetime.strptime(end_date, '%d.%b.%Y')
                             delta = timedelta(days=7)
                             
-                            while fecha_inicio <= fecha_fin:
-                                evento = Event()
-                                evento.add('summary', titulo_evento)
-                                if type(grupos) == list:
-                                    # grupos = grupos[-1]
-                                    evento.add('description', f' {grupos}')
+                            # We create events from the start_hour until the end_date with a time delta of 7 days.
+                            while start_date <= end_date:
+                                event = Event()
+                                event.add('summary', event_title)
+                                if type(groups) == list:
+                                    # groups = groups[-1]
+                                    event.add('description', f' {groups}')
                                 else:
-                                    evento.add('description', f' {grupos}')
-                                evento.add('dtstart', fecha_inicio.replace(hour=int(hora_inicio.split(':')[0]), minute=int(hora_inicio.split(':')[1])))
-                                evento.add('dtend', fecha_inicio.replace(hour=int(hora_fin.split(':')[0]), minute=int(hora_fin.split(':')[1])))
-                                evento.add('location', ubicacion[1:])
-                                calendario.add_component(evento)
-                                fecha_inicio += delta
+                                    event.add('description', f' {groups}')
+                                event.add('dtstart', start_date.replace(hour=int(start_hour.split(':')[0]), minute=int(start_hour.split(':')[1])))
+                                event.add('dtend', start_date.replace(hour=int(end_hour.split(':')[0]), minute=int(end_hour.split(':')[1])))
+                                event.add('location', location[1:])
+                                calendar.add_component(event)
+                                start_date += delta
 
                         except ValueError:
-                            print(f'Fecha y/u hora inválida: {fecha_inicio}')
+                            print(f'date y/u hora inválida: {start_date}')
+                    
+                    # Here we have specific events that repeat once, on a single day.
                     else:
-                        evento = Event()
-                        evento.add('summary', titulo_evento)
-                        if type(grupos) == list:
-                            grupos = grupos[-1]
-                            evento.add('description', f' {grupos}')
+                        event = Event()
+                        event.add('summary', event_title)
+                        if type(groups) == list:
+                            groups = groups[-1]
+                            event.add('description', f' {groups}')
                         else:
-                            evento.add('description', f' {grupos}')
+                            event.add('description', f' {groups}')
 
-                        fecha = f'{fecha}.{año_actual}'
-                        fecha_inicio_obj = datetime.strptime(fecha, '%d.%b.%Y')
-                        if 1 <= fecha_inicio_obj.month <= 8:
-                            año_actual = 2024
-                            fecha = f'{fechas_divididas[0]}.{año_actual}'
+                        date = f'{date}.{current_year}'
+                        start_date_obj = datetime.strptime(date, '%d.%b.%Y')
+                        if 1 <= start_date_obj.month <= 8:
+                            current_year = 2024
+                            date = f'{split_dates[0]}.{current_year}'
 
-                        evento.add('dtstart', datetime.strptime(fecha, '%d.%b.%Y').replace(hour=int(hora_inicio.split(':')[0]), minute=int(hora_inicio.split(':')[1])))
-                        evento.add('dtend', datetime.strptime(fecha, '%d.%b.%Y').replace(hour=int(hora_fin.split(':')[0]), minute=int(hora_fin.split(':')[1])))
-                        evento.add('location', ubicacion[1:])
-                        calendario.add_component(evento)
+                        event.add('dtstart', datetime.strptime(date, '%d.%b.%Y').replace(hour=int(start_hour.split(':')[0]), minute=int(start_hour.split(':')[1])))
+                        event.add('dtend', datetime.strptime(date, '%d.%b.%Y').replace(hour=int(end_hour.split(':')[0]), minute=int(end_hour.split(':')[1])))
+                        event.add('location', location[1:])
+                        calendar.add_component(event)
 
             downloads_path = "C:\\Users\\Pablo\\OneDrive\\Documentos\\1Programacion\\TFG\\media\\UC3M"
             filename = f'{subject.subject_key}_UC3M_calendario.ics'
+
+            index = 2
+            while os.path.exists(f'{downloads_path}\\{filename}'):
+                filename = f'{subject.subject_key}_{index}_UC3M_calendario.ics'
+                index += 1
+
             with open(f'{downloads_path}\\{filename}', 'wb') as f:
-                f.write(calendario.to_ical())
+                f.write(calendar.to_ical())
 
             subject_instance = Subject.objects.get(id=subject.id)
             schedule_instance = TimeTable.objects.filter(subject=subject_instance).first()

@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import pytz
 from icalendar import Calendar, Event
 import time
-import html
+import os
 from datetime import datetime
 import json
 from django.core.management.base import BaseCommand
@@ -26,12 +26,14 @@ def main_function():
     
     print(len(subjects_uab))
     pos = 0
-    for subject in subjects_uab:
-        if subject.subject_key == 105033:
-            pos = subjects_uab.index(subject)
-            print(pos)
+    # for subject in subjects_uab:
+    #     if subject.subject_key == 100092:
+    #         pos = subjects_uab.index(subject)
+    #         print(pos)
+    #         break
 
     for subject in subjects_uab[pos:]:
+
         calendario = Calendar()
         print(subject.subject_key)
 
@@ -103,8 +105,15 @@ def main_function():
             calendario.add_component(evento)
 
         driver.quit()
+
         downloads_path = "C:\\Users\\Pablo\\OneDrive\\Documentos\\1Programacion\\TFG\\media\\UAB"
         filename = f'{subject.subject_key}_UAB_calendario.ics'
+
+        index = 2
+        while os.path.exists(f'{downloads_path}\\{filename}'):
+            filename = f'{subject.subject_key}_{index}_UAB_calendario.ics'
+            index += 1
+
         with open(f'{downloads_path}\\{filename}', 'wb') as f:
             f.write(calendario.to_ical())
 

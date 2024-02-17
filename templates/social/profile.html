@@ -1,0 +1,116 @@
+{% extends 'Sciences/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+    Perfil de Usuario
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/social/profile.css' %}">
+{% endblock %}
+
+{% block header %}
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="{% url 'home' %}" id="change" class="logo-btn">
+                <img src="{% static 'img/microscopio.png' %}" alt="Logo" class="logo-img">
+                SciencesPath!
+            </a>
+        </div>
+        <nav>
+            <a href="{% url 'profile' request.user %}">Mi Perfil</a>
+            <a href="#comunity">Comunidad</a>
+            <a href="#questions">Preguntas Frecuentes</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Barra Izquierda -->
+    <div class="left-bar">
+        <div class="card">
+            <img class="card-img" src="{{ user.profile.image.url }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">@{{ user }}</h5>
+                <p class="card-text">{{ user.profile.bio }}</p>
+                <h6 class="card-title font-weight-bold">
+                    {{ user.profile.followers.count }} Followers
+                    {{ user.profile.following.count }} Following
+                </h6>
+                {% if request.user.is_authenticated %}
+                    {% if user.username != request.user.username %}
+                        {% if user not in request.user.profile.following %}
+                            <div class="btn-container">
+                                <a href="{% url 'follow' user %}"><button class="btn-primary">Seguir</button></a>
+                            </div>
+                        {% else %}
+                            <div class="btn-container">
+                                <a href="{% url 'unfollow' user %}"><button class="btn-primary">Dejar de seguir</button></a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="btn-container">
+                            <a href="{% url 'edit' %}" ><button class="btn-primary">Editar mi perfil</button></a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Centro -->
+    <div class="center-bar">
+        {% if user == request.user %}
+            <h2 class="profile-transactions-title">Mis Transacciones</h2>
+        {% else %}
+            <h2 class="profile-transactions-title">Sus Transacciones</h2>
+        {% endif %}
+        {% for transaction in transactions %}
+        <div class="transaction-card">
+            <!-- Transaction Info -->
+            <div class="transaction-body">
+                {% if transaction.transaction_type == 'enviar_dinero'%}
+                    {% if transaction.user == user %}
+                        <span class="transaction-type">Envío de {{ transaction.amount }}€ a <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a></span>
+                    {% elif transaction.recipient == user %}
+                        <span class="transaction-type">Recibo de {{ transaction.amount }}€ de <a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a></span>
+                    {% endif %}
+                {% else %}
+                    {% if transaction.user == user %}
+                        <span class="transaction-type">Solicitud de {{ transaction.amount }}€ a <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a></span>
+                    {% elif transaction.recipient == user %}
+                        <span class="transaction-type"><a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a> te solicita {{ transaction.amount }}€</span>
+                    {% endif %}
+                {% endif %}
+                <span class="transaction-message">Mensaje: {{ transaction.transaction_message }}</span>
+                <span class="transaction-timestamp">{{ transaction.timestamp|naturaltime }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-transactions-message">No tienes transacciones aún.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Barra Derecha -->
+    <div class="right-bar">
+        <div class="profile-stats">
+            <h3>Estadísticas del perfil</h3>
+            <p>Total Enviado: {{ total_sent }}€</p>
+            <p>Total Recibido: {{ total_received }}€</p>
+        </div>
+        <div class="profile-balance">
+            <h3>Saldo actual:</h3>
+            <p>{{ user.profile.amount }}€</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

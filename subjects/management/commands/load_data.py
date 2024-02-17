@@ -28,7 +28,7 @@ def load_subjects_from_json(file_path: str):
 
             for key2, value2 in value.items():
                 if university == "UAM":
-                    key2 = key2.lower().capitalize()
+                    key2 = capitalize_words(key2)
                 subject_data = {
                     'name': key2,
                     'subject_key': value2['Codigo'] if 'Codigo' in value2 else \
@@ -52,3 +52,6 @@ def load_subjects_from_json(file_path: str):
                     subject = Subject.objects.create( 
                         university=university, degree=degree, **subject_data
                     )
+
+def capitalize_words(name):
+    return ' '.join(word.capitalize() if len(word) > 3 else word.lower() for word in name.split())
