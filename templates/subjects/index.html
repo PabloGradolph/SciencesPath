@@ -48,8 +48,6 @@
             <div class="filter-column">
                 <h2>Filtrar Asignaturas:</h2>
                 <form id="filter-form" class="filter-form" action="{% url 'index' %}#content-column" method="GET">
-                    <!-- Campo oculto para la consulta de búsqueda -->
-                    {% comment %} <input type="hidden" name="search_filter" value="{{ search_query }}"> {% endcomment %}
                     {{ filter_form.as_p }}
                     <input type="submit" value="Aplicar Filtros" class="filter-btn">
                 </form>
@@ -108,14 +106,6 @@
         </div>
     </div>
     <script type="text/javascript">
-        document.getElementById('search-form').addEventListener('submit', function() {
-            var searchValue = document.querySelector('.search-bar').value;
-            var hiddenSearchInput = document.querySelector('.filter-form input[type="hidden"][name="search_filter"]');
-            if (hiddenSearchInput) {
-                hiddenSearchInput.value = searchValue;
-            }
-        });
-
         // Selecciona ambos formularios
         var searchForm = document.getElementById('search-form');
         var filterForm = document.getElementById('filter-form');

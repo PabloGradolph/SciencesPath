@@ -60,7 +60,6 @@ def index(request):
     form_data = request.GET.copy()
     if 'page' in form_data:
         del form_data['page']
-    form_data['search_filter'] = search_query
 
     context = {
         'page_subjects': page,
