@@ -296,6 +296,7 @@ footer {
 
 footer .container {
     max-width: none;
+    margin-top: 0;
 }
 
 footer .group-1 {

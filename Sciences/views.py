@@ -47,7 +47,7 @@ def profile(request, username):
     user = User.objects.get(username=username)
     posts = user.posts.all()
     context = {'current_year': current_year, 'user': user, 'posts':posts}
-    return render(request, 'social/profile.html', context)
+    return render(request, 'Sciences/profile.html', context)
 
 # TODO -> Tienes que completar la vista de documents.
 @login_required(login_url='login')

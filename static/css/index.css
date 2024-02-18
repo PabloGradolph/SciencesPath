@@ -36,6 +36,12 @@
     padding-bottom: 30px;
 }
 
+.container3 {
+    min-height: none;
+    margin-top: 0;
+    padding-bottom: 0;
+}
+
 .container h1 {
     font-size: 32px;
     font-weight: bold;
@@ -245,74 +251,7 @@ a {
     border-radius: 3px;
 }
 
-/* Footer */
-footer {
-    width: 100%;
-    background-color: #333333;
-    padding: 0;
-    margin-top: 75px;
-    border-top: 1px solid black;
-}
-
-footer .container {
-    max-width: none;
-}
-
-footer .group-1 {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 20px;
-}
-
-footer .group-1 .box p{
-    margin: 10px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-}
-
-footer .group-1 .box span{
-    color: var(--color-primary)
-}
-
-footer .group-1 .box img {
-    justify-content: space-between;
-    width: 4em;
-    height: 4em;
-    border-radius: 5px;
-}
-
-footer .group-1 .box h4 {
-    color: #fff;
-
-}
-
-footer .group-2 {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    background-color: #2b2a2a;
-}
-
-footer .group-2 small, footer .group-2 b, footer .group-2 a{
-    color: #fff;
-}
-
-footer .group-2 a:hover{
-    color: #ffffffcb;
-}
-
 @media (min-width:720px) {
-    footer .group-2{
-        width: 100%;
-    }
     .container2 h1 {
         text-align: center;
     }

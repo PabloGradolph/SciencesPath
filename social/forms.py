@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Post, Profile
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 class PostForm(forms.ModelForm):
     """Form for creating or updating a Post instance."""
@@ -31,9 +33,11 @@ class ProfileUpdateForm(forms.ModelForm):
     """
     Form for updating user profile.
     """
+    phone_number = PhoneNumberField(widget=PhoneNumberPrefixWidget(initial='ES'))
+                                    
     class Meta:
         model = Profile
-        fields = ['image', 'bio']
+        fields = ['phone_number', 'image', 'bio']
         widgets = {
             'image': forms.FileInput(attrs={'class': 'hide-current-image'})
         }
