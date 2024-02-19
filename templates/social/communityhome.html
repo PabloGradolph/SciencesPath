@@ -1,5 +1,6 @@
 {% extends 'Sciences/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}
     Inicio
@@ -7,6 +8,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/social/community_home.css' %}">
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block header %}
@@ -59,47 +61,45 @@
         <form class="post-form" method="post", enctype="multipart/form-data">
             <p>{{ error }}</p>
             {% csrf_token %}
-            <input type="hidden" name="transaction_type" id="transaction_type" value="">
             {{ form.content }}
             {{ form.image }}
             <div class="btn-container">
-                <button class="btn btn-primary" type="button" onclick="setTransactionType('enviar_dinero')">Enviar Dinero</button>
-                <button class="btn btn-primary" type="button" onclick="setTransactionType('solicitar_dinero')">Solicitar Dinero</button>
+                <button class="btn btn-primary" type="submit">Publicar</button>
             </div>
         </form>
 
-        <!-- Transactions -->
-        <h3 class="transactions-title">Últimas Transacciones</h3>
-        {% comment %} {% for transaction in transactions %}
-        <div class="transaction-card">
-            <div class="transaction-header">
-                <img src="{{ transaction.user.profile.image.url}}" alt="User Image" class="user-img">
-                <div class="transaction-header-info">
-                    <a href="{% url 'profile' transaction.user %}">
-                        <span>@{{ transaction.user.username }}</span>
-                    </a>
-                    <span class="time-ago">{{ transaction.timestamp|naturaltime }}</span>
-                    {% if transaction.transaction_type == 'enviar_dinero'%}
-                    <p>
-                        <a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a>
-                        envía {{ transaction.amount }}€ a
-                        <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a>
-                    </p>
-                    {% elif transaction.transaction_type == 'solicitar_dinero'%}
-                    <p>
-                        <a href="{% url 'profile' username=transaction.user.username %}">@{{ transaction.user.username }}</a>
-                        solicita {{ transaction.amount }}€ a
-                        <a href="{% url 'profile' username=transaction.recipient.username %}">@{{ transaction.recipient.username }}</a>
-                    </p>
+        <!-- Posts -->
+        <h3 class="posts-title">Últimas Publicaciones</h3>
+        {% for post in posts %}
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="{{ post.user.profile.image.url}}" alt="User Image" class="user-img">
+                    <div class="post-header-info">
+                        <a href="{% url 'profile' post.user %}">
+                            <span>@{{ post.user.username }}</span>
+                        </a>
+                        <span class="time-ago">{{ post.timestamp|naturaltime }}</span>
+                    </div>
+                    <div class="post-message">
+                        <p>{{ post.content }}</p>
+                    </div>
+                    {% if post.image %}
+                    <div class="post-message">
+                        <img src="{{ post.image.url }}" alt="Post Image">
+                    </div>
                     {% endif %}
-                </div> {% endcomment %}
-                <div class="transaction-message">
-                    <p>Mensaje: </p>
-                    {% comment %} <p>Mensaje: {{ transaction.transaction_message }}</p> {% endcomment %}
+                    <!-- DELETE -->
+                    {% if request.user == post.user %}
+                        <div class="trash">
+                            <a href="{% url 'delete' post.id %}" style="background: white; border: none;">
+                                <i class="fa fa-trash-o" style="color:#657786; font-size: 20px" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                    <!-- END-DELETE -->
                 </div>
-            {% comment %} </div>
-        </div>
-        {% endfor %} {% endcomment %}
+            </div>
+        {% endfor %}
     </div>
 
             <!-- Barra Derecha -->

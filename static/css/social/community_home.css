@@ -5,7 +5,6 @@
     align-items: flex-start;
     margin-top: 90px;
     width: 100%;
-    height: 100vh;
     padding: 20px;
     text-align: center;
     background-color: #f9f9f9;
@@ -61,7 +60,7 @@
 
 .profile-btn {
     display: block;
-    background-color: #337ab7;
+    background-color: #008037;
     color: white;
     text-align: center;
     padding: 10px;
@@ -72,12 +71,12 @@
 }
 
 .profile-btn:hover {
-    background-color: #23527c;
+    background-color: #00612a;
 }
 
 .btn-primary {
     margin-top: 10px;
-    background-color: #337ab7;
+    background-color: #008037;
     color: white;
     border: none;
     border-radius: 5px;
@@ -87,7 +86,7 @@
 }
 
 .btn-primary:hover {
-    background-color: #23527c; 
+    background-color: #00612a; 
 }
 
 .center-bar {
@@ -139,7 +138,7 @@ textarea::placeholder {
 
 .post-form button {
     margin: 20px;
-    background-color: #337ab7;
+    background-color: #008037;
     color: white;
     font-weight: bold;
     border: none; 
@@ -148,17 +147,17 @@ textarea::placeholder {
 }
 
 .post-form button:hover {
-    background-color: #23527c;
+    background-color: #00612a;
 }
 
-.transactions-title {
+.posts-title {
     font-size: 24px; 
     font-weight: bold; 
     margin-bottom: 20px;
     color: #333;
 }
 
-.transaction-card {
+.post-card {
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ddd;
@@ -171,9 +170,9 @@ textarea::placeholder {
     border-radius: 50%;
 }
 
-.transaction-header-info a {
+.post-header-info a {
     text-decoration: none;
-    color: #337ab7;
+    color: #008037;
     font-weight: bold;
 }
 
@@ -183,7 +182,7 @@ textarea::placeholder {
     font-size: 20px; 
 }
 
-.transaction-message p {
+.post-message p {
     margin-top: 10px;
 }
 
@@ -225,7 +224,7 @@ textarea::placeholder {
     text-align: center;
     justify-content: center;
     text-decoration: none;
-    color: #337ab7;
+    color: #008037;
     font-weight: bold;
 }
 
