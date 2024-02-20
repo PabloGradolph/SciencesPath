@@ -96,6 +96,14 @@ class Post(models.Model):
     def __str__(self) -> str:
         """Returns the post's content as its string representation."""
         return self.content
+    
+    def num_likes(self):
+        """Returns the number of likes this post has."""
+        return self.likes.count()
+
+    def num_comments(self):
+        """Returns the number of comments this post has."""
+        return self.comments.count()
 
 
 class Relationship(models.Model):
@@ -107,3 +115,28 @@ class Relationship(models.Model):
     def __str__(self) -> str:
         """Returns the relationship's string representation, showing the direction of the relationship."""
         return f'{self.from_user} to {self.to_user}'
+
+
+class Like(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked_posts')
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('post', 'user')
+
+    def __str__(self) -> str:
+        return f'{self.user} likes {self.post}'
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_made')
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self) -> str:
+        return f'Comment by {self.user} on {self.post}'
