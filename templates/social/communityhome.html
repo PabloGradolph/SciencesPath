@@ -9,6 +9,8 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/social/community_home.css' %}">
 <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 {% endblock %}
 
 {% block header %}
@@ -58,72 +60,138 @@
     <!-- Centro -->
     <div class="center-bar">
         <!-- Formulario -->
-        <form class="post-form" method="post", enctype="multipart/form-data">
-            <p>{{ error }}</p>
-            {% csrf_token %}
-            {{ form.content }}
-            {{ form.image }}
-            <div class="btn-container">
-                <button class="btn btn-primary" type="submit">Publicar</button>
+        <div class="area-comentar">
+            <div class="avatar">
+                <img src="{{ request.user.profile.image.url }}" alt="img">
             </div>
+            <form method="post" class="inputs-comentarios" enctype="multipart/form-data">
+                <p>{{ error }}</p>
+                {% csrf_token %}
+                {{ form.content }}
+                <div class="botones-comentar">
+                    <div class="boton-subir-archivo">
+                        <label class="boton-file" for="adjuntar">
+                            <i class="far fa-image"></i>
+                            Adjuntar archivo
+                        </label>
+                        {{ form.image }}
+                    </div>
+                    <button class="boton-enviar" type="sutmit">
+                        <i class="fas fa-paper-plane"></i>
+                        Publicar
+                    </button>
+                </div>
+            </form>
+        </div>
         </form>
 
         <!-- Posts -->
         <h3 class="posts-title">Últimas Publicaciones</h3>
         {% for post in posts %}
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="{{ post.user.profile.image.url}}" alt="User Image" class="user-img">
-                    <div class="post-header-info">
-                        <a href="{% url 'profile' post.user %}">
-                            <span>@{{ post.user.username }}</span>
-                        </a>
-                        <span class="time-ago">{{ post.timestamp|naturaltime }}</span>
-                    </div>
-                    <div class="post-message">
-                        <p>{{ post.content }}</p>
-                    </div>
-                    {% if post.image %}
-                    <div class="post-message">
-                        <img src="{{ post.image.url }}" alt="Post Image">
-                    </div>
-                    {% endif %}
-                    <!-- DELETE -->
-                    {% if request.user == post.user %}
-                        <div class="trash">
-                            <a href="{% url 'delete' post.id %}" style="background: white; border: none;">
-                                <i class="fa fa-trash-o" style="color:#657786; font-size: 20px" aria-hidden="true"></i>
-                            </a>
-                        </div>
-                    {% endif %}
-                    <!-- END-DELETE -->
+        <div class="publicacion-realizada">
+            <div class="usuario-publico">
+                <div class="avatar">
+                    <img src="{{ post.user.profile.image.url }}" alt="img">
                 </div>
+                <div class="contenido-publicacion">
+                    <span><a href="{% url 'profile' post.user %}" style="text-decoration: none;"><b>@{{ post.user.username }}</b></a> <small>{{ post.timestamp|naturaltime }}</small></span>
+                </div>
+                {% if request.user == post.user %}
+                    <div class="menu-comentario">
+                        <i class="fas fa-pen"></i>
+                        <ul class="menu">
+                            <li><a href="">Editar</a></li>
+                            <li><a href="{% url 'delete' post.id %}">Eliminar</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
+            <p>{{ post.content }}</p>
+            {% if post.image %}
+                <div class="archivo-publicado">
+                    <a href="{{ post.image.url }}" target="_blank">
+                        <img src="{{ post.image.url }}" alt="img">
+                    </a>
+                </div>
+            {% endif %}
+            <div class="botones-comentario" data-post-id="{{ post.id }}">
+                <button type="" class="boton-puntuar" 
+                data-action="{% if post.id in likes %}unlike{% else %}like{% endif %}" 
+                data-post-id="{{ post.id }}">
+                    <i class="fas fa-thumbs-up like-icon" style="color: {% if post.id in likes %}blue{%else%}black{% endif %}"></i>
+                    <span class="likes-count">{{ post.likes.count }}</span>
+                </button>
+                <button type="" class="boton-responder">
+                    Comentar
+                </button>
+            </div>
+        </div>
         {% endfor %}
     </div>
 
             <!-- Barra Derecha -->
             <div class="right-bar">
                 <div class="top-users">
-                    <h3>Usuarios a quien seguir:</h3>
-                    {% comment %} <ul>
+                    <h3>Otros Usuarios:</h3>
+                    <ul>
                         {% for user in top_users %}
-                            {% if user != request.user and user.is_authenticated %} <!-- Para que solo muestre otros users -->
+                            {% if user != request.user and user.is_authenticated %}
                                 <li>
                                     <a href="{% url 'profile' user %}" class="user-link">
-                                        <img src="{{ user.profile.image.url }}" class="user-img"><span class="user-name">{{ user.username }}</span>
+                                        <img src="{{ user.profile.image.url }}" class="user-img"><span class="user-name">@{{ user.username }}</span>
                                     </a>
                                 </li>
                             {% endif %}
                         {% endfor %}
-                    </ul> {% endcomment %}
+                    </ul>
                 </div>
                 <div class="user-amount">
-                    <h3>Este es tu saldo acutal en la aplicación:</h3>
-                    {% comment %} <p>{{ user_balance }}€</p> {% endcomment %}
+                    {% comment %}<h3>Este es tu saldo acutal en la aplicación:</h3>
+                     <p>{{ user_balance }}€</p> {% endcomment %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const likeButtons = document.querySelectorAll('.boton-puntuar');
+    
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                const action = this.dataset.action;
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const likeIcon = this.querySelector('.like-icon');
+    
+                fetch('{% url "post_like" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: `id=${postId}&action=${action}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        const likesCount = this.querySelector('.likes-count');
+                        const currentLikes = parseInt(likesCount.textContent);
+    
+                        if (action === 'like') {
+                            this.dataset.action = 'unlike';
+                            likesCount.textContent = currentLikes + 1;
+                            likeIcon.style.color = 'blue';
+                        } else {
+                            this.dataset.action = 'like';
+                            likesCount.textContent = currentLikes - 1;
+                            likeIcon.style.color = 'black';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
 {% endblock content %}

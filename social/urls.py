@@ -7,4 +7,5 @@ urlpatterns = [
     path('edit/', views.edit, name='edit'),
     path('follow/<str:username>/', views.follow, name='follow'),
     path('unfollow/<str:username>/', views.unfollow, name='unfollow'),
+    path('like/', views.post_like, name='post_like'),
 ]

@@ -6,7 +6,6 @@
     margin-top: 90px;
     width: 100%;
     padding: 20px;
-    text-align: center;
     background-color: #f9f9f9;
 }
 
@@ -17,6 +16,7 @@
 
 .left-bar, .right-bar {
     flex-basis: calc(20% - 20px);
+    text-align: center;
 }
 
 .center-bar {
@@ -29,6 +29,9 @@
     border-radius: 10px;
     margin-left: 20px;
     padding: 20px;
+    position: sticky;
+    top: 100px;
+    overflow-y: auto;
 }
 
 .card {
@@ -98,29 +101,6 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-.post-form {
-    padding-bottom: 20px;
-    margin-bottom: 40px;
-    margin-right: 20px;
-    border-bottom: 1px solid #d6d6d6;
-}
-
-.post-form p {
-    color: red;
-    margin-bottom: 10px; 
-}
-
-.post-form input[type="text"],
-.post-form input[type="number"],
-.post-form textarea,
-.post-form button {
-    width: 100%; 
-    margin-bottom: 10px; 
-    padding: 10px;
-    border: 1px solid #ddd; 
-    border-radius: 5px;
-}
-
 input[type="number"]::placeholder,
 input[type="text"]::placeholder,
 textarea::placeholder {
@@ -128,67 +108,6 @@ textarea::placeholder {
     font-style: italic;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
-}
-
-.post-form .btn-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.post-form button {
-    margin: 20px;
-    background-color: #008037;
-    color: white;
-    font-weight: bold;
-    border: none; 
-    cursor: pointer; 
-    width: 50%;
-}
-
-.post-form button:hover {
-    background-color: #00612a;
-}
-
-.posts-title {
-    font-size: 24px; 
-    font-weight: bold; 
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.post-card {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px; 
-    background-color: #f0f4f8; 
-}
-
-.user-img {
-    max-width: 100px; 
-    border-radius: 50%;
-}
-
-.post-header-info a {
-    text-decoration: none;
-    color: #008037;
-    font-weight: bold;
-}
-
-.trash a {
-    text-decoration: none;
-    color: #657786;
-    font-size: 20px; 
-}
-
-.post-message p {
-    margin-top: 10px;
-}
-
-.time-ago {
-    color: #999; 
-    font-size: 12px;
 }
 
 .right-bar {
@@ -200,6 +119,9 @@ textarea::placeholder {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
     border-radius: 10px;
     padding: 20px;
+    position: sticky;
+    top: 100px;
+    overflow-y: auto;
 }
 
 .top-users h3 {
@@ -247,11 +169,326 @@ textarea::placeholder {
     color: #009688;
 }
 
+/* ---------------------------------- NEW PART ------------------------------*/
+
+
+
+/* --------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+.contenedor-comentarios {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+}
+
+.contenedor-comentarios img {
+    width: 100%;
+}
+
+.area-comentar {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-bottom: 1.5rem;
+    padding: 18px;
+    background-color: #fff;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, .1);
+    border-radius: 12px;
+}
+
+.comentarios-usuarios {
+    width: calc(100% - 2.5rem);
+}
+
+.contenedor-comentarios a {
+    text-decoration: none;
+}
+
+.comentar-publicacion .avatar,
+.publicacion-realizada .usuario-publico .avatar,
+.contenedor-comentarios .comentario-principal-usuario .avatar,
+.area-comentar .avatar {
+    display: flex;
+    width: 65px;
+    height: 65px;
+    background-color: #F4F4F4;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.comentarios-usuarios .nombre-usuario {
+    font-weight: bold;
+    margin-right: .5rem;
+    color: inherit;
+}
+/* botones comentar */
+.boton-subir-archivo {
+    position: relative;
+    display: inline-block;
+}
+
+.boton-subir-archivo input[type="file"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+}
+
+.boton-file,
+.boton-enviar {
+    display: inline-block;
+    border: 0;
+    background-color: #008037;
+    padding: 7px 15px;
+    margin-right: .5rem;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.boton-file:hover,
+.boton-enviar:hover {
+    background-color: #01602a;
+}
+
+/* fin */
+.contenedor-comentarios .comentario-principal-usuario .comentario,
+.area-comentar .inputs-comentarios {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-left: .5rem;
+}
+
+.area-comentar .inputs-comentarios {
+    margin-left: 1rem;
+}
+
+.contenedor-comentarios .comentario-principal-usuario .texto,
+.area-comentar .inputs-comentarios .area-comentario {
+    border: 0;
+    background-color: #F0F0F0;
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: .5rem;
+}
+
+.botones-comentario span.tiempo-comentario {
+    font-size: 0.8rem !important;
+    color: #9F9F9F;
+    margin-left: .25rem;
+}
+
+.area-comentar .inputs-comentarios .area-comentario {
+    padding: 12px 15px;
+}
+
+.area-comentar .inputs-comentarios .botones-comentar {
+    display: flex;
+}
+
+/* comentarios de usuario */
+.comentarios-usuarios .comentario-principal-usuario {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.comentarios-usuarios .usuario-comentario {
+    width: 100%;
+    display: block;
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.menu-comentario {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: #E9E9E9;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.comentarios-usuarios .usuario-comentario .menu-comentario {
+    top: 5px;
+    right: -15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+}
+
+.comentarios-usuarios .usuario-comentario:hover .menu-comentario {
+    display: flex;
+}
+
+.publicacion-realizada .menu-comentario {
+    display: flex;
+    right: 0;
+}
+
+.menu-comentario .menu {
+    list-style: none;
+    position: absolute;
+    right: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 5px 1px rgba(0, 0, 0, .2);
+    border-radius: 8px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all ease-in 200ms;
+}
+
+.menu-comentario:hover .menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-comentario .menu a {
+    display: block;
+    padding: 7px 15px;
+    color: inherit;
+}
+
+.menu-comentario .menu a:hover {
+    background-color: #E1E1E1;
+}
+
+.publicacion-realizada .usuario-publico .avatar,
+.comentarios-usuarios .comentario-principal-usuario .avatar {
+    width: 45px;
+    height: 45px;
+}
+
+.comentarios-usuarios .comentario-principal-usuario .texto {
+    padding: 10px 15px;
+    width: auto;
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: .25rem;
+    font-size: 0.9rem;
+    position: relative;
+    padding-right: 1.65rem;
+}
+
+.comentarios-usuarios .comentario-principal-usuario .comentar-comentario {
+    width: 100%;
+    display: flex;
+}
+
+.comentarios-usuarios .comentar-publicacion input[type="text"] {
+    border: 0;
+    background-color: #E1E1E1;
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 8px 10px;
+    font-size: .9rem;
+    border-radius: 8px;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.botones-comentario {
+    display: block;
+}
+
+.botones-comentario button {
+    display: inline-block;
+    border: 0;
+    padding: 3px 8px;
+    font-size: .8rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.botones-comentario button:hover {
+    background-color: #D5D8E1;
+}
+
+.comentar-publicacion .avatar,
+.contenedor-sub-comentarios .comentario-principal-usuario .avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.boton-enviar i,
+.boton-file i,
+.boton-puntuar i,
+.boton-responder i {
+    margin-right: .5rem;
+}
+
+.boton-enviar i,
+.boton-file i{
+    margin-right: .5rem;
+    color: #fff;
+}
+
+/* publicacion realizada */
+.publicacion-realizada {
+    margin-bottom: 2.5rem;
+}
+
+.publicacion-realizada .usuario-publico {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: .5rem;
+    position: relative;
+}
+
+.publicacion-realizada .usuario-publico .contenido-publicacion {
+    margin-left: 1rem;
+}
+
+.comentar-publicacion {
+    display: flex;
+    width: 100%;
+}
+
+.comentar-publicacion .comentar-comentario {
+    flex-grow: 1;
+    flex-basis: 0;
+    display: flex;
+    align-items: center;
+}
+
+.publicacion-realizada p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9em;
+}
+
+.archivo-publicado img {
+    display: block;
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    object-fit: contain;
+    margin: auto;
+}
+
+.publicacion-realizada .contenido-publicacion ul {
+    list-style: none;
+    font-size: 0.8em;
+    color: #909090;
+}
+
 footer {
     width: 100%;
     background-color: #333333;
     padding: 0;
-    margin-top: 75px;
     border-top: 1px solid black;
 }
 
