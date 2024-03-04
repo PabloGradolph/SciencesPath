@@ -8,8 +8,8 @@ from django_countries.fields import CountryField
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=255, verbose_name="Calle")
-    number = models.PositiveIntegerField(verbose_name="Número")
+    street = models.CharField(max_length=255, verbose_name="Calle", blank=True, null=True)
+    number = models.PositiveIntegerField(verbose_name="Número", blank=True, null=True)
     floor = models.PositiveIntegerField(blank=True, null=True, verbose_name="Piso")
     door = models.CharField(max_length=10, blank=True, verbose_name="Letra")
     city = models.CharField(max_length=100, verbose_name="Ciudad")

@@ -497,8 +497,36 @@ footer .container {
     margin-top: 0;
 }
 
+
+@media (max-width: 950px) {
+    .container {
+        justify-content: center;
+    }
+
+    .right-bar,
+    .left-bar {
+        display: none;
+    }
+
+    .center-bar {
+        align-self: center;
+        flex-basis: 80%;
+    }
+}
+
 @media (max-width: 720px) {
     .container {
         margin-top: 0px;
+        justify-content: center;
+    }
+
+    .right-bar,
+    .left-bar {
+        display: none;
+    }
+
+    .center-bar {
+        align-self: center;
+        flex-basis: 80%;
     }
 }

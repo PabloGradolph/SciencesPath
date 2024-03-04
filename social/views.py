@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Post, Relationship, Like
-from .forms import PostForm, UserUpdateForm, ProfileUpdateForm
+from .forms import PostForm, UserUpdateForm, ProfileUpdateForm, AddressUpdateForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -79,18 +79,29 @@ def edit(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        a_form = AddressUpdateForm(request.POST, instance=request.user.profile.address if hasattr(request.user.profile, 'address') else None)
 
-        if u_form.is_valid() and p_form.is_valid():
+        if u_form.is_valid() and p_form.is_valid() and a_form.is_valid():
             u_form.save()
             p_form.save()
+            address = a_form.save(commit=False)
+            if not address.pk:
+                address.save()
+                request.user.profile.address = address
+                request.user.profile.save()
             username = request.user.username
             profile_url = reverse('profile', kwargs={'username': username})
             return redirect(profile_url)
+        else:
+            print(u_form.errors)
+            print(p_form.errors)
+            print(a_form.errors)
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
+        a_form = AddressUpdateForm(instance=request.user.profile.address if hasattr(request.user.profile, 'address') else None)
         
-    context = {'u_form': u_form, 'p_form': p_form}
+    context = {'u_form': u_form, 'p_form': p_form, 'a_form': a_form}
     return render(request, 'social/edit.html', context)
 
 @login_required(login_url='login')

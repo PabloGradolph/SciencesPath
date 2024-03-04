@@ -53,6 +53,37 @@
                 {{ u_form.username }}
             </div>
             <div class="input-wrapper">
+                <label>Email</label>
+                {{ u_form.email }}
+            </div>
+
+            <!-- Formulario de dirección -->
+            <div class="input-wrapper">
+                <label>Calle</label>
+                {{ a_form.street }}
+            </div>
+            <div class="input-wrapper">
+                <label>Número</label>
+                {{ a_form.number }}
+            </div>
+            <div class="input-wrapper">
+                <label>Piso</label>
+                {{ a_form.floor }}
+            </div>
+            <div class="input-wrapper">
+                <label>Puerta</label>
+                {{ a_form.door }}
+            </div>
+            <div class="input-wrapper">
+                <label>Ciudad</label>
+                {{ a_form.city }}
+            </div>
+            <div class="input-wrapper">
+                <label>País</label>
+                {{ a_form.country }}
+            </div>
+
+            <div class="input-wrapper">
                 <label>Bio</label>
                 {{ p_form.bio }}
             </div>
@@ -61,8 +92,46 @@
                 {{ p_form.image }}
             </div>
 
-            <button class="btn primary-btn">Actualizar</button>
+
+            <div class="input-wrapper">
+                <label for="id_is_student">¿Eres estudiante?</label>
+                {{ p_form.is_student }}
+            </div>
+            <div class="input-wrapper student-field">
+                <label>Universidad</label>
+                {{ p_form.university }}
+            </div>
+            <div class="input-wrapper student-field">
+                <label>Año</label>
+                {{ p_form.year }}
+            </div>
+            <div class="input-wrapper student-field">
+                <label>Email de la Universidad</label>
+                {{ p_form.university_email }}
+            </div>
+
+            <button type="submit" class="btn primary-btn">Actualizar</button>
         </form>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleccionar el checkbox de is_student y los contenedores de los otros campos
+        const isStudentCheckbox = document.getElementById('id_is_student');
+        const studentFields = document.querySelectorAll('.student-field');
+
+        // Función para mostrar/ocultar campos basados en el checkbox
+        function toggleStudentFields() {
+            studentFields.forEach(field => {
+                field.style.display = isStudentCheckbox.checked ? 'block' : 'none';
+            });
+        }
+
+        // Event listener para el cambio de checkbox
+        isStudentCheckbox.addEventListener('change', toggleStudentFields);
+
+        // Llamar a la función al cargar la página para establecer el estado inicial
+        toggleStudentFields();
+    });
+</script>
 {% endblock %}

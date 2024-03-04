@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'subjects.apps.SubjectsConfig',
     'faq.apps.FaqConfig',
     'social.apps.SocialConfig',
+    'django_countries',
 ]
 
 MIDDLEWARE = [
