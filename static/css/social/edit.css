@@ -1,30 +1,36 @@
 .container {
+    max-width: none;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 100px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 120px;
     width: 100%;
     padding: 20px;
     text-align: center;
-    background-color: #f9f9f9;
 }
 
 .formulario {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    margin-top: 50px;
-    margin-left: 25%;
+    width: 90%;
 }
 
-.formulario .user-img {
-    flex-basis: 30%;
+.formulario form {
+    width: 100%;
 }
 
 .avator {
-    max-width: 400px;
+    max-width: 200px;
     border-radius: 50%;
-    margin-right: 20px;
+    cursor: pointer;
+    transition: filter 0.5s ease;
+}
+
+.avator:hover {
+    filter: brightness(70%);
 }
 
 .edit-title {
@@ -36,7 +42,6 @@
 
 .formulario form {
     flex-basis: 70%;
-    padding-left: 20px;
 }
 
 .input-wrapper {
@@ -51,8 +56,13 @@
 }
 
 .input-wrapper input[type="text"],
-.input-wrapper textarea{
-    width: 100%;
+.input-wrapper input[type="email"],
+.input-wrapper input[type="date"],
+.input-wrapper input[type="number"],
+.input-wrapper input[type="url"],
+.input-wrapper textarea,
+.input-wrapper select{
+    width: 50%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -62,28 +72,20 @@
 
 .primary-btn {
     margin-top: 10px;
-    background-color: #337ab7;
+    background-color: #008037;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 20px; 
     font-weight: bold;
     text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 18px;
 }
 
 .primary-btn:hover {
-    background-color: #23527c; 
-}
-
-.custom-file-upload {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #ccc;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
     cursor: pointer;
-    width: 95%;
+    background-color: #01602a; 
 }
 
 input[type="file"] {
@@ -94,11 +96,50 @@ input[type="file"] {
     display: none;
 }
 
-.input-wrapper input[type="number"]{
+.accordion-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    color: #555;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    transition: background-color 0.4s ease;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.accordion-button:hover, .accordion-button.active {
+    background-color: #ccc;
+}
+
+.accordion-button-text {
+    flex-grow: 1;
+}
+
+.accordion-button i { 
+    font-size: 10px;
+    margin-left: auto;
+    transition: transform 0.2s ease; 
+}
+
+.accordion-button.active i {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 720px) {
+    .container {
+        margin-top: 20px;
+    }
 }

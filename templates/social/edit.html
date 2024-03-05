@@ -7,6 +7,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/social/edit.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 {% endblock %}
 
 {% block header %}
@@ -35,81 +36,128 @@
 {% block content %}
 <div class="container">
     <div class="formulario">
-        <div class="user-img">
-            <img src="{{ user.profile.image.url }}" alt="" class="avator">
-        </div>
 
         <!-- Formulario -->
         <form class="col pr-0" method="post" enctype="multipart/form-data">
-            <h3 class="edit-title">Edita tu usuario:</h3>
-            <p>{{ error }}</p>
             {% csrf_token %}
-            <div class="input-wrapper">
-                <label>Nombre</label>
-                {{ u_form.first_name }}
+            <div class="user-img" onclick="document.getElementById('profileImageUpload').click();">
+                <img src="{{ user.profile.image.url }}" alt="" class="avator">
             </div>
-            <div class="input-wrapper">
-                <label for="user-name-id">Username</label>
-                {{ u_form.username }}
+            {{ p_form.image }}
+            <h3 class="edit-title">Edita tu Perfil</h3>
+            <p>{{ error }}</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-button" type="button">
+                        <span class="accordion-button-text">Información Personal</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="input-wrapper">
+                            <label>Nombre</label>
+                            {{ u_form.first_name }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="user-name-id">Username</label>
+                            {{ u_form.username }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Email</label>
+                            {{ u_form.email }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Fecha de Nacimiento</label>
+                            {{ p_form.birth_date }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Bio</label>
+                            {{ p_form.bio }}
+                        </div>
+                        {% comment %} <div class="input-wrapper">
+                            <label for="id_image" class="custom-file-upload">Cambiar Imagen</label>
+                            {{ p_form.image }}
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-button" type="button">
+                        <span class="accordion-button-text">Actualiza tu Dirección</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <!-- Formulario de dirección -->
+                        <div class="input-wrapper">
+                            <label>Calle</label>
+                            {{ a_form.street }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Número</label>
+                            {{ a_form.number }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Piso</label>
+                            {{ a_form.floor }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Puerta</label>
+                            {{ a_form.door }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Ciudad</label>
+                            {{ a_form.city }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label>País</label>
+                            {{ a_form.country }}
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-button" type="button">
+                        <span class="accordion-button-text">Redes Sociales</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="input-wrapper">
+                            <label><i class="icon-facebook fab fa-facebook-f"></i> Facebook url</label>
+                            {{ p_form.facebook_url }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label><i class="icon-instagram fab fa-instagram"></i> Instagram url</label>
+                            {{ p_form.instagram_url }}
+                        </div>
+                        <div class="input-wrapper">
+                            <label><i class="icon-twitter fab fa-twitter"></i> Twitter url</label>
+                            {{ p_form.twitter_url }}
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-button" type="button">
+                        <span class="accordion-button-text">Datos Universitarios</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="input-wrapper">
+                            <label for="id_is_student">¿Eres estudiante?</label>
+                            {{ p_form.is_student }}
+                        </div>
+                        <div class="input-wrapper student-field">
+                            <label>Universidad</label>
+                            {{ p_form.university }}
+                        </div>
+                        <div class="input-wrapper student-field">
+                            <label>Año</label>
+                            {{ p_form.year }}
+                        </div>
+                        <div class="input-wrapper student-field">
+                            <label>Email de la Universidad</label>
+                            {{ p_form.university_email }}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="input-wrapper">
-                <label>Email</label>
-                {{ u_form.email }}
-            </div>
-
-            <!-- Formulario de dirección -->
-            <div class="input-wrapper">
-                <label>Calle</label>
-                {{ a_form.street }}
-            </div>
-            <div class="input-wrapper">
-                <label>Número</label>
-                {{ a_form.number }}
-            </div>
-            <div class="input-wrapper">
-                <label>Piso</label>
-                {{ a_form.floor }}
-            </div>
-            <div class="input-wrapper">
-                <label>Puerta</label>
-                {{ a_form.door }}
-            </div>
-            <div class="input-wrapper">
-                <label>Ciudad</label>
-                {{ a_form.city }}
-            </div>
-            <div class="input-wrapper">
-                <label>País</label>
-                {{ a_form.country }}
-            </div>
-
-            <div class="input-wrapper">
-                <label>Bio</label>
-                {{ p_form.bio }}
-            </div>
-            <div class="input-wrapper">
-                <label for="id_image" class="custom-file-upload">Cambiar Imagen</label>
-                {{ p_form.image }}
-            </div>
-
-
-            <div class="input-wrapper">
-                <label for="id_is_student">¿Eres estudiante?</label>
-                {{ p_form.is_student }}
-            </div>
-            <div class="input-wrapper student-field">
-                <label>Universidad</label>
-                {{ p_form.university }}
-            </div>
-            <div class="input-wrapper student-field">
-                <label>Año</label>
-                {{ p_form.year }}
-            </div>
-            <div class="input-wrapper student-field">
-                <label>Email de la Universidad</label>
-                {{ p_form.university_email }}
-            </div>
-
             <button type="submit" class="btn primary-btn">Actualizar</button>
         </form>
     </div>
@@ -119,19 +167,43 @@
         // Seleccionar el checkbox de is_student y los contenedores de los otros campos
         const isStudentCheckbox = document.getElementById('id_is_student');
         const studentFields = document.querySelectorAll('.student-field');
-
+    
         // Función para mostrar/ocultar campos basados en el checkbox
         function toggleStudentFields() {
             studentFields.forEach(field => {
                 field.style.display = isStudentCheckbox.checked ? 'block' : 'none';
             });
         }
-
+    
         // Event listener para el cambio de checkbox
-        isStudentCheckbox.addEventListener('change', toggleStudentFields);
+        if (isStudentCheckbox) { // Verifica si el checkbox existe para evitar errores
+            isStudentCheckbox.addEventListener('change', toggleStudentFields);
+    
+            // Llamar a la función al cargar la página para establecer el estado inicial
+            toggleStudentFields();
+        }
+    
+        // Código para manejar los acordeones
+        var acc = document.getElementsByClassName("accordion-button");
+        for (var i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
 
-        // Llamar a la función al cargar la página para establecer el estado inicial
-        toggleStudentFields();
+        document.getElementById('profileImageUpload').onchange = function(event) {
+            if (event.target.files.length > 0) {
+                const src = URL.createObjectURL(event.target.files[0]);
+                const avatar = document.querySelector('.avator');
+                avatar.src = src;
+            }
+        };
     });
 </script>
 {% endblock %}

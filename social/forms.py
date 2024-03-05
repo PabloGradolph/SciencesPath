@@ -66,7 +66,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['phone_number', 'image', 'bio', 'university_email', 'facebook_url', 'instagram_url', 'twitter_url',
                    'birth_date', 'is_student', 'university', 'year']
         widgets = {
-            'image': forms.FileInput(attrs={'class': 'hide-current-image'})
+            'image': forms.FileInput(attrs={'id': 'profileImageUpload', 'class': 'hide-current-image'})
         }
 
 
