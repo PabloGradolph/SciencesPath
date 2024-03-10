@@ -10,6 +10,11 @@
 <link rel="stylesheet" href="{% static 'css/social/profile.css' %}">
 <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
 {% endblock %}
 
 {% block header %}
@@ -56,12 +61,38 @@
                         {% endif %}
                     {% else %}
                         {% if user.profile.is_student %}
-                            <a href="{% url 'edit' %}"><button type="button" class="boton-portada3">
+                            <div id="myModal1" class="modal">
+                                <!-- Modal content -->
+                                <div class="modal-content">
+                                    <span class="close1">&times;</span>
+                                    <h2>Mi Expediente</h2>
+                                </div>
+                            </div>
+                            <button type="submit" id="myBtn1" class="boton-portada3">
                                 <i class="far fa-regular fa-file"></i> Mi Expediente
-                            </button></a>
-                            <a href="{% url 'edit' %}"><button type="button" class="boton-portada2">
+                            </button>
+                            <!-- The Modal -->
+                            <div id="myModal2" class="modal">
+                                <!-- Modal content -->
+                                <div class="modal-content">
+                                    <span class="close2">&times;</span>
+                                    <h2>Mi Horario</h2>
+                                    <section>
+                                        <h3>Selecciona tu Asignatura</h3>
+                                        <!-- Campo de búsqueda -->
+                                        <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
+                                        <button id="addSubjectToCalendarButton">Añadir al Calendario</button>
+                                        <!-- Contenedor para resultados de búsqueda -->
+                                        <div id="searchResults" class="search-results"></div>
+                                    </section>
+                                    <section>
+                                        <div id='calendar' class="fc-calendar-container"></div>
+                                    </section>
+                                </div>
+                            </div>
+                            <button type="submit" id="myBtn2" class="boton-portada2">
                                 <i class="far fa-regular fa-calendar-alt"></i> Mi Horario
-                            </button></a>
+                            </button>
                         {% endif %}
                         <a href="{% url 'edit' %}"><button type="button" class="boton-portada1">
                             <i class="far fa-image"></i> Editar Perfil
@@ -135,4 +166,161 @@
         </div>
     </section>
 <div class="container">
+<script>
+    var calendar;
+
+    function renderCalendar() {
+        var calendarEl = document.getElementById('calendar');
+        // var events = {{ events_json|safe }};
+        if (calendarEl && !calendar) {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'es',
+                timeZone: 'local',
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                },
+                buttonText: {
+                    today: 'Hoy',
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                },
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    omitZeroMinute: false,
+                    hour12: false,
+                },
+                dayHeaderFormat: { weekday: 'short' },
+                firstDay: 1,
+                editable: false,
+                allDaySlot: false,
+                slotMinTime: '07:00:00',
+                slotMaxTime: '22:00:00',
+                eventClick: function(info) {
+                    
+                    var startDate = new Date(info.event.start);
+                    var endDate = new Date(info.event.end);
+    
+                    var startStr = startDate.getDate() + '/' + (startDate.getMonth() + 1) + '/' + startDate.getFullYear() + ' - ' + startDate.getHours() + ':' + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+                    var endStr = endDate.getDate() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getFullYear() + ' - ' + endDate.getHours() + ':' + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+    
+    
+                    alert('Información: ' + info.event.title + '\n' +
+                    'Inicio: ' + startStr + '\n' +
+                    'Fin: ' + endStr + '\n' +
+                    'Ubicación: ' + (info.event.extendedProps.location || 'Ubicación no especificada'));
+                }
+            });
+        
+            calendar.render();
+        }
+    }
+    
+    // Get the modal
+    var modal1 = document.getElementById("myModal1");
+    var btn1 = document.getElementById("myBtn1");
+    var span1 = document.getElementsByClassName("close1")[0];
+    
+    // When the user clicks the button, open the modal 
+    btn1.onclick = function() {
+        modal1.style.display = "block";
+    }
+    
+    // When the user clicks on <span> (x), close the modal
+    span1.onclick = function() {
+        modal1.style.display = "none";
+    }
+
+    // Get the second modal
+    var modal2 = document.getElementById("myModal2");
+    var btn2 = document.getElementById("myBtn2");
+    var span2 = document.getElementsByClassName("close2")[0];
+    
+    // When the user clicks the button, open the modal 
+    btn2.onclick = function() {
+        modal2.style.display = "block";
+        renderCalendar();
+    }
+    
+    // When the user clicks on <span> (x), close the modal
+    span2.onclick = function() {
+        modal2.style.display = "none";
+    }
+    
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal1) {
+            modal1.style.display = "none";
+        } else if (event.target == modal2) {
+            modal2.style.display = "none";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchUrl = "{% url 'search_subjects' %}";
+        const addSubjectToCalendarButton = document.getElementById('addSubjectToCalendarButton');
+    
+        searchInput.addEventListener('input', function() {
+            const query = this.value;
+    
+            if(query.length > 0) {
+                fetch(searchUrl + `?search_query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = ''; // Limpiar resultados anteriores
+                    data.subjects.forEach(asignatura => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('search-result-item');
+                        resultDiv.textContent = `${asignatura.name} (${asignatura.subject_key})`;
+                        resultDiv.setAttribute('data-id', asignatura.id);
+                        searchResults.appendChild(resultDiv);
+    
+                        // Evento de clic para cada resultado
+                        resultDiv.addEventListener('click', function() {
+                            searchInput.value = this.textContent; // Actualiza la barra de búsqueda con el texto seleccionado
+                            searchInput.setAttribute('data-selected-id', this.getAttribute('data-id'));
+                            searchResults.innerHTML = ''; // Limpia los resultados de búsqueda
+                        });
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                searchResults.innerHTML = '';
+            }
+        });
+
+        addSubjectToCalendarButton.addEventListener('click', function() {
+            const selectedSubjectId = searchInput.getAttribute('data-selected-id');
+    
+            if (!selectedSubjectId) {
+                alert('Por favor, selecciona una asignatura.');
+                return;
+            }
+            
+            renderCalendar();
+
+            // Llamar a tu endpoint con la ID de la asignatura para obtener el horario
+            fetch(`/subjects/parse-ics/${selectedSubjectId}/`) // Asegúrate de que la URL es correcta
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.events && Array.isArray(data.events)) {
+                    data.events.forEach(eventData => {
+                        console.log(eventData)
+                        calendar.addEvent(eventData);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error al añadir asignatura al calendario:', error);
+                alert('Error al añadir asignatura al calendario.');
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -183,6 +183,81 @@ footer .container {
     margin-top: 0;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 10% auto;
+    border: 1px solid #888;
+    width: 60%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.close1,
+.close2 {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    margin-right: 13px;
+}
+
+.close1:hover,
+.close1:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.close2:hover,
+.close2:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.search-results {
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.search-result-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background-color: #f2f2f2;
+}
+
+#calendar {
+    width: 80%; /* O el ancho máximo que desees */
+    margin: 40px auto;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 10px; /* Espaciado entre los botones de navegación y el calendario */
+}
+
+.fc-calendar-container {
+    height: 500px;
+}
 /* adactacion a dispositivos */
 @media (max-width: 750px) {
 

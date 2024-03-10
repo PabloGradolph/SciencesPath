@@ -41,7 +41,6 @@ def main(request: HttpRequest) -> HttpResponse:
     return render(request, 'Sciences/main.html', context)
 
 
-# TODO -> Tienes que completar la vista de profile.
 @login_required(login_url='login')
 def profile(request, username):
     user = User.objects.get(username=username)

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from .models import Subject, SubjectRating, SubjectMaterial, TimeTable
 from django.db.models import Q
 from django.contrib import messages
@@ -23,7 +24,6 @@ def index(request):
     if search_query:
         subjects = Subject.objects.filter(
             Q(name__icontains=search_query) | 
-            Q(university__name__icontains=search_query) | 
             Q(subject_key__icontains=search_query)
         )
 
@@ -192,3 +192,54 @@ def horario(request, subject_id):
         'schedule': schedule,
         'events_json': events_json,
         })
+
+
+@login_required(login_url='login')
+def search_subjects(request):
+    search_query = request.GET.get('search_query', '')
+    subjects = Subject.objects.filter(name__icontains=search_query) | Subject.objects.filter(subject_key__icontains=search_query)
+    subjects_list = list(subjects.values('id', 'name', 'subject_key'))
+    response = JsonResponse({'subjects': subjects_list})
+    print(response)
+    return response
+
+
+@login_required(login_url='login')
+def parse_ics_to_json(request, subject_id):
+    subject = get_object_or_404(Subject, pk=subject_id)
+    # Este es un ejemplo, necesitas ajustar la lógica para encontrar tu archivo .ics
+    try:
+        schedule = TimeTable.objects.get(subject=subject)
+        c = None
+        # Intenta leer el archivo de horario adecuado según la universidad
+        try:
+            if subject.university.name == 'UAM':
+                c = Calendar.from_ical(schedule.schedule_file_uam.read())
+            elif subject.university.name == 'UC3M':
+                c = Calendar.from_ical(schedule.schedule_file_uc3m.read())
+            elif subject.university.name == 'UAB':
+                c = Calendar.from_ical(schedule.schedule_file_uab.read())
+        except FileNotFoundError:
+            return JsonResponse({'error': 'Horario no encontrado para la asignatura.'}, status=404)
+
+        events = []
+        if c:
+            local_timezone = pytz.timezone('Europe/Madrid')
+            for event in c.walk('vevent'):
+                dtstart_utc = event.decoded('dtstart')
+                dtend_utc = event.decoded('dtend')
+                dtstart_local = dtstart_utc.astimezone(local_timezone)
+                dtend_local = dtend_utc.astimezone(local_timezone)
+
+                formatted_event = {
+                    'title': html.unescape(event.get('summary')),
+                    'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'location': html.unescape(event.get('location', 'Ubicación no especificada')),
+                }
+                events.append(formatted_event)
+                
+        return JsonResponse({'events': events})
+
+    except TimeTable.DoesNotExist:
+        return JsonResponse({'error': 'Horario no encontrado para la asignatura.'}, status=404)

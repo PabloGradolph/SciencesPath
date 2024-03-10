@@ -82,6 +82,23 @@ def create_user_profile(sender: type, instance: User, created: bool, **kwargs) -
 post_save.connect(create_user_profile, sender=User)
     
 
+class Event(models.Model):
+    """Model that represents an event in a user's calendar."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    location = models.CharField(max_length=255, blank=True, null=True)
+    is_all_day = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['start_time']
+
+    def __str__(self):
+        return f'{self.title} ({self.start_time.strftime("%Y-%m-%d %H:%M")} - {self.end_time.strftime("%Y-%m-%d %H:%M")})'
+    
+
 class Post(models.Model):
     """Represents a post made by a user."""
 
