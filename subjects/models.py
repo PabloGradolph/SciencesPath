@@ -80,3 +80,15 @@ class SubjectMaterial(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class SubjectSchedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subject_schedules')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    color = models.CharField(max_length=7, default='#3788D8')  # Hex color for display in the calendar
+
+    class Meta:
+        unique_together = ('user', 'subject')
+
+    def __str__(self):
+        return f'{self.user.username} - {self.subject.name}'

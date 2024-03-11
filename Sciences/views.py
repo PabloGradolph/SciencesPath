@@ -1,5 +1,6 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.core.serializers import serialize
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -9,6 +10,7 @@ from datetime import datetime
 from .forms import CustomUserCreationForm
 from faq.models import FAQ
 import re
+import json
 
 # Global variable
 current_year = datetime.now().year
@@ -45,7 +47,25 @@ def main(request: HttpRequest) -> HttpResponse:
 def profile(request, username):
     user = User.objects.get(username=username)
     posts = user.posts.all()
-    context = {'current_year': current_year, 'user': user, 'posts':posts}
+    events = user.events.all()
+
+    events_json = json.loads(serialize('json', events))
+
+    for event in events_json:
+        event['fields']['start'] = event['fields']['start_time']
+        event['fields']['end'] = event['fields']['end_time']
+        event['fields']['allDay'] = event['fields']['is_all_day']
+        event['fields']['title'] = event['fields']['title']
+        event['fields']['description'] = event['fields']['description']
+        event['fields']['location'] = event['fields']['location']
+
+        del event['fields']['user']
+        del event['fields']['start_time']
+        del event['fields']['end_time']
+        del event['fields']['is_all_day']
+
+    events_json = json.dumps([event['fields'] for event in events_json])
+    context = {'current_year': current_year, 'user': user, 'posts':posts, 'events_json': events_json}
     return render(request, 'Sciences/profile.html', context)
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, Degree, University, SubjectRating, TimeTable
+from .models import Subject, Degree, University, SubjectRating, TimeTable, SubjectMaterial, SubjectSchedule
 
 
 class SubjectAdmin(admin.ModelAdmin):
@@ -12,3 +12,5 @@ admin.site.register(Degree)
 admin.site.register(University)
 admin.site.register(SubjectRating)
 admin.site.register(TimeTable)
+admin.site.register(SubjectMaterial)
+admin.site.register(SubjectSchedule)

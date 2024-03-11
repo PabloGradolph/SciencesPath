@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import JsonResponse
-from .models import Subject, SubjectRating, SubjectMaterial, TimeTable
+from django.http import JsonResponse, HttpResponseBadRequest
+from .models import Subject, SubjectRating, SubjectMaterial, TimeTable, SubjectSchedule
+from social.models import Event
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
@@ -12,6 +14,7 @@ import pytz
 from datetime import datetime
 import json
 import html
+import random
 
 current_year = datetime.now().year
 
@@ -200,18 +203,24 @@ def search_subjects(request):
     subjects = Subject.objects.filter(name__icontains=search_query) | Subject.objects.filter(subject_key__icontains=search_query)
     subjects_list = list(subjects.values('id', 'name', 'subject_key'))
     response = JsonResponse({'subjects': subjects_list})
-    print(response)
     return response
 
 
 @login_required(login_url='login')
 def parse_ics_to_json(request, subject_id):
+    # Asegurarse de que la petición es AJAX
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return HttpResponseBadRequest('Acceso no permitido')
+    
     subject = get_object_or_404(Subject, pk=subject_id)
-    # Este es un ejemplo, necesitas ajustar la lógica para encontrar tu archivo .ics
+ 
     try:
+
+        if SubjectSchedule.objects.filter(user=request.user, subject=subject).exists():
+            return JsonResponse({'error': 'El usuario ya tiene esta asignatura en su horario.'}, status=400)
+
         schedule = TimeTable.objects.get(subject=subject)
         c = None
-        # Intenta leer el archivo de horario adecuado según la universidad
         try:
             if subject.university.name == 'UAM':
                 c = Calendar.from_ical(schedule.schedule_file_uam.read())
@@ -225,6 +234,11 @@ def parse_ics_to_json(request, subject_id):
         events = []
         if c:
             local_timezone = pytz.timezone('Europe/Madrid')
+            subject_schedule = SubjectSchedule.objects.create(
+                user=request.user,
+                subject=subject,
+                color='#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])  # Genera un color hex aleatorio
+            )
             for event in c.walk('vevent'):
                 dtstart_utc = event.decoded('dtstart')
                 dtend_utc = event.decoded('dtend')
@@ -238,6 +252,16 @@ def parse_ics_to_json(request, subject_id):
                     'location': html.unescape(event.get('location', 'Ubicación no especificada')),
                 }
                 events.append(formatted_event)
+
+                Event.objects.create(
+                        user=request.user,
+                        title=html.unescape(event.get('summary')),
+                        start_time=dtstart_local,
+                        end_time=dtend_local,
+                        location=html.unescape(event.get('location', 'Ubicación no especificada')),
+                        description=html.unescape(event.get('description', '')),
+                        is_all_day=False
+                    )
                 
         return JsonResponse({'events': events})
 

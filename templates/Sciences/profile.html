@@ -171,7 +171,7 @@
 
     function renderCalendar() {
         var calendarEl = document.getElementById('calendar');
-        // var events = {{ events_json|safe }};
+        var events = {{ events_json|safe }};
         if (calendarEl && !calendar) {
             calendar = new FullCalendar.Calendar(calendarEl, {
                 locale: 'es',
@@ -195,6 +195,7 @@
                     hour12: false,
                 },
                 dayHeaderFormat: { weekday: 'short' },
+                events: events,
                 firstDay: 1,
                 editable: false,
                 allDaySlot: false,
@@ -302,23 +303,37 @@
                 alert('Por favor, selecciona una asignatura.');
                 return;
             }
-            
-            renderCalendar();
 
             // Llamar a tu endpoint con la ID de la asignatura para obtener el horario
-            fetch(`/subjects/parse-ics/${selectedSubjectId}/`) // Asegúrate de que la URL es correcta
-            .then(response => response.json())
+            fetch(`/subjects/parse-ics/${selectedSubjectId}/`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw response;
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data && data.events && Array.isArray(data.events)) {
                     data.events.forEach(eventData => {
-                        console.log(eventData)
                         calendar.addEvent(eventData);
                     });
+                    alert('Asignatura añadida con éxito.');
                 }
             })
             .catch(error => {
-                console.error('Error al añadir asignatura al calendario:', error);
-                alert('Error al añadir asignatura al calendario.');
+                if (error.status === 404) {
+                    alert('Horario no encontrado para la asignatura seleccionada.');
+                } else if (error.status === 400) {
+                    alert('El usuario ya tiene esta asignatura en su horario.');
+                }
+                else {
+                    console.error('Error al añadir asignatura al calendario:', error);
+                    alert('Error al añadir asignatura al calendario.');
+                }
             });
         });
     });
