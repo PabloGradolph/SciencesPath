@@ -258,6 +258,11 @@ footer .container {
 .fc-calendar-container {
     height: 500px;
 }
+
+.fc-event {
+    cursor: pointer;
+}
+
 /* adactacion a dispositivos */
 @media (max-width: 750px) {
 

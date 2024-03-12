@@ -12,6 +12,7 @@
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block header %}
@@ -85,10 +86,17 @@
                     var endStr = endDate.getDate() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getFullYear() + ' - ' + endDate.getHours() + ':' + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
 
 
-                    alert('Información: ' + info.event.title + '\n' +
-                    'Inicio: ' + startStr + '\n' +
-                    'Fin: ' + endStr + '\n' +
-                    'Ubicación: ' + (info.event.extendedProps.location || 'Ubicación no especificada'));
+                    Swal.fire({
+                        title: 'Información del Evento',
+                        html: `
+                          <strong>Título:</strong> ${info.event.title} <br>
+                          <strong>Inicio:</strong> ${startStr} <br>
+                          <strong>Fin:</strong> ${endStr} <br>
+                          <strong>Ubicación:</strong> ${info.event.extendedProps.location || 'Ubicación no especificada'}
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Cerrar'
+                    });                      
                 }
             });
         

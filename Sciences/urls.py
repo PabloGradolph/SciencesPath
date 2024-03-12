@@ -13,6 +13,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/<str:username>/', views.profile, name='profile'),
     path('documents/', views.documents, name='documents'),
+    path('remove-subject-from-schedule/<int:subject_id>/', views.delete_subject_from_schedule, name='remove-subject-from-schedule'),
     path('subjects/', include('subjects.urls')),
     path('community/', include('social.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -15,6 +15,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block header %}
@@ -80,10 +81,21 @@
                                     <section>
                                         <h3>Selecciona tu Asignatura</h3>
                                         <!-- Campo de búsqueda -->
-                                        <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
+                                        <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." autocomplete="off">
                                         <button id="addSubjectToCalendarButton">Añadir al Calendario</button>
                                         <!-- Contenedor para resultados de búsqueda -->
                                         <div id="searchResults" class="search-results"></div>
+                                        <div class="subjects-container">
+                                            <h3>Asignaturas seleccionadas</h3>
+                                            <ul id="selected-subjects-list">
+                                                {% for subject in user_subjects %}
+                                                    <li id="subject-{{ subject.id }}">
+                                                        {{ subject.name }} ({{subject.subject_key}})
+                                                        <button class="remove-subject-btn" data-subject-id="{{ subject.id }}">&times;</button>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
                                     </section>
                                     <section>
                                         <div id='calendar' class="fc-calendar-container"></div>
@@ -169,11 +181,130 @@
 <script>
     var calendar;
 
+    function getCSRFToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+    
+    function addEventToDB(eventData) {
+        fetch('/subjects/event/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken() // Asegúrate de obtener el token CSRF correctamente
+            },
+            body: JSON.stringify(eventData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                eventData.id = data.event_id; // Actualiza el ID del evento con el ID de la base de datos
+                calendar.addEvent(eventData);
+            } else {
+                console.error('Error al añadir evento');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function updateEventInDB(event) {
+        const eventData = {
+            id: event.id,
+            title: event.title,
+            start: event.start.toISOString(),
+            end: event.end.toISOString(),
+            allDay: event.allDay
+        };
+
+        fetch('/subjects/event/update/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken() // Asegúrate de obtener el token CSRF correctamente
+            },
+            body: JSON.stringify(eventData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Evento actualizado con éxito');
+            } else {
+                console.error('Error al actualizar evento');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function handleEventDrop(info) {
+        // Actualiza el evento en la base de datos
+        updateEventInDB(info.event);
+    }
+
+    function handleEventResize(info) {
+        // Actualiza el evento en la base de datos
+        updateEventInDB(info.event);
+    }
+
+    function handleDateSelect(selectInfo) {
+        let title = prompt('Ingrese el título del evento:');
+        let calendarApi = selectInfo.view.calendar;
+    
+        calendarApi.unselect(); // Limpia la selección del calendario
+    
+        if (title) {
+            addEventToDB({
+                title: title,
+                start: selectInfo.startStr,
+                end: selectInfo.endStr,
+                allDay: selectInfo.allDay
+            });
+        }
+    }
+
+    function deleteEvent(eventId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esta acción',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí añades tu lógica para eliminar el evento de la base de datos
+                // Por ejemplo, haciendo una solicitud DELETE a tu backend
+                fetch(`/subjects/event/delete/${eventId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(), // Asegúrate de enviar el token CSRF
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        // Si el evento se eliminó correctamente del backend, también lo eliminamos del calendario
+                        calendar.getEventById(eventId).remove();
+                        Swal.fire('Eliminado', 'El evento ha sido eliminado.', 'success');
+                    } else {
+                        Swal.fire('Error', 'No se pudo eliminar el evento.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
     function renderCalendar() {
         var calendarEl = document.getElementById('calendar');
         var events = {{ events_json|safe }};
         if (calendarEl && !calendar) {
             calendar = new FullCalendar.Calendar(calendarEl, {
+                editable: true, // Permite arrastrar y soltar
+                selectable: true, // Permite seleccionar rangos para crear eventos
+                selectMirror: true,
+                dayMaxEvents: true,
+                
+                // Manejadores de eventos
+                eventDrop: handleEventDrop, // Se llama cuando un evento se mueve
+                eventResize: handleEventResize, // Se llama cuando un evento se redimensiona
+                select: handleDateSelect,
                 locale: 'es',
                 timeZone: 'local',
                 initialView: 'timeGridWeek',
@@ -197,28 +328,69 @@
                 dayHeaderFormat: { weekday: 'short' },
                 events: events,
                 firstDay: 1,
-                editable: false,
                 allDaySlot: false,
                 slotMinTime: '07:00:00',
                 slotMaxTime: '22:00:00',
+                eventTextColor: '#fff',
                 eventClick: function(info) {
                     
-                    var startDate = new Date(info.event.start);
-                    var endDate = new Date(info.event.end);
-    
-                    var startStr = startDate.getDate() + '/' + (startDate.getMonth() + 1) + '/' + startDate.getFullYear() + ' - ' + startDate.getHours() + ':' + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
-                    var endStr = endDate.getDate() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getFullYear() + ' - ' + endDate.getHours() + ':' + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
-    
-    
-                    alert('Información: ' + info.event.title + '\n' +
-                    'Inicio: ' + startStr + '\n' +
-                    'Fin: ' + endStr + '\n' +
-                    'Ubicación: ' + (info.event.extendedProps.location || 'Ubicación no especificada'));
+                    const eventId = info.event.id;
+                    const startDate = new Date(info.event.start);
+                    const endDate = new Date(info.event.end);
+                    const startStr = startDate.getDate() + '/' + (startDate.getMonth() + 1) + '/' + startDate.getFullYear() + ' - ' + startDate.getHours() + ':' + (startDate.getMinutes() < 10 ? '0' : '') + startDate.getMinutes();
+                    const endStr = endDate.getDate() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getFullYear() + ' - ' + endDate.getHours() + ':' + (endDate.getMinutes() < 10 ? '0' : '') + endDate.getMinutes();
+
+                    const eventDetails = `
+                        <div>Información: ${info.event.title}</div>
+                        <div>Inicio: ${startStr}</div>
+                        <div>Fin: ${endStr}</div>
+                        <div>Ubicación: ${info.event.extendedProps.location || 'Ubicación no especificada'}</div>`;
+
+                    Swal.fire({
+                        title: 'Detalles del Evento',
+                        html: eventDetails,
+                        showCancelButton: true,
+                        confirmButtonText: 'Eliminar',
+                        cancelButtonText: 'Cerrar',
+                        preConfirm: () => {
+                            deleteEvent(eventId);
+                        }
+                    });
                 }
             });
         
             calendar.render();
         }
+    }
+
+    // Función para manejar la eliminación de una asignatura
+    function removeSubjectAndEvents() {
+        const subjectId = this.getAttribute('data-subject-id');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/remove-subject-from-schedule/${subjectId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // Elimina el elemento de la lista si la petición fue exitosa
+                document.getElementById(`subject-${subjectId}`).remove();
+
+                // Aquí eliminamos los eventos del calendario
+                const eventsToRemove = calendar.getEvents().filter(event => event.extendedProps.subject == subjectId);
+                eventsToRemove.forEach(event => event.remove());
+            } else {
+                Swal.fire('No se pudo eliminar la asignatura.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error al eliminar la asignatura.');
+        });
     }
     
     // Get the modal
@@ -284,9 +456,16 @@
     
                         // Evento de clic para cada resultado
                         resultDiv.addEventListener('click', function() {
-                            searchInput.value = this.textContent; // Actualiza la barra de búsqueda con el texto seleccionado
-                            searchInput.setAttribute('data-selected-id', this.getAttribute('data-id'));
-                            searchResults.innerHTML = ''; // Limpia los resultados de búsqueda
+                            const subjectId = this.getAttribute('data-id');
+                            const subjectDetails = this.textContent.split('(');
+                            const subjectName = subjectDetails[0].trim();
+                            const subjectCode = subjectDetails[1].slice(0, -1);
+                        
+                            searchInput.value = `${subjectName} (${subjectCode})`;
+                            searchInput.setAttribute('data-selected-id', subjectId);
+                            searchInput.setAttribute('data-name', subjectName);
+                            searchInput.setAttribute('data-code', subjectCode);
+                            searchResults.innerHTML = '';
                         });
                     });
                 })
@@ -298,9 +477,11 @@
 
         addSubjectToCalendarButton.addEventListener('click', function() {
             const selectedSubjectId = searchInput.getAttribute('data-selected-id');
+            const subjectName = searchInput.getAttribute('data-name');
+            const subjectCode = searchInput.getAttribute('data-code');
     
             if (!selectedSubjectId) {
-                alert('Por favor, selecciona una asignatura.');
+                Swal.fire('Por favor, selecciona una asignatura.');
                 return;
             }
 
@@ -321,21 +502,60 @@
                     data.events.forEach(eventData => {
                         calendar.addEvent(eventData);
                     });
-                    alert('Asignatura añadida con éxito.');
+
+                    // Añadir la asignatura al DOM
+                    const subjectsList = document.getElementById('selected-subjects-list');
+                    const newSubjectLi = document.createElement('li');
+                    newSubjectLi.id = `subject-${selectedSubjectId}`;
+                    newSubjectLi.innerHTML = `
+                        ${subjectName} (${subjectCode})
+                        <button class="remove-subject-btn" data-subject-id="${selectedSubjectId}">&times;</button>`;
+
+                    // Añadir el nuevo 'li' al 'ul'
+                    subjectsList.appendChild(newSubjectLi);
+                    
+                    // Agrega el evento click al botón de eliminar recién creado
+                    newSubjectLi.querySelector('.remove-subject-btn').addEventListener('click', removeSubjectAndEvents);
+                    
+                    Swal.fire('Asignatura añadida con éxito.');
+                    // Limpia el input y el atributo data-selected-id
+                    searchInput.value = '';
+                    searchInput.removeAttribute('data-selected-id');
+                    // Limpia los resultados de búsqueda si es necesario
+                    searchResults.innerHTML = '';
                 }
             })
             .catch(error => {
                 if (error.status === 404) {
-                    alert('Horario no encontrado para la asignatura seleccionada.');
+                    Swal.fire('Horario no encontrado para la asignatura seleccionada.');
+                    // Limpia el input y el atributo data-selected-id
+                    searchInput.value = '';
+                    searchInput.removeAttribute('data-selected-id');
+                    // Limpia los resultados de búsqueda si es necesario
+                    searchResults.innerHTML = '';
                 } else if (error.status === 400) {
-                    alert('El usuario ya tiene esta asignatura en su horario.');
+                    Swal.fire('El usuario ya tiene esta asignatura en su horario.');
+                    // Limpia el input y el atributo data-selected-id
+                    searchInput.value = '';
+                    searchInput.removeAttribute('data-selected-id');
+                    // Limpia los resultados de búsqueda si es necesario
+                    searchResults.innerHTML = '';
                 }
                 else {
                     console.error('Error al añadir asignatura al calendario:', error);
-                    alert('Error al añadir asignatura al calendario.');
+                    Swal.fire('Error al añadir asignatura al calendario.');
+                    // Limpia el input y el atributo data-selected-id
+                    searchInput.value = '';
+                    searchInput.removeAttribute('data-selected-id');
+                    // Limpia los resultados de búsqueda si es necesario
+                    searchResults.innerHTML = '';
                 }
             });
         });
+    });
+
+    document.querySelectorAll('.remove-subject-btn').forEach(button => {
+        button.addEventListener('click', removeSubjectAndEvents);
     });
 </script>
 {% endblock %}

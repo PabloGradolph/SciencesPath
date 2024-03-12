@@ -1,14 +1,18 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.serializers import serialize
+from django.http import JsonResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.db import IntegrityError
 from datetime import datetime
 from .forms import CustomUserCreationForm
 from faq.models import FAQ
+from subjects.models import Subject, SubjectSchedule
+from social.models import Event
 import re
 import json
 
@@ -48,16 +52,27 @@ def profile(request, username):
     user = User.objects.get(username=username)
     posts = user.posts.all()
     events = user.events.all()
+    user_subjects = user.subject_schedules.all()
+    subjects_colors = {subject.subject_id: subject.color for subject in user_subjects}
 
     events_json = json.loads(serialize('json', events))
 
     for event in events_json:
+        if "Día festi" in event['fields']['title'] or "Dia festi" in event['fields']['title']:
+            continue
+
+        subject_id = event['fields'].get('subject')
+        event_color = subjects_colors.get(subject_id, '#3788D8')
+
+        event['fields']['id'] = event['pk']
         event['fields']['start'] = event['fields']['start_time']
         event['fields']['end'] = event['fields']['end_time']
         event['fields']['allDay'] = event['fields']['is_all_day']
         event['fields']['title'] = event['fields']['title']
         event['fields']['description'] = event['fields']['description']
         event['fields']['location'] = event['fields']['location']
+        event['fields']['color'] = event_color
+        event['fields']['textColor'] = '#ffffff'
 
         del event['fields']['user']
         del event['fields']['start_time']
@@ -65,9 +80,34 @@ def profile(request, username):
         del event['fields']['is_all_day']
 
     events_json = json.dumps([event['fields'] for event in events_json])
-    context = {'current_year': current_year, 'user': user, 'posts':posts, 'events_json': events_json}
+
+    # Obtener los ids de las asignaturas del usuario
+    subject_ids = user.subject_schedules.values_list('subject_id', flat=True)
+
+    # Usar esos ids para obtener los objetos Subject correspondientes
+    subjects = Subject.objects.filter(id__in=subject_ids)
+
+    context = {'current_year': current_year, 'user': user, 'posts':posts, 'events_json': events_json, 'user_subjects': subjects}
     return render(request, 'Sciences/profile.html', context)
 
+
+@login_required(login_url='login')
+@require_POST
+def delete_subject_from_schedule(request, subject_id):
+    # Asegúrate de que el usuario esté autenticado y la petición sea POST
+    user = request.user
+    subject = get_object_or_404(Subject, id=subject_id)
+    
+    # Intenta eliminar la asignatura del horario del usuario
+    try:
+        subject_schedule = SubjectSchedule.objects.get(user=user, subject=subject)
+        subject_schedule.delete()
+        events = Event.objects.filter(user=user, subject=subject)
+        events.delete()
+        return JsonResponse({'status': 'success', 'message': 'Asignatura eliminada del horario.'})
+    except SubjectSchedule.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Asignatura no encontrada en el horario.'}, status=404)
+    
 
 @login_required(login_url='login')
 def documents(request):

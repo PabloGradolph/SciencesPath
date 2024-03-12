@@ -9,4 +9,7 @@ urlpatterns = [
     path('horario/<int:subject_id>/', views.horario, name='horario'),
     path('search/', views.search_subjects, name='search_subjects'),
     path('parse-ics/<int:subject_id>/', views.parse_ics_to_json, name='parse-ics-to-json'),
+    path('event/add/', views.add_event, name='add-event'),
+    path('event/update/', views.update_event, name='update-event'),
+    path('event/delete/<int:event_id>/', views.delete_event, name='delete-event'),
 ]

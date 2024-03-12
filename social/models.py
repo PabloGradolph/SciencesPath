@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
+from subjects.models import Subject
 
 
 class Address(models.Model):
@@ -85,6 +86,7 @@ post_save.connect(create_user_profile, sender=User)
 class Event(models.Model):
     """Model that represents an event in a user's calendar."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="subjects", blank=True, null=True)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     start_time = models.DateTimeField()

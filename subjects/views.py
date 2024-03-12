@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Subject, SubjectRating, SubjectMaterial, TimeTable, SubjectSchedule
@@ -213,6 +214,7 @@ def parse_ics_to_json(request, subject_id):
         return HttpResponseBadRequest('Acceso no permitido')
     
     subject = get_object_or_404(Subject, pk=subject_id)
+    color = '#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])  # Genera un color hex aleatorio
  
     try:
 
@@ -237,33 +239,83 @@ def parse_ics_to_json(request, subject_id):
             subject_schedule = SubjectSchedule.objects.create(
                 user=request.user,
                 subject=subject,
-                color='#' + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])  # Genera un color hex aleatorio
+                color=color
             )
             for event in c.walk('vevent'):
+                title = html.unescape(event.get('summary'))
+                if "Día festi" in title or "Dia festi" in title:
+                    continue
+
                 dtstart_utc = event.decoded('dtstart')
                 dtend_utc = event.decoded('dtend')
                 dtstart_local = dtstart_utc.astimezone(local_timezone)
                 dtend_local = dtend_utc.astimezone(local_timezone)
 
+                created_event = Event.objects.create(
+                    user=request.user,
+                    title=html.unescape(event.get('summary')),
+                    start_time=dtstart_local,
+                    end_time=dtend_local,
+                    location=html.unescape(event.get('location', 'Ubicación no especificada')),
+                    description=html.unescape(event.get('description', '')),
+                    is_all_day=False,
+                    subject_id=subject_id
+                )
+                
                 formatted_event = {
-                    'title': html.unescape(event.get('summary')),
+                    'id': created_event.id,
+                    'title': title,
                     'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
                     'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
                     'location': html.unescape(event.get('location', 'Ubicación no especificada')),
+                    'color': color,
+                    'subject': subject_id
                 }
                 events.append(formatted_event)
-
-                Event.objects.create(
-                        user=request.user,
-                        title=html.unescape(event.get('summary')),
-                        start_time=dtstart_local,
-                        end_time=dtend_local,
-                        location=html.unescape(event.get('location', 'Ubicación no especificada')),
-                        description=html.unescape(event.get('description', '')),
-                        is_all_day=False
-                    )
                 
         return JsonResponse({'events': events})
 
     except TimeTable.DoesNotExist:
         return JsonResponse({'error': 'Horario no encontrado para la asignatura.'}, status=404)
+    
+
+@login_required(login_url='login')
+def add_event(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        event = Event.objects.create(
+            user=request.user,
+            title=data['title'],
+            start_time=data['start'],
+            end_time=data['end'],
+            is_all_day=data['allDay']
+        )
+        return JsonResponse({'status': 'success', 'event_id': event.id})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+@login_required(login_url='login')
+def update_event(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        try:
+            event = Event.objects.get(id=data['id'], user=request.user)
+            event.title = data['title']
+            event.start_time = data['start']
+            event.end_time = data['end']
+            event.is_all_day = data['allDay']
+            event.save()
+            return JsonResponse({'status': 'success'})
+        except Event.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Event not found'}, status=404)
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+@login_required(login_url='login')
+def delete_event(request, event_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Autenticación requerida'}, status=401)
+
+    event = get_object_or_404(Event, id=event_id, user=request.user)
+    event.delete()
+    return JsonResponse({'status': 'success'})
