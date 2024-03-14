@@ -45,6 +45,9 @@ class Subject(models.Model):
         
         rounded_avg = round(avg * 2) / 2
         return rounded_avg
+    
+    class Meta:
+        ordering = ['degree']
 
 
 class SubjectRating(models.Model):

@@ -16,4 +16,5 @@ urlpatterns = [
     path('remove-subject-from-schedule/<int:subject_id>/', views.delete_subject_from_schedule, name='remove-subject-from-schedule'),
     path('subjects/', include('subjects.urls')),
     path('community/', include('social.urls')),
+    path('activate/<uidb64>/<token>', views.activate, name='activate'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

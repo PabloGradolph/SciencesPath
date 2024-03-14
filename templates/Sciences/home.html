@@ -29,6 +29,16 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{{ message.tags }}-alert alert-dismissible">
+                    <span class="close-alert">&times;</span>
+                    {{ message|safe|escape }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <section id="welcome">
         <div class="container">
             <h1>Bienvenido a Ciencias</h1>
@@ -95,4 +105,13 @@
             </div>
         </div>
     </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.close-alert').forEach(function(closeButton) {
+                closeButton.onclick = function() {
+                    this.parentElement.style.display = 'none';
+                };
+            });
+        });
+    </script>
 {% endblock %}

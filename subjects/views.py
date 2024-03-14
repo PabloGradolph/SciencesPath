@@ -23,7 +23,7 @@ current_year = datetime.now().year
 def index(request):
     search_query = request.GET.get('search', '').strip()
     filter_form = SubjectFilterForm(request.GET)
-    subjects = Subject.objects.all()
+    subjects = Subject.objects.all().order_by('degree')
 
     if search_query:
         subjects = Subject.objects.filter(

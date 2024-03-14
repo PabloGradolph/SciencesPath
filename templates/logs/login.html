@@ -31,18 +31,37 @@
 {% endblock %}
 
 {% block content %}
-  <div class="form-container">
-    <h2>Inicio de Sesión</h2>
-    <form method="post">
-        <p>{{ error }}</p>
-        {% csrf_token %}
-        <div>
-            {{ form.as_p }}
+    <div class="row">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{{ message.tags }}-alert alert-dismissible">
+                    <span class="close-alert">&times;</span>
+                    {{ message|safe|escape }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="form-container">
+        <h2>Inicio de Sesión</h2>
+        <form method="post">
+            <p>{{ error }}</p>
+            {% csrf_token %}
+            <div>
+                {{ form.as_p }}
+            </div>
+            <div class="center">
+            <button type="submit" class="btn-primary">Iniciar Sesión</button>
         </div>
-        <div class="center">
-          <button type="submit" class="btn-primary">Iniciar Sesión</button>
-      </div>
-    </form>
-    <p class="register-text">¿No tienes una cuenta? <a href="{% url 'register' %}">Registrarse</a></p>
-  </div>
+        </form>
+        <p class="register-text">¿No tienes una cuenta? <a href="{% url 'register' %}">Registrarse</a></p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.close-alert').forEach(function(closeButton) {
+                closeButton.onclick = function() {
+                    this.parentElement.style.display = 'none';
+                };
+            });
+        });
+    </script>
 {% endblock %}

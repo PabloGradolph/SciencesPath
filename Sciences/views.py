@@ -4,7 +4,7 @@ from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db import IntegrityError
@@ -13,6 +13,13 @@ from .forms import CustomUserCreationForm
 from faq.models import FAQ
 from subjects.models import Subject, SubjectSchedule
 from social.models import Event
+from django.contrib import messages
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import EmailMessage
+from .tokens import account_activation_token
 import re
 import json
 
@@ -156,10 +163,12 @@ def register(request: HttpRequest) -> HttpResponse:
                 # We try to create a user but an IntegrityError could be thrown -> User already exists.
                 try:
                     user = User.objects.create_user(username=username, email=email, password=password1)
+                    user.is_active=False
                     user.save()
-                    login(request, user)
-                    return redirect('main')
-                except IntegrityError:
+                    activateEmail(request, user, email)
+                    return redirect('home')
+                except IntegrityError as e:
+                    print(e)
                     return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El usuario ya existe'})
             
             else:
@@ -212,3 +221,41 @@ def logout_view(request: HttpRequest) -> HttpResponseRedirect:
     """
     logout(request)
     return redirect('home')
+
+
+
+def activate(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        messages.success(request, "Gracias por confirmar tu email. Ya puedes iniciar sesión.")
+        return redirect('login')
+    else:
+        messages.error(request, "El link de activación es inválido!")
+
+    return redirect('main')
+
+
+def activateEmail(request, user, to_email):
+    mail_subject = "Activa tu cuenta."
+    message = render_to_string("logs/template_activate_account.html", {
+        'user': user.username,
+        'domain': get_current_site(request).domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+        "protocol": 'https' if request.is_secure() else 'http'
+    })
+    email = EmailMessage(mail_subject, message, to=[to_email])
+    if email.send():
+        messages.success(request, f'Estimado <b>{user}</b>, por favor comprueba tu email: <b>{to_email}</b> y haz click \
+                         en el link recibido para completar el registro. <b>Nota:</b> Comprueba la carpeta de spam.')
+    else:
+        messages.error(request, f'Problema enviando el email a {to_email}, comprueba que el correo es correcto.')
