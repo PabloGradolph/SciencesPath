@@ -95,3 +95,45 @@ class SubjectSchedule(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.subject.name}'
+    
+
+class Dossier(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='dossier')
+
+    def calculate_average_grade(self):
+        subjects_in_dossier = self.subjectindossier_set.exclude(grade__isnull=True)
+        total_grades = sum(item.grade for item in subjects_in_dossier)
+        num_subjects = subjects_in_dossier.count()
+        return round(total_grades / num_subjects, 2) if num_subjects > 0 else 0
+
+    def calculate_extra_curricular_credits(self):
+        return int(sum(extra_credits.credits for extra_credits in self.extra_curricular_credits.all()))
+    
+    def credits_achieved(self):
+        return int(sum(item.subject.credits for item in self.subjectindossier_set.filter(grade__gte=5)) + self.calculate_extra_curricular_credits())
+    
+    def credits_remaining(self):
+        total_credits_achieved = sum(item.subject.credits for item in self.subjectindossier_set.filter(grade__gte=5))
+        return int(240 - total_credits_achieved - self.calculate_extra_curricular_credits())
+    
+    def total_credits(self):
+        total_credits = sum(item.subject.credits for item in self.subjectindossier_set.all())
+        return int(total_credits + self.calculate_extra_curricular_credits())
+    
+
+class SubjectInDossier(models.Model):
+    dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    grade = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.subject} - Grade: {self.grade}'
+
+
+class ExtraCurricularCredits(models.Model):
+    dossier = models.ForeignKey(Dossier, on_delete=models.CASCADE, related_name='extra_curricular_credits')
+    name = models.CharField(max_length=255)
+    credits = models.DecimalField(max_digits=3, decimal_places=1)
+
+    def __str__(self):
+        return f"{self.name} - {self.credits} créditos"

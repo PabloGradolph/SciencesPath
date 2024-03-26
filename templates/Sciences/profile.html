@@ -66,7 +66,70 @@
                                 <!-- Modal content -->
                                 <div class="modal-content">
                                     <span class="close1">&times;</span>
-                                    <h2>Mi Expediente</h2>
+                                    <section>
+                                        <h2>Selecciona tu Asignatura</h2>
+                                        <!-- Campo de búsqueda -->
+                                        <div class="search-section">
+                                            <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." autocomplete="off">
+                                            <button id="addSubjectToDossierButton">Añadir al Expediente</button>
+                                        </div>
+                                        <div id="searchResults" class="search-results"></div>
+                                    </section>
+                                    
+                                    <div class="add-extra-credits-section">
+                                        <h3>Añadir Créditos Extracurriculares</h3>
+                                        <input type="text" id="extraNameInput" placeholder="Nombre de actividad" autocomplete="off">
+                                        <input type="number" id="extraCreditsInput" placeholder="Créditos" min="0.1" max="6" step="0.1">
+                                        <button id="addExtraCreditsButton">Añadir</button>
+                                    </div>
+
+                                    <div class="expediente-info">
+                                        <h3>Información del Expediente</h3>
+                                        <p class="average_grade">Nota media: {{ average_grade }}</p>
+                                        <p class="total_credits">Total de créditos matriculados: {{ total_credits }}</p>
+                                        <p class="credits_achieved">Créditos superados: {{ credits_achieved }}</p>
+                                        <p class="credits_remaining">Créditos por superar: {{ credits_remaining }}</p>
+                                    </div>
+
+                                    <table id="grades-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Asignatura</th>
+                                                <th>Código</th>
+                                                <th>Créditos</th>
+                                                <th>Nota</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for subject_in_dossier in subjects_in_dossier %}
+                                                <tr id="subject-row-{{ subject_in_dossier.id }}">
+                                                    <td>{{ subject_in_dossier.subject.name }}</td>
+                                                    <td>{{ subject_in_dossier.subject.subject_key }}</td>
+                                                    <td>{{ subject_in_dossier.subject.credits }}</td>
+                                                    {% if subject_in_dossier.grade == None %}
+                                                        <td>N/A</td>
+                                                    {% else %}
+                                                        <td>{{ subject_in_dossier.grade }}</td>
+                                                    {% endif %}
+                                                    <td>
+                                                        <button class="delete-subject-btn" data-subject-id="{{ subject_in_dossier.id }}">&times;</button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for extra_credit in extra_curricular_credits %}
+                                                <tr id="extra-credit-row-{{ extra_credit.id }}">
+                                                    <td>{{ extra_credit.name }}</td>
+                                                    <td>-</td>
+                                                    <td>{{ extra_credit.credits }}</td>
+                                                    <td>N/A</td>
+                                                    <td>
+                                                        <button class="delete-extra-credit-btn" data-extra-credit-id="{{ extra_credit.id }}">&times;</button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             <button type="submit" id="myBtn1" class="boton-portada3">
@@ -77,12 +140,13 @@
                                 <!-- Modal content -->
                                 <div class="modal-content">
                                     <span class="close2">&times;</span>
-                                    <h2>Mi Horario</h2>
                                     <section>
-                                        <h3>Selecciona tu Asignatura</h3>
+                                        <h2>Selecciona tu Asignatura</h2>
                                         <!-- Campo de búsqueda -->
-                                        <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." autocomplete="off">
-                                        <button id="addSubjectToCalendarButton">Añadir al Calendario</button>
+                                        <div class="search-section">
+                                            <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." autocomplete="off">
+                                            <button id="addSubjectToCalendarButton">Añadir al Calendario</button>
+                                        </div>
                                         <!-- Contenedor para resultados de búsqueda -->
                                         <div id="searchResults" class="search-results"></div>
                                         <div class="subjects-container">
@@ -153,7 +217,7 @@
                     </ul>
                     <ul class="lista-datos">
                         <li><i class="icono fas fa-graduation-cap"></i> Curso: {{ user.profile.year|default:"No especificado" }}.</li>
-                        <li><i class="icono fas fa-book"></i> Créditos superados: {{ user.profile.credits_passed }}.</li>
+                        <li><i class="icono fas fa-book"></i> Créditos superados: {{ credits_achieved }}.</li>
                     </ul>
                 </div>
             {% endif %}
@@ -392,6 +456,144 @@
             Swal.fire('Error al eliminar la asignatura.');
         });
     }
+
+    function addSubjectToDossier(selectedSubjectId, subjectName, subjectCode, subjectGrade, searchInput) {
+        fetch(`/subjects/add-subject-to-dossier/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({
+                subject_id: selectedSubjectId,
+                grade: subjectGrade
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return response.json().then(errorData => Promise.reject(errorData));
+            }
+        })
+        .then(data => {
+            // Añadir los detalles al expediente en la tabla del front-end
+            const gradesTableBody = document.getElementById('grades-table').querySelector('tbody');
+            const newRow = gradesTableBody.insertRow();
+            
+            newRow.id = `subject-row-${data.subject_in_dossier_id}`;
+            newRow.innerHTML = `
+                <td>${subjectName}</td>
+                <td>${subjectCode}</td>
+                <td>${data.credits}</td>
+                <td>${subjectGrade}</td>
+                <td><button class="delete-subject-btn" data-subject-id="${data.subject_in_dossier_id}">&times;</button></td>
+            `;
+            
+            // Actualiza los valores en la sección de información del expediente
+            document.querySelector('.expediente-info .average_grade').textContent = `Nota media: ${data.average_grade}`;
+            document.querySelector('.expediente-info .total_credits').textContent = `Total de créditos matriculados: ${data.total_credits}`;
+            document.querySelector('.expediente-info .credits_achieved').textContent = `Créditos superados: ${data.credits_achieved}`;
+            document.querySelector('.expediente-info .credits_remaining').textContent = `Créditos por superar: ${data.credits_remaining}`;
+
+            // Limpia el input y los atributos relacionados
+            searchInput.value = '';
+            searchInput.removeAttribute('data-selected-id');
+            searchInput.removeAttribute('data-name');
+            searchInput.removeAttribute('data-code');
+            searchResults.innerHTML = '';
+            
+            Swal.fire('Asignatura añadida con éxito al expediente.');
+        })
+        .catch(errorData => {
+            console.error('Error:', errorData);
+            Swal.fire('Error', errorData.error, 'error');
+        });
+    }
+
+    function removeSubjectFromDossier(subjectId, button) {
+        // Confirmación antes de borrar
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esto!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, bórralo!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Llamar a la API para borrar la asignatura
+                fetch(`/subjects/delete-subject-from-dossier/${subjectId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return response.json().then(errorData => Promise.reject(errorData));
+                    }
+                })
+                .then(data => {
+                    // Eliminar la fila de la tabla
+                    document.getElementById(`subject-row-${subjectId}`).remove();
+                    document.querySelector('.expediente-info .average_grade').textContent = `Nota media: ${data.average_grade}`;
+                    document.querySelector('.expediente-info .total_credits').textContent = `Total de créditos matriculados: ${data.total_credits}`;
+                    document.querySelector('.expediente-info .credits_achieved').textContent = `Créditos superados: ${data.credits_achieved}`;
+                    document.querySelector('.expediente-info .credits_remaining').textContent = `Créditos por superar: ${data.credits_remaining}`;
+
+                    Swal.fire('Eliminado!', 'La asignatura ha sido borrada.', 'success');
+                })
+                .catch(errorData => {
+                    console.error('Error:', errorData);
+                    Swal.fire('Error', errorData.error, 'error');
+                });
+            }
+        });
+    }
+
+    function setupDeleteExtraCreditButtons() {
+        document.querySelectorAll('.delete-extra-credit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const extraCreditId = this.getAttribute('data-extra-credit-id');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, bórralo!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/subjects/delete-extra-credit/${extraCreditId}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken(),
+                            },
+                        })
+                        .then(response => response.ok ? response.json() : Promise.reject(response))
+                        .then(data => {
+                            document.getElementById(`extra-credit-row-${extraCreditId}`).remove();
+                            Swal.fire('Eliminado!', data.message, 'success');
+                            document.querySelector('.expediente-info .average_grade').textContent = `Nota media: ${data.average_grade}`;
+                            document.querySelector('.expediente-info .total_credits').textContent = `Total de créditos matriculados: ${data.total_credits}`;
+                            document.querySelector('.expediente-info .credits_achieved').textContent = `Créditos superados: ${data.credits_achieved}`;
+                            document.querySelector('.expediente-info .credits_remaining').textContent = `Créditos por superar: ${data.credits_remaining}`;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error', 'No se pudo eliminar el crédito extracurricular.', 'error');
+                        });
+                    }
+                });
+            });
+        });
+    }
     
     // Get the modal
     var modal1 = document.getElementById("myModal1");
@@ -434,10 +636,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        setupDeleteExtraCreditButtons();
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
         const searchUrl = "{% url 'search_subjects' %}";
         const addSubjectToCalendarButton = document.getElementById('addSubjectToCalendarButton');
+        const addSubjectToDossierButton = document.getElementById('addSubjectToDossierButton');
+        const addExtraCreditsButton = document.getElementById('addExtraCreditsButton');
     
         searchInput.addEventListener('input', function() {
             const query = this.value;
@@ -550,6 +755,103 @@
                     // Limpia los resultados de búsqueda si es necesario
                     searchResults.innerHTML = '';
                 }
+            });
+        });
+
+        addSubjectToDossierButton.addEventListener('click', function() {
+            const selectedSubjectId = searchInput.getAttribute('data-selected-id');
+            const subjectName = searchInput.getAttribute('data-name');
+            const subjectCode = searchInput.getAttribute('data-code');
+    
+            if (!selectedSubjectId) {
+                Swal.fire('Por favor, selecciona una asignatura.');
+                return;
+            }
+
+            Swal.fire({
+                title: '¿La asignatura ha sido superada?',
+                showDenyButton: true,
+                confirmButtonText: 'Sí',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const subjectGrade = prompt('Ingresa la nota de la asignatura:');
+                    if (subjectGrade !== null && subjectGrade !== '') {
+                        addSubjectToDossier(selectedSubjectId, subjectName, subjectCode, subjectGrade, searchInput);
+                    } else {
+                        Swal.fire('Necesitas proporcionar una nota para la asignatura.');
+                    }
+                } else if (result.isDenied) {
+                    addSubjectToDossier(selectedSubjectId, subjectName, subjectCode, 'N/A', searchInput);
+                }
+            });
+        });
+
+        const gradesTable = document.getElementById('grades-table');
+        gradesTable.addEventListener('click', function(event) {
+            const target = event.target;
+    
+            // Verifica si el elemento clicado es un botón de eliminar
+            if (target.classList.contains('delete-subject-btn')) {
+                const subjectInDossierId = target.getAttribute('data-subject-id');
+                removeSubjectFromDossier(subjectInDossierId, target);
+            }
+        });
+
+        addExtraCreditsButton.addEventListener('click', function() {
+            const extraName = document.getElementById('extraNameInput').value.trim();
+            const extraCredits = parseFloat(document.getElementById('extraCreditsInput').value);
+    
+            if (!extraName || isNaN(extraCredits) || extraCredits <= 0 || extraCredits > 6) {
+                Swal.fire('Error', 'Por favor, proporciona un nombre válido y un número de créditos entre 0.1 y 6.', 'error');
+                return;
+            }
+    
+            fetch('/subjects/add-extra-credits/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(), // Asegúrate de tener esta función para obtener el token CSRF
+                },
+                body: JSON.stringify({
+                    name: extraName,
+                    credits: extraCredits
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return response.json().then(errorData => Promise.reject(errorData));
+                }
+            })
+            .then(data => {
+                Swal.fire('¡Éxito!', 'Créditos extracurriculares añadidos con éxito.', 'success');
+    
+                // Limpia los campos del formulario
+                document.getElementById('extraNameInput').value = '';
+                document.getElementById('extraCreditsInput').value = '';
+    
+                const gradesTableBody = document.getElementById('grades-table').querySelector('tbody');
+                const newRow = gradesTableBody.insertRow();
+                
+                newRow.id = `extra-credit-row-${data.new_extra_credits_id}`;
+                newRow.innerHTML = `
+                    <td>${extraName}</td>
+                    <td>-</td>
+                    <td>${extraCredits}</td>
+                    <td>N/A</td>
+                    <td><button class="delete-extra-credit-btn" data-extra-credit-id="${data.new_extra_credits_id}">&times;</button></td>
+                `;
+                setupDeleteExtraCreditButtons();
+                document.querySelector('.expediente-info .average_grade').textContent = `Nota media: ${data.average_grade}`;
+                document.querySelector('.expediente-info .total_credits').textContent = `Total de créditos matriculados: ${data.total_credits}`;
+                document.querySelector('.expediente-info .credits_achieved').textContent = `Créditos superados: ${data.credits_achieved}`;
+                document.querySelector('.expediente-info .credits_remaining').textContent = `Créditos por superar: ${data.credits_remaining}`;
+            })
+            .catch(errorData => {
+                console.error('Error:', errorData);
+                Swal.fire('Error', errorData.error || 'Se produjo un error al realizar la solicitud.', 'error');
             });
         });
     });

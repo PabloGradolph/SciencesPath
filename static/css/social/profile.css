@@ -230,8 +230,137 @@ footer .container {
     cursor: pointer;
 }
 
+.modal-content h2, .modal-content h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.add-extra-credits-section {
+    background-color: #f2f2f2; /* Color de fondo suave */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px; /* Espacio antes de la siguiente sección */
+}
+
+.add-extra-credits-section h3 {
+    margin-bottom: 15px; /* Espacio debajo del título */
+    color: #333; /* Color oscuro para el texto */
+    text-align: center;
+}
+
+.add-extra-credits-section input[type="text"],
+.add-extra-credits-section input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px; /* Espacio entre los campos de entrada */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-extra-credits-section button {
+    background-color: #4CAF50; /* Un verde vibrante */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block; /* Hace que el botón sea un bloque para centrar fácilmente */
+    width: 100%;
+    margin-top: 10px;
+}
+
+.add-extra-credits-section button:hover {
+    background-color: #45a049; /* Un verde un poco más oscuro para el efecto hover */
+}
+
+.expediente-info {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.expediente-info h3 {
+    margin-top: 0;
+}
+
+.expediente-info p {
+    font-size: 20px;
+    margin: 5px 0;
+}
+
+#grades-table {
+    margin: 0 auto;
+    width: 90%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+#grades-table thead {
+    background-color: #f2f2f2;
+}
+
+#grades-table th, #grades-table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.delete-subject-btn,
+.delete-extra-credit-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.delete-subject-btn:hover,
+.delete-extra-credit-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Centrado de la tabla */
+.grades-table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Estilos para el buscador y el botón de añadir */
+.modal-content .search-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    margin-right: 25px;
+    margin-left: 25px;
+    border-bottom: none;
+}
+  
+.modal-content .search-section input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+  
+.modal-content .search-section button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+  
+.modal-content .search-section button:hover {
+    background-color: #45a049;
+}
+
 .search-results {
-    border: 1px solid #ddd;
     max-height: 200px;
     overflow-y: auto;
     margin-bottom: 20px;
@@ -244,6 +373,52 @@ footer .container {
 
 .search-result-item:hover {
     background-color: #f2f2f2;
+}
+
+/* Estilos para la lista de asignaturas seleccionadas */
+.subjects-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    width: 100%;
+    padding: 10px;
+}
+  
+.subjects-container h3 {
+    margin-bottom: 10px;
+}
+  
+#selected-subjects-list {
+    list-style: none;
+    padding: 0;
+}
+  
+#selected-subjects-list li {
+    background: #e4e4e4;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+  
+.remove-subject-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
+  
+.remove-subject-btn:hover {
+    background: #ff1a1a;
 }
 
 #calendar {

@@ -11,7 +11,7 @@ from django.db import IntegrityError
 from datetime import datetime
 from .forms import CustomUserCreationForm
 from faq.models import FAQ
-from subjects.models import Subject, SubjectSchedule
+from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
 from social.models import Event
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -94,7 +94,25 @@ def profile(request, username):
     # Usar esos ids para obtener los objetos Subject correspondientes
     subjects = Subject.objects.filter(id__in=subject_ids)
 
-    context = {'current_year': current_year, 'user': user, 'posts':posts, 'events_json': events_json, 'user_subjects': subjects}
+    try:
+        dossier = Dossier.objects.get(user=user)
+        average_grade = dossier.calculate_average_grade()
+        credits_achieved = dossier.credits_achieved()
+        credits_remaining = dossier.credits_remaining()
+        total_credits = dossier.total_credits()
+        subjects_in_dossier = SubjectInDossier.objects.filter(dossier=dossier)
+        extra_curricular_credits = dossier.extra_curricular_credits.all()
+
+    except Dossier.DoesNotExist:
+        average_grade = 0
+        credits_achieved = 0
+        total_credits = 0
+        credits_remaining = 240
+        subjects_in_dossier = []
+        extra_curricular_credits = []
+
+    context = {'current_year': current_year, 'user': user, 'posts':posts, 'events_json': events_json, 'user_subjects': subjects, 'subjects_in_dossier': subjects_in_dossier,
+               'average_grade': average_grade, 'credits_achieved': credits_achieved, 'credits_remaining': credits_remaining, 'total_credits': total_credits, 'extra_curricular_credits': extra_curricular_credits}
     return render(request, 'Sciences/profile.html', context)
 
 
@@ -164,8 +182,8 @@ def register(request: HttpRequest) -> HttpResponse:
                 try:
                     user = User.objects.create_user(username=username, email=email, password=password1)
                     user.is_active=False
-                    user.save()
                     activateEmail(request, user, email)
+                    user.save()
                     return redirect('home')
                 except IntegrityError as e:
                     print(e)
@@ -256,6 +274,6 @@ def activateEmail(request, user, to_email):
     email = EmailMessage(mail_subject, message, to=[to_email])
     if email.send():
         messages.success(request, f'Estimado <b>{user}</b>, por favor comprueba tu email: <b>{to_email}</b> y haz click \
-                         en el link recibido para completar el registro. <b>Nota:</b> Comprueba la carpeta de spam.')
+                         en el link recibido para completar el registro. <b>Nota:</b> Cualquier problema escriba a <b>sciences.paths@gmail.com</b>.')
     else:
         messages.error(request, f'Problema enviando el email a {to_email}, comprueba que el correo es correcto.')

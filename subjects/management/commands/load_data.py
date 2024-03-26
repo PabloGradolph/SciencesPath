@@ -21,7 +21,7 @@ def load_subjects_from_json(file_path: str):
 
             if "(A1, A2)" in key or "(B1)" in key or "(B2)" in key or "(A2) (UC3M)" in key:
                 university_name = "UC3M"
-            elif "(A1)" in key or "(A2) (UAM)":
+            elif "(A1)" in key or "(A2) (UAM)" in key:
                 university_name = "UAM"
             else:
                 university_name = key.split('(')[1]

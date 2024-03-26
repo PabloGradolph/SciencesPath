@@ -1,7 +1,9 @@
 {% autoescape off %}
-Hi {{ user.username }},
+Hola {{ user }},
 
-Please click on the link below to confirm your registration:
+Por favor, haga click en el link de abajo para finalizar tu registro:
 
 {{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+Si tiene cualquier problema, conteste a este correo o póngase en contacto, escribiendo a sciences.paths@gmail.com. 
 {% endautoescape %}

@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods, require_POST
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseBadRequest
-from .models import Subject, SubjectRating, SubjectMaterial, TimeTable, SubjectSchedule
+from django.db.models import Sum
+from .models import Subject, SubjectRating, SubjectMaterial, TimeTable, SubjectSchedule, Dossier, SubjectInDossier, ExtraCurricularCredits
 from social.models import Event
+from decimal import Decimal
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
@@ -278,6 +280,164 @@ def parse_ics_to_json(request, subject_id):
     except TimeTable.DoesNotExist:
         return JsonResponse({'error': 'Horario no encontrado para la asignatura.'}, status=404)
     
+
+@login_required(login_url='login')
+def add_subject_to_dossier(request):
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        user = request.user
+        data = json.loads(request.body)
+        subject_id = data.get('subject_id')
+        grade = data.get('grade')
+        if grade == 'N/A':
+            grade = None
+            grade_decimal = None
+        elif ',' in grade:
+            grade = grade.replace(',', '.')
+            grade_decimal = Decimal(grade)
+        else:
+            grade_decimal = Decimal(grade)
+
+        try:
+            # Valida que tengamos los datos necesarios
+            if subject_id is None:
+                print("Datos")
+                return HttpResponseBadRequest("Faltan datos para añadir la asignatura al expediente.")
+
+            # Obtiene el subject basado en el subject_id proporcionado
+            try:
+                subject = Subject.objects.get(id=subject_id)
+            except Subject.DoesNotExist:
+                print("Subject")
+                return HttpResponseBadRequest("La asignatura especificada no existe.")
+
+            # Obtiene o crea el Dossier para el usuario actual
+            dossier, _ = Dossier.objects.get_or_create(user=user)
+
+            total_credits = dossier.subjectindossier_set.aggregate(
+                total=Sum('subject__credits')
+            )['total'] or 0
+            new_subject_credits = Subject.objects.get(id=subject_id).credits
+
+            if total_credits + new_subject_credits > 245:
+                return JsonResponse({
+                    'error': 'No se puede añadir la asignatura debido al límite de créditos.'
+                }, status=400)
+            
+            if SubjectInDossier.objects.filter(dossier=dossier, subject=subject).exists():
+                return JsonResponse({
+                    'error': 'La asignatura ya ha sido añadida al expediente.'
+                }, status=400)
+        
+            # Añade la asignatura y la nota al expediente (Dossier)
+            new_subject_in_dossier = SubjectInDossier.objects.create(dossier=dossier, subject=subject, grade=grade_decimal)
+
+            # Aquí puedes devolver cualquier información adicional necesaria para el front-end
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Asignatura añadida al expediente con éxito.',
+                'subject_name': subject.name,
+                'subject_code': subject.subject_key,
+                'credits': subject.credits,
+                'grade': grade,
+                'average_grade': dossier.calculate_average_grade(),
+                'total_credits': dossier.total_credits(),
+                'credits_achieved': dossier.credits_achieved(),
+                'credits_remaining': dossier.credits_remaining(),
+                'subject_in_dossier_id': new_subject_in_dossier.id,
+            })
+
+        except Exception as e:
+            print("Exception")
+            return HttpResponseBadRequest(f"Error al procesar la solicitud: {str(e)}")
+    else:
+        print("Solicitud")
+        return HttpResponseBadRequest("Solicitud no válida.")
+    
+
+@login_required(login_url='login')
+@require_http_methods(["DELETE"])
+def delete_subject_from_dossier(request, subject_in_dossier_id):
+    subject_in_dossier = get_object_or_404(SubjectInDossier, pk=subject_in_dossier_id)
+    dossier = subject_in_dossier.dossier
+    subject_in_dossier.delete()
+
+    # Recalcular los valores después de la eliminación
+    average_grade = dossier.calculate_average_grade()
+    total_credits = dossier.total_credits()
+    credits_achieved = dossier.credits_achieved()
+    credits_remaining = dossier.credits_remaining()
+
+    # Devolver la respuesta con los valores actualizados
+    return JsonResponse({
+        'average_grade': average_grade,
+        'total_credits': total_credits,
+        'credits_achieved': credits_achieved,
+        'credits_remaining': credits_remaining,
+    })
+
+
+@login_required(login_url='login')
+def add_extra_credits(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        credits = data.get('credits')
+
+        # Validación básica
+        if not name or credits <= 0:
+            return HttpResponseBadRequest("Datos inválidos.")
+
+        dossier, _ = Dossier.objects.get_or_create(user=request.user)
+
+        # Calcular la suma total de créditos extracurriculares actuales
+        total_extra_credits = sum(credit.credits for credit in dossier.extra_curricular_credits.all())
+        if total_extra_credits + credits > 6:
+            return JsonResponse({'error': 'La suma total de créditos extracurriculares no puede exceder 6.'}, status=400)
+
+        new_extra_credits = ExtraCurricularCredits.objects.create(dossier=dossier, name=name, credits=credits)
+        average_grade = dossier.calculate_average_grade()
+        credits_achieved = dossier.credits_achieved()
+        credits_remaining = dossier.credits_remaining()
+        total_credits = dossier.total_credits()
+        
+        return JsonResponse({'status': 'success', 'message': 'Créditos extracurriculares añadidos con éxito.', 
+                             'new_extra_credits_id': new_extra_credits.id, 
+                            'average_grade': average_grade,
+                            'credits_achieved': credits_achieved,
+                            'credits_remaining': credits_remaining,
+                            'total_credits': total_credits,
+                            })
+    else:
+        return HttpResponseBadRequest("Método no permitido.")
+    
+
+@login_required(login_url='login')
+@require_http_methods(["DELETE"])
+def delete_extra_credit(request, extra_credit_id):
+    if request.method == 'DELETE':
+        try:
+            extra_credit = ExtraCurricularCredits.objects.get(id=extra_credit_id, dossier__user=request.user)
+            extra_credit.delete()
+
+            # Recalcular valores después de eliminar el crédito
+            dossier = Dossier.objects.get(user=request.user)
+            average_grade = dossier.calculate_average_grade()
+            credits_achieved = dossier.credits_achieved()
+            credits_remaining = dossier.credits_remaining()
+            total_credits = dossier.total_credits()
+
+            # Devolver valores recalculados en la respuesta
+            return JsonResponse({
+                'message': 'Crédito extracurricular eliminado con éxito.',
+                'average_grade': average_grade,
+                'credits_achieved': credits_achieved,
+                'credits_remaining': credits_remaining,
+                'total_credits': total_credits,
+            })
+        except ExtraCurricularCredits.DoesNotExist:
+            return HttpResponseBadRequest('Crédito extracurricular no encontrado.')
+    else:
+        return HttpResponseBadRequest('Método no permitido.')
 
 @login_required(login_url='login')
 def add_event(request):

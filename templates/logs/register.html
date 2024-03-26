@@ -5,6 +5,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/logs.css' %}">
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block header %}
@@ -44,7 +45,7 @@
     </div>
     <div class="form-container">
         <h2>Registro de Usuario</h2>
-        <form method="POST">
+        <form method="POST" id="registration-form">
             <p>{{ error }}</p>
             {% csrf_token %}
             <div>
@@ -58,6 +59,21 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('registration-form');
+            form.onsubmit = function(event) {
+                event.preventDefault(); // Detiene la redirección automática
+                Swal.fire({
+                    title: 'Registro Exitoso',
+                    text: 'Por favor, confirma tu email para activar tu cuenta.',
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            };
+
             document.querySelectorAll('.close-alert').forEach(function(closeButton) {
                 closeButton.onclick = function() {
                     this.parentElement.style.display = 'none';
