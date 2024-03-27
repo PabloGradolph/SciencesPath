@@ -54,7 +54,7 @@ class Profile(models.Model):
     year = models.CharField(max_length=2, choices=YEAR_CHOICES, blank=True, null=True, default='')
     university_email = models.EmailField(max_length=254, blank=True, null=True)
     credits_passed = models.PositiveIntegerField(default=0)
-    facebook_url = models.URLField(max_length=255, blank=True, null=True)
+    linkedin_url = models.URLField(max_length=255, blank=True, null=True)
     instagram_url = models.URLField(max_length=255, blank=True, null=True)
     twitter_url = models.URLField(max_length=255, blank=True, null=True)
 

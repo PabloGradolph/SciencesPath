@@ -53,7 +53,7 @@ class ProfileUpdateForm(forms.ModelForm):
     """
     phone_number = PhoneNumberField(widget=PhoneNumberPrefixWidget(initial='ES'), required=False)
     university_email = forms.EmailField(required=False)
-    facebook_url = forms.URLField(required=False)
+    linkedin_url = forms.URLField(required=False)
     instagram_url = forms.URLField(required=False)
     twitter_url = forms.URLField(required=False)
     birth_date = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date'}), required=False)
@@ -63,7 +63,7 @@ class ProfileUpdateForm(forms.ModelForm):
                                     
     class Meta:
         model = Profile
-        fields = ['phone_number', 'image', 'bio', 'university_email', 'facebook_url', 'instagram_url', 'twitter_url',
+        fields = ['phone_number', 'image', 'bio', 'university_email', 'linkedin_url', 'instagram_url', 'twitter_url',
                    'birth_date', 'is_student', 'university', 'year']
         widgets = {
             'image': forms.FileInput(attrs={'id': 'profileImageUpload', 'class': 'hide-current-image'})

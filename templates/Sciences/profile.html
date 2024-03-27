@@ -222,10 +222,10 @@
                 </div>
             {% endif %}
             <div class="redes-sociales">
-                {% if user.profile.facebook_url %}
-                    <a href="{{ user.profile.facebook_url }}" target="blank_" class="boton-redes facebook fab fa-facebook-f"><i class="icon-facebook"></i></a>
+                {% if user.profile.linkedin_url %}
+                    <a href="{{ user.profile.linkedin_url }}" target="blank_" class="boton-redes linkedin fab fa-linkedin"><i class="icon-linkedin"></i></a>
                 {% else %}
-                    <a href="" class="boton-redes facebook fab fa-facebook-f"><i class="icon-facebook"></i></a>
+                    <a href="" class="boton-redes linkedin fab fa-linkedin"><i class="icon-linkedin"></i></a>
                 {% endif %}
                 {% if user.profile.twitter_url %}
                     <a href="{{ user.profile.twitter_url }}" target="blank_" class="boton-redes twitter fab fa-twitter"><i class="icon-twitter"></i></a>
