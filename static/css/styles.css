@@ -393,6 +393,10 @@ footer .group-2 {
     background-color: #2b2a2a;
 }
 
+footer small {
+    color: #fff;
+}
+
 footer .group-2 small, footer .group-2 b, footer .group-2 a{
     color: #fff;
 }
