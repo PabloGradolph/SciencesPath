@@ -17,4 +17,7 @@ urlpatterns = [
     path('subjects/', include('subjects.urls')),
     path('community/', include('social.urls')),
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
+    path('password_change', views.password_change, name="password_change"),
+    path('password_reset', views.password_reset_request, name="password_reset"),
+    path('reset/<uidb64>/<token>', views.passwordResetConfirm, name="password_reset_confirm"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

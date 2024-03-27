@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db import IntegrityError
 from datetime import datetime
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm
 from faq.models import FAQ
 from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
 from social.models import Event
@@ -19,6 +20,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
+from django.db.models.query_utils import Q
 from .tokens import account_activation_token
 import re
 import json
@@ -138,6 +140,24 @@ def delete_subject_from_schedule(request, subject_id):
 def documents(request):
     context = {'current_year': current_year}
     return render(request, 'Sciences/documents.html', context)
+
+
+@login_required(login_url='login')
+def password_change(request):
+    user = request.user
+    if request.method == 'POST':
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tu contraseña ha sido cambiada.")
+            return redirect('login')
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+
+    form = SetPasswordForm(user)
+    context = {'current_year': current_year, 'form': form}
+    return render(request, 'logs/password_reset_confirm.html', context)
 
 
 def register(request: HttpRequest) -> HttpResponse:
@@ -277,3 +297,75 @@ def activateEmail(request, user, to_email):
                          en el link recibido para completar el registro. <b>Nota:</b> Cualquier problema escriba a <b>sciences.paths@gmail.com</b>.')
     else:
         messages.error(request, f'Problema enviando el email a {to_email}, comprueba que el correo es correcto.')
+
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            user_email = form.cleaned_data['email']
+            associated_user = User.objects.filter(email=user_email).first()
+            if associated_user:
+                subject = "Recuperar Contraseña SciencesPath!"
+                message = render_to_string("logs/template_reset_password.html", {
+                    'user': associated_user,
+                    'domain': get_current_site(request).domain,
+                    'uid': urlsafe_base64_encode(force_bytes(associated_user.pk)),
+                    'token': account_activation_token.make_token(associated_user),
+                    "protocol": 'https' if request.is_secure() else 'http'
+                }) 
+                email = EmailMessage(subject, message, to=[associated_user.email])
+                if email.send():
+                    messages.success(request,
+                                        """
+                                        <h2>Recuperación de Contraseña enviada</h2><hr>
+                                        <p>
+                                            Te hemos enviado un email con todas las instrucciones. Si existe una cuenta con tu email, deberías recibirlo pronto.<br>
+                                            Si no recibes el email, asegúrate de que el email es correcto, comprueba la carpeta de spam o ponte en contacto con <b>sciences.paths@gmail.com</b>.
+                                        </p>
+                                        """
+                                    )
+                else:
+                    messages.error(request, "Problema encontrado al enviar el email, <b>PROBLEMA EN EL SERVIDOR</b>. \
+                                   Inténtalo más tarde o póngase en contacto con <b>sciences.paths@gmail.com</b>.")
+            
+            return redirect('home')
+
+        for error in list(form.errors.values()):
+            messages.error(request, error)
+
+    form = PasswordResetForm()
+    context = {'current_year': current_year, 'form': form}
+    return render(request=request,
+                  template_name="logs/password_reset.html",
+                  context=context
+                  )
+
+
+def passwordResetConfirm(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        if request.method == 'POST':
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Tu contraseña ha sido actualizada. Ya puedes iniciar sesión con la nueva contraseña.")
+                return redirect('login')
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+        
+        form = SetPasswordForm(user)
+        context = {'current_year': current_year, 'form': form}
+        return render(request, 'logs/password_reset_confirm.html', context=context)
+    else:
+        messages.error(request, "El link ha expirado.")
+
+    messages.error(request, 'Algo ha ido mal, redirigiendo a la página de inicio.')
+    return redirect('home')

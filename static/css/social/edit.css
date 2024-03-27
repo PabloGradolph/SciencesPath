@@ -88,6 +88,12 @@
     background-color: #01602a; 
 }
 
+.change-password {
+    margin-bottom: 10px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 input[type="file"] {
     display: none;
 }

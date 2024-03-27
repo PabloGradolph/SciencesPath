@@ -1,6 +1,10 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, PasswordResetForm
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from typing import Any
+from typing import Any, Mapping
+
+from django.forms.renderers import BaseRenderer
+from django.forms.utils import ErrorList
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -24,3 +28,9 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User # The model associated with this form.
         fields = ['username', 'email', 'password1', 'password2'] # Fields included in the form.
+
+
+class SetPasswordForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['new_password1', 'new_password2']

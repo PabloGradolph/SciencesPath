@@ -62,23 +62,29 @@
             var form = document.getElementById('registration-form');
             form.onsubmit = function(event) {
                 event.preventDefault(); // Detiene la redirección automática
-                Swal.fire({
-                    title: 'Registro Exitoso',
-                    text: 'Por favor, confirma tu email para activar tu cuenta.',
-                    icon: 'success',
-                    confirmButtonText: 'Ok'
-                }).then(function(result) {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
+                
+                if (form.checkValidity()) {
+                    Swal.fire({
+                        title: 'Confirma tu Email',
+                        text: 'Por favor, si el registro es correcto, confirma tu email para activar tu cuenta.',
+                        icon: 'info',
+                        confirmButtonText: 'Ok'
+                    }).then(function(result) {
+                        if (result.isConfirmed) {
+                            form.submit(); // Envía el formulario si el usuario confirma
+                        }
+                    });
+                } else {
+                    // Opcional: puedes hacer que se muestren los mensajes de validación HTML5
+                    form.reportValidity();
+                }
             };
-
+        
             document.querySelectorAll('.close-alert').forEach(function(closeButton) {
                 closeButton.onclick = function() {
                     this.parentElement.style.display = 'none';
                 };
             });
-        });
+        });        
     </script>
 {% endblock %}

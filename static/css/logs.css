@@ -95,6 +95,14 @@ form .helptext {
     text-align: center;
 }
 
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
 .password-help {
     list-style: none;
     padding-left: 0;
