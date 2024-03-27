@@ -1,16 +1,16 @@
-from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, PasswordResetForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from typing import Any, Mapping
-
-from django.forms.renderers import BaseRenderer
-from django.forms.utils import ErrorList
+from django import forms
+from typing import Any
 
 
 class CustomUserCreationForm(UserCreationForm):
     """
     A custom form for user creation that extends Django's built-in UserCreationForm.
     """
+    is_student = forms.BooleanField(required=False, label='¿Eres estudiante del Grado en Ciencias?', help_text='Marca esta casilla si lo eres.')
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initializes the form with custom help texts and validators for specific fields.
@@ -27,7 +27,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = User # The model associated with this form.
-        fields = ['username', 'email', 'password1', 'password2'] # Fields included in the form.
+        fields = ['username', 'email', 'password1', 'password2', 'is_student'] # Fields included in the form.
 
 
 class SetPasswordForm(SetPasswordForm):

@@ -13,7 +13,7 @@ from .forms import CustomUserCreationForm, SetPasswordForm
 from django.contrib.auth.forms import PasswordResetForm
 from faq.models import FAQ
 from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
-from social.models import Event
+from social.models import Event, Profile
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -184,6 +184,13 @@ def register(request: HttpRequest) -> HttpResponse:
         password1 = request.POST['password1']
         password2 = request.POST['password2']
 
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            is_student = form.cleaned_data.get('is_student')
+        else:
+            messages.error(request, "Está ocurriendo un error con el formulario.")
+            is_student = True
+
         # Check if the username is longer than 35 chars.
         if len(username) > 35:
             return render(request, 'logs/register.html', {'form': form, 'error': 'El nombre de usuario es demasiado largo.'})
@@ -204,6 +211,7 @@ def register(request: HttpRequest) -> HttpResponse:
                     user.is_active=False
                     activateEmail(request, user, email)
                     user.save()
+                    Profile.objects.update_or_create(user=user, defaults={'is_student': is_student})
                     return redirect('home')
                 except IntegrityError as e:
                     print(e)
