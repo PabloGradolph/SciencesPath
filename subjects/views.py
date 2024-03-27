@@ -204,7 +204,7 @@ def horario(request, subject_id):
 def search_subjects(request):
     search_query = request.GET.get('search_query', '')
     subjects = Subject.objects.filter(name__icontains=search_query) | Subject.objects.filter(subject_key__icontains=search_query)
-    subjects_list = list(subjects.values('id', 'name', 'subject_key'))
+    subjects_list = list(subjects.values('id', 'name', 'subject_key', 'degree__name'))
     response = JsonResponse({'subjects': subjects_list})
     return response
 

@@ -144,11 +144,11 @@
                                         <h2>Selecciona tu Asignatura</h2>
                                         <!-- Campo de búsqueda -->
                                         <div class="search-section">
-                                            <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." autocomplete="off">
+                                            <input type="text" id="searchInput2" placeholder="Buscar por nombre o código..." autocomplete="off">
                                             <button id="addSubjectToCalendarButton">Añadir al Calendario</button>
                                         </div>
                                         <!-- Contenedor para resultados de búsqueda -->
-                                        <div id="searchResults" class="search-results"></div>
+                                        <div id="searchResults2" class="search-results"></div>
                                         <div class="subjects-container">
                                             <h3>Asignaturas seleccionadas</h3>
                                             <ul id="selected-subjects-list">
@@ -638,7 +638,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         setupDeleteExtraCreditButtons();
         const searchInput = document.getElementById('searchInput');
+        const searchInput2 = document.getElementById('searchInput2');
         const searchResults = document.getElementById('searchResults');
+        const searchResults2 = document.getElementById('searchResults2');
         const searchUrl = "{% url 'search_subjects' %}";
         const addSubjectToCalendarButton = document.getElementById('addSubjectToCalendarButton');
         const addSubjectToDossierButton = document.getElementById('addSubjectToDossierButton');
@@ -655,7 +657,7 @@
                     data.subjects.forEach(asignatura => {
                         const resultDiv = document.createElement('div');
                         resultDiv.classList.add('search-result-item');
-                        resultDiv.textContent = `${asignatura.name} (${asignatura.subject_key})`;
+                        resultDiv.textContent = `${asignatura.name} (${asignatura.subject_key}) - ${asignatura.degree__name}`;
                         resultDiv.setAttribute('data-id', asignatura.id);
                         searchResults.appendChild(resultDiv);
     
@@ -680,10 +682,46 @@
             }
         });
 
+        searchInput2.addEventListener('input', function() {
+            const query = this.value;
+    
+            if(query.length > 0) {
+                fetch(searchUrl + `?search_query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults2.innerHTML = ''; // Limpiar resultados anteriores
+                    data.subjects.forEach(asignatura => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('search-result-item');
+                        resultDiv.textContent = `${asignatura.name} (${asignatura.subject_key}) - ${asignatura.degree__name}`;
+                        resultDiv.setAttribute('data-id', asignatura.id);
+                        searchResults2.appendChild(resultDiv);
+    
+                        // Evento de clic para cada resultado
+                        resultDiv.addEventListener('click', function() {
+                            const subjectId = this.getAttribute('data-id');
+                            const subjectDetails = this.textContent.split('(');
+                            const subjectName = subjectDetails[0].trim();
+                            const subjectCode = subjectDetails[1].slice(0, -1);
+                        
+                            searchInput2.value = `${subjectName} (${subjectCode})`;
+                            searchInput2.setAttribute('data-selected-id', subjectId);
+                            searchInput2.setAttribute('data-name', subjectName);
+                            searchInput2.setAttribute('data-code', subjectCode);
+                            searchResults2.innerHTML = '';
+                        });
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                searchResults2.innerHTML = '';
+            }
+        });
+
         addSubjectToCalendarButton.addEventListener('click', function() {
-            const selectedSubjectId = searchInput.getAttribute('data-selected-id');
-            const subjectName = searchInput.getAttribute('data-name');
-            const subjectCode = searchInput.getAttribute('data-code');
+            const selectedSubjectId = searchInput2.getAttribute('data-selected-id');
+            const subjectName = searchInput2.getAttribute('data-name');
+            const subjectCode = searchInput2.getAttribute('data-code');
     
             if (!selectedSubjectId) {
                 Swal.fire('Por favor, selecciona una asignatura.');
@@ -724,36 +762,36 @@
                     
                     Swal.fire('Asignatura añadida con éxito.');
                     // Limpia el input y el atributo data-selected-id
-                    searchInput.value = '';
-                    searchInput.removeAttribute('data-selected-id');
+                    searchInput2.value = '';
+                    searchInput2.removeAttribute('data-selected-id');
                     // Limpia los resultados de búsqueda si es necesario
-                    searchResults.innerHTML = '';
+                    searchResults2.innerHTML = '';
                 }
             })
             .catch(error => {
                 if (error.status === 404) {
                     Swal.fire('Horario no encontrado para la asignatura seleccionada.');
                     // Limpia el input y el atributo data-selected-id
-                    searchInput.value = '';
-                    searchInput.removeAttribute('data-selected-id');
+                    searchInput2.value = '';
+                    searchInput2.removeAttribute('data-selected-id');
                     // Limpia los resultados de búsqueda si es necesario
-                    searchResults.innerHTML = '';
+                    searchResults2.innerHTML = '';
                 } else if (error.status === 400) {
                     Swal.fire('El usuario ya tiene esta asignatura en su horario.');
                     // Limpia el input y el atributo data-selected-id
-                    searchInput.value = '';
-                    searchInput.removeAttribute('data-selected-id');
+                    searchInput2.value = '';
+                    searchInput2.removeAttribute('data-selected-id');
                     // Limpia los resultados de búsqueda si es necesario
-                    searchResults.innerHTML = '';
+                    searchResults2.innerHTML = '';
                 }
                 else {
                     console.error('Error al añadir asignatura al calendario:', error);
                     Swal.fire('Error al añadir asignatura al calendario.');
                     // Limpia el input y el atributo data-selected-id
-                    searchInput.value = '';
-                    searchInput.removeAttribute('data-selected-id');
+                    searchInput2.value = '';
+                    searchInput2.removeAttribute('data-selected-id');
                     // Limpia los resultados de búsqueda si es necesario
-                    searchResults.innerHTML = '';
+                    searchResults2.innerHTML = '';
                 }
             });
         });
