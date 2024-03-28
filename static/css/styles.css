@@ -211,58 +211,96 @@ header nav a:hover {
     background-color: #015827;
 }
 
-/* Quienes somos */
-#about .container {
+/*=============== About Us ===============*/
+.AboutUs__section h1 {
     text-align: center;
-    padding: 170px 12px;
 }
 
-#about h2 {
-    margin-top: 0;
+.AboutUs__section .card {
+    font-family: 'poppins';
 }
 
-#about-header{
-    margin-bottom: 10px;
+.AboutUs__section .card h2 {
+    font-family: 'poppins';
 }
 
-#history {
-    background-image: linear-gradient(
-        0deg,
-        rgba(0,0,0,0.7),
-        rgba(0,0,0,0.7)
-    )
-    ,url("../img/MIHistoria.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 5px;
+.about-wrapper {
+    padding: 5% 8%;
 }
 
-#mission {
-    background-image: linear-gradient(
-        0deg,
-        rgba(0,0,0,0.6),
-        rgba(0,0,0,0.6)
-    )
-    ,url("../img/MiMision.webp");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center center;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 5px;
+.AboutUs__section .about {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#history p, #history h3{
+.AboutUs__section .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.AboutUs__section .card {
+    height: 450px;
+    width: 370px;
+    background-color: #00441e;
+    padding: 3% 8%;
+    border: 2px solid #00f369;
+    border-radius: 9px;
+    transition: .6;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.AboutUs__section .card:after{
+    content: "";
+    position: absolute;
+    top: 150%;
+    left: -200px;
+    width: 120%;
+    transform: rotate(50deg);
+    background-color: #fff;
+    height: 18px;
+    filter: blur(30px);
+    opacity: 0.5;
+    transition: 1s;
+}
+.AboutUs__section .card:hover:after{
+    width: 225%;
+    top: -100%;
+}
+
+.AboutUs__section .card i{
+    color: #daac74;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: var(--biggest-font-size);
+}
+
+.AboutUs__section .card h2{
     color: #fff;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
-#mission p, #mission h3{
-    color: #fff;
-    font-weight: bold;
+.AboutUs__section .card p {
+    text-align: left;
+    width: 100%;
+    margin: 12px 0;
+    color: rgba(255, 255, 255, 0.877);
+}
+  
+.AboutUs__section .card:hover{
+    transform: translateY(-8px);
+    border-color: #f8e8d4;
+}
+  
+.AboutUs__section .card:hover i{
+    color: #b38042;
 }
 
 /* Más información */

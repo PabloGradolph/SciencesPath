@@ -5,6 +5,11 @@
     Bienvenido a Ciencias
 {% endblock %}
 
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+{% endblock %}
+
 {% block header %}
     <header>
         <div class="header-container">
@@ -43,34 +48,49 @@
         <div class="container">
             <h1>Bienvenido a Ciencias</h1>
             <p>¡Explora nuestro Grado compartido en Ciencias!</p>
-            <p>En esta aplicación encontrarás toda la información necesaria acerca de nuestro grado, diferentes áreas de estudio, posibles itinerarios, menciones, asignaturas disponibles y mucho más.</p>
+            <p>En esta aplicación encontrarás toda la información necesaria acerca de nuestro grado, asignaturas disponibles, horarios, herramientas que te ayudarán llevar el grado y mucho más.</p>
             <div class="btn-container">
                 <a href="{% url 'main' %}" ><button class="btn-primary">Comenzar</button></a>
             </div>
         </div>
     </section>
 
-    <section id="about">
-        <div class="container">
-            <div id="about-header">
-                <h2>Esto es Sciences<span class="color-path">Path!</span></h2>
-                <p>¡Este es mi sitio web! Soy un estudiante del Grado en Ciencias llamado Pablo Gradolph Oliva apasionado por las tecnologías y con ganas de compartir mi experiencia y ayudar al resto de alumnos de nuestro grado.</p>
-            </div>
-            <div class="about">
-                <div id="history" class="expandable">
-                    <h3>Mi Historia</h3>
-                    <div class="full-description">
-                        <p>Mi travesía comenzó hace casi 4 años cuando me cogieron para cursar este maravilloso grado universitario. Mis compañeros y yo nos enfrentábamos a un gran reto: Ser la Primera Promoción.</p>
-                        <p>Ahora mismo me encuentro en el último curso y a lo largo de estos años nos han surgido diversas preguntas como: ¿Debo cambiarme de universidad?, ¿Qué asignaturas elijo? y muchas otras.</p>
-                        <p>Esta es la razón por la que estoy desarrollando como Trabajo de Fin de Grado esta herramienta: Una aplicación web llamada SciencesPath que permita guiar a los alumnos que llegan nuevos durante su camino en la universidad.</p>
-                    </div>
-                </div>
-                <div id="mission" class="expandable">
-                    <h3>Mi Misión</h3>
-                    <div id="mission-full-description" class="full-description">
-                        <p>Mi principal misión es facilitar el camino a todos esos alumnos que llegan detrás de mi en sus años de universidad. </p>
-                        <p>Para ello, aquí encontrarás información de todas las asignaturas que se pueden cursar, con sus planes de estudio y características principales </p>
-                        <p>Encontrarás horarios, información de las distintas universidades, la posibilidad de contacar con otros estudiantes, entre otras muchas cosas. </p>
+    <section class="AboutUs__section section" id="About">
+        <h1 class="section__title">🏠 ¿Quiénes somos?</h1>
+        <div class="container section__border">
+            <div class="about-wrapper">
+                <div class="about">
+                    <div class="cards">
+                        <div class="card">
+                            <i class="fa-solid fa-door-open"></i>
+                            <h2>Bienvenidos a SciencesPath!</h2>
+                            <p>Mi nombre es Pablo Gradolph Oliva y soy estudiante del Grado en Ciencias. Este es mi proyecto de TFG donde he fusionado mis habilidades de programación y desarrollo Web con mi especial interés en ayudar al resto de estudiantes de mi grado.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-brands fa-chromecast"></i>
+                            <h2>Mi Misión</h2>
+                            <p>En SciencesPath!, mi objetivo es que conozcas nuestro grado sino formas parte de él y proporcionarte toda la ayuda y herramientas útiles que se me han ocurrido si ya eres estudiante del grado.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <h2>Lo que ofrecemos</h2>
+                            <p>Esta aplicación está repleta de funcionalidades, información, enlaces de interés y herramientas interactivas para hacer tu viaje por el grado más fácil y disfrutable. Con un diseño intuitivo y funciones fáciles de usar, quiero que SciencesPath! sea tu compañero de confianza en el grado.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-user-group"></i>
+                            <h2>Únete a nuestra comunidad</h2>
+                            <p>En SciencesPath!, creemos en el poder de la comunidad. Nos encantaría que compartieras tus experiencias, tus propios proyectos y tus consejos con nosotros. Juntos, podemos hacer de SciencesPath un lugar más útil para todos.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-desktop"></i>
+                            <h2>El camino continúa</h2>
+                            <p>Aunque este proyecto marca el final de mi grado, es solo el comienzo de lo que espero que sea una larga y fructífera aventura. Estoy comprometido a mejorar y expandir SciencesPath!, siempre con el objetivo de enriquecer tu experiencia educativa.</p>
+                        </div>
+                        <div class="card">
+                            <i class="fa-solid fa-camera"></i>
+                            <h2>Gracias por visitarnos</h2>
+                            <p>Estoy emocionado de tenerte como parte de nuestro viaje en SciencesPath!. Estoy ansioso de ver y conocer más sobre ti, tus proyectos y cómo llevas el grado. ¡Espero que disfrutes explorando, aprendiendo y, por supuesto, experimentando!</p>
+                        </div>
                     </div>
                 </div>
             </div>
