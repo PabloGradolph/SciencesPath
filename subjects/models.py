@@ -71,10 +71,11 @@ class TimeTable(models.Model):
 class SubjectMaterial(models.Model):
     MATERIAL_TYPES = (
         ('Apuntes', 'Apuntes'),
-        ('Ejercicios', 'Ejercicios'),
+        ('Ejercicios/Prácticas', 'Ejercicios/Prácticas'),
         ('Examenes', 'Exámenes'),
     )
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='materials')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     material_type = models.CharField(max_length=20, choices=MATERIAL_TYPES, default='Apuntes')

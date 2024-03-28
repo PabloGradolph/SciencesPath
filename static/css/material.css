@@ -17,6 +17,99 @@ body {
     text-align: center;
 }
 
+.form-container {
+    background-color: #fff;
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 20px auto;
+}
+  
+input[type="text"],
+input[type="number"],
+select,
+button {
+    width: 100%;
+    padding: 10px; 
+    margin-bottom: 10px; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+}
+  
+button {
+    background-color: #5cb85c;
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+}
+  
+button:hover {
+    background-color: #4cae4c; 
+}
+
+.materials-container {
+    margin-top: 20px;
+}
+
+.form-container h3 {
+    text-align: center;
+    color: #333;
+}
+
+.materials-container h2 {
+    text-align: center;
+    color: #fff;
+}
+
+.materials-container ul {
+    padding-inline-start: 0px;
+}
+
+.materials-container li {
+    font-size: large;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.material-item {
+    font-size: medium;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px; 
+}
+
+.material-user-image {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.material-user-username {
+    font-size: 1.2em; 
+    margin-right: 5px; 
+}
+
+.material-date {
+    font-size: 0.8em; 
+    color: #aaaaaa;
+}
+  
+.materials-container a {
+    text-decoration: none; 
+    color: #fff; 
+}
+
+.materials-container a span{
+    text-decoration: none; 
+    color: #fff; 
+}
+  
+.materials-container a:hover {
+    text-decoration: underline;
+}
+  
 footer {
     width: 100%;
     background-color: #333333;

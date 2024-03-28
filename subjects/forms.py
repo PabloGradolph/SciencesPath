@@ -1,5 +1,6 @@
 from django import forms
 from .models import Degree, University, Subject, SubjectMaterial
+from django.core.validators import FileExtensionValidator
 
 class SubjectFilterForm(forms.Form):
     degree = forms.ModelChoiceField(queryset=Degree.objects.all(), required=False, empty_label="Todos", label="Grado")
@@ -33,6 +34,13 @@ class SubjectFilterForm(forms.Form):
         return year_choices
 
 class SubjectMaterialForm(forms.ModelForm):
+    file = forms.FileField(validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+
     class Meta:
         model = SubjectMaterial
         fields = ['title', 'material_type', 'file']
+        labels = {
+            'title': 'Título',
+            'material_type': 'Tipo de material',
+            'file': 'Archivo',
+        }

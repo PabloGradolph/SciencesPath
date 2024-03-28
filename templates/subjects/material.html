@@ -7,6 +7,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/material.css' %}">
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block header %}
@@ -34,6 +35,83 @@
 
 {% block content %}
     <div class="container">
-        <h1>Apuntes de {{ subject.name }}</h1>
+        <h1>Material de {{ subject.name }}</h1>
+        <div class="form-container">
+            <h3>¡Sube tu Material!</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Subir</button>
+            </form>
+        </div>
+
+        <!-- Muestra los materiales clasificados por tipo -->
+        <div class="materials-container">
+            {% regroup materials by material_type as materials_by_type %}
+            {% for type in materials_by_type %}
+                <h2>{{ type.grouper }}</h2>
+                <ul>
+                {% for material in type.list %}
+                    <li id="material-item-{{ material.id }}">
+                        <div class="material-item">
+                            <a href="{% url 'profile' material.user.username %}">
+                                <img src="{{ material.user.profile.image.url }}" alt="Foto de perfil" class="material-user-image">
+                            </a>
+                            <div>
+                                <a href="{% url 'profile' material.user.username %}" class="material-user-username">@{{ material.user.username }}</a>
+                                <span class="material-date">{{ material.upload_date|date:"d M Y" }}</span>
+                            </div>
+                        </div>
+                        {{ material.title }}: <a href="{{ material.file.url }}">Descargar</a>
+                        {% if material.user == request.user %}
+                            <button onclick="deleteMaterial({{ material.id }});" class="delete-material-btn">Borrar</button>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
     </div>
+    <script>
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function deleteMaterial(materialId) {
+            Swal.fire({
+                title: '¿Estás seguro de que quieres borrar este material?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, borrarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/subjects/delete-material/${materialId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': getCSRFToken()
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                '¡Borrado!',
+                                'El material ha sido eliminado.',
+                                'success'
+                            );
+                            // Eliminar el elemento del DOM o actualizar la página
+                            document.querySelector(`#material-item-${materialId}`).remove();
+                        } else {
+                            Swal.fire(
+                                'Error',
+                                'No se pudo borrar el material.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            })
+        }
+    </script>
 {% endblock %}

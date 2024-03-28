@@ -134,22 +134,37 @@ def detail(request, subject_id):
     }
     return render(request, 'subjects/detail.html', context)
 
-# TODO terminar esta view.
+
 @login_required(login_url='login')
 def upload_material(request, subject_id):
     subject = get_object_or_404(Subject, pk=subject_id)
+    materials = SubjectMaterial.objects.filter(subject=subject).order_by('material_type')
     
     if request.method == 'POST':
         form = SubjectMaterialForm(request.POST, request.FILES)
         if form.is_valid():
             material = form.save(commit=False)
             material.subject = subject
+            material.user = request.user
             material.save()
-            return redirect('detail', subject_id=subject_id)
+            return redirect('upload_material', subject_id=subject_id)
     else:
         form = SubjectMaterialForm()
     
-    return render(request, 'subjects/material.html', {'form': form, 'subject': subject, 'current_year': current_year})
+    return render(request, 'subjects/material.html', {'form': form, 'subject': subject, 'materials': materials, 'current_year': current_year})
+
+
+@login_required(login_url='login')
+@require_http_methods(["DELETE"])
+def delete_material(request, material_id):
+    material = get_object_or_404(SubjectMaterial, id=material_id)
+    
+    if material.user != request.user:
+        return JsonResponse({'error': 'No tienes permiso para borrar este material.'}, status=403)
+    
+    material.delete()
+    return JsonResponse({'message': 'Material borrado correctamente.'})
+
 
 @login_required(login_url='login')
 def horario(request, subject_id):
