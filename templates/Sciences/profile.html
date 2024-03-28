@@ -60,6 +60,63 @@
                                 <i class="far fa-solid fa-minus"></i> Dejar de seguir
                             </button></a>
                         {% endif %}
+                        {% if user.profile.is_expediente_public %}
+                            <div id="myModal1" class="modal">
+                                <!-- Modal content -->
+                                <div class="modal-content">
+                                    <span class="close1">&times;</span>
+                                    <div class="expediente-info">
+                                        <h3>Información del Expediente</h3>
+                                        <p class="average_grade">Nota media: {{ average_grade }}</p>
+                                        <p class="total_credits">Total de créditos matriculados: {{ total_credits }}</p>
+                                        <p class="credits_achieved">Créditos superados: {{ credits_achieved }}</p>
+                                        <p class="credits_remaining">Créditos por superar: {{ credits_remaining }}</p>
+                                    </div>
+                                    <table id="grades-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Asignatura</th>
+                                                <th>Código</th>
+                                                <th>Créditos</th>
+                                                <th>Nota</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for subject_in_dossier in subjects_in_dossier %}
+                                                <tr id="subject-row-{{ subject_in_dossier.id }}">
+                                                    <td>{{ subject_in_dossier.subject.name }}</td>
+                                                    <td>{{ subject_in_dossier.subject.subject_key }}</td>
+                                                    <td>{{ subject_in_dossier.subject.credits }}</td>
+                                                    {% if subject_in_dossier.grade == None %}
+                                                        <td>N/A</td>
+                                                    {% else %}
+                                                        <td>{{ subject_in_dossier.grade }}</td>
+                                                    {% endif %}
+                                                    <td>
+                                                        <button class="delete-subject-btn" data-subject-id="{{ subject_in_dossier.id }}">&times;</button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for extra_credit in extra_curricular_credits %}
+                                                <tr id="extra-credit-row-{{ extra_credit.id }}">
+                                                    <td>{{ extra_credit.name }}</td>
+                                                    <td>-</td>
+                                                    <td>{{ extra_credit.credits }}</td>
+                                                    <td>N/A</td>
+                                                    <td>
+                                                        <button class="delete-extra-credit-btn" data-extra-credit-id="{{ extra_credit.id }}">&times;</button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <button type="submit" id="myBtn1" class="boton-portada3">
+                                <i class="far fa-regular fa-file"></i> Expediente
+                            </button>
+                        {% endif %}
                     {% else %}
                         {% if user.profile.is_student %}
                             <div id="myModal1" class="modal">

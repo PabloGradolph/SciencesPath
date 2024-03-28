@@ -57,6 +57,7 @@ class Profile(models.Model):
     linkedin_url = models.URLField(max_length=255, blank=True, null=True)
     instagram_url = models.URLField(max_length=255, blank=True, null=True)
     twitter_url = models.URLField(max_length=255, blank=True, null=True)
+    is_expediente_public = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         """Returns the profile's string representation, showing the username."""

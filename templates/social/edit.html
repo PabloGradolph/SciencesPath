@@ -45,7 +45,11 @@
             </div>
             {{ p_form.image }}
             <h3 class="edit-title">Edita tu Perfil</h3>
-            <p>{{ error }}</p>
+            {% if u_form.errors or p_form.errors or a_form.errors %}
+                {{ u_form.errors }}
+                {{ p_form.errors }}
+                {{ a_form.errors }}
+            {% endif %}
             
             <div class="accordion">
                 <div class="accordion-item">
@@ -151,6 +155,10 @@
                         <div class="input-wrapper student-field">
                             <label>Email de la Universidad</label>
                             {{ p_form.university_email }}
+                        </div>
+                        <div class="input-wrapper student-field">
+                            <label>¿Expediente público?</label>
+                            {{ p_form.is_expediente_public }}
                         </div>
                     </div>
                 </div>

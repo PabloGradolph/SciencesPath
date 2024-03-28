@@ -92,10 +92,7 @@ def edit(request: HttpRequest) -> HttpResponse:
             username = request.user.username
             profile_url = reverse('profile', kwargs={'username': username})
             return redirect(profile_url)
-        else:
-            print(u_form.errors)
-            print(p_form.errors)
-            print(a_form.errors)
+
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
