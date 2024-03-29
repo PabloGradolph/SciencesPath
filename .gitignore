@@ -1,6 +1,4 @@
 db.sqlite3
 env
-media
 __pychache__
 todo.txt
-docs
