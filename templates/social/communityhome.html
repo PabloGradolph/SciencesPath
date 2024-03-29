@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block title %}
-    Inicio
+    Comunidad
 {% endblock %}
 
 {% block styles %}
@@ -38,6 +38,36 @@
 
 {% block content %}
 <div class="container">
+    <div id="followersModal" class="modal">
+        <div class="modal-content">
+            <span class="close1">&times;</span>
+            <h2>Seguidores</h2>
+            <ul class="user-list">
+                {% for user in followers %}
+                    <li>
+                        <a href="{% url 'profile' user %}" class="user-link">
+                            <img src="{{ user.profile.image.url }}" class="user-img"><span class="user-name">@{{ user.username }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div id="followingModal" class="modal">
+        <div class="modal-content">
+            <span class="close2">&times;</span>
+            <h2>Seguidos</h2>
+            <ul class="user-list">
+                {% for user in following %}
+                    <li>
+                        <a href="{% url 'profile' user %}" class="user-link">
+                            <img src="{{ user.profile.image.url }}" class="user-img"><span class="user-name">@{{ user.username }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
     <!-- Barra Izquierda -->
     <div class="left-bar">
         <div class="card">
@@ -46,8 +76,12 @@
                 <h5 class="card-title">@{{ request.user }}</h5>
                 <p class="card-text">{{ request.user.profile.bio }}</p>
                 <h6 class="card-title font-weight-bold">
-                    {{ request.user.profile.followers.count }} Followers
-                    {{ request.user.profile.following.count }} Following
+                    <button type="submit" id="myBtn1" class="boton-portada3">
+                        {{ request.user.profile.followers.count }} Seguidores
+                    </button>
+                    <button type="submit" id="myBtn2" class="boton-portada2">
+                        {{ request.user.profile.following.count }} Seguidos
+                    </button>
                 </h6>
                 <a href="{% url 'profile' request.user %}" class="profile-btn">Mi perfil</a>
             </div>
@@ -76,7 +110,7 @@
                         </label>
                         {{ form.image }}
                     </div>
-                    <button class="boton-enviar" type="sutmit">
+                    <button class="boton-enviar" type="submit">
                         <i class="fas fa-paper-plane"></i>
                         Publicar
                     </button>
@@ -100,7 +134,6 @@
                     <div class="menu-comentario">
                         <i class="fas fa-pen"></i>
                         <ul class="menu">
-                            <li><a href="">Editar</a></li>
                             <li><a href="{% url 'delete' post.id %}">Eliminar</a></li>
                         </ul>
                     </div>
@@ -121,9 +154,59 @@
                     <i class="fas fa-thumbs-up like-icon" style="color: {% if post.id in likes %}blue{%else%}black{% endif %}"></i>
                     <span class="likes-count">{{ post.likes.count }}</span>
                 </button>
-                <button type="" class="boton-responder">
+                <button type="" class="boton-responder" data-post-id="{{ post.id }}">
                     Comentar
                 </button>
+                <div id="comment-form-container-{{ post.id }}" class="comment-form-container comentar-publicacion" style="display: none;">
+                    <form action="{% url 'add_comment_to_post' post.id %}" method="post" enctype="multipart/form-data" class="comentar-comentario">
+                        {% csrf_token %}
+                        {{ comment_form.content }}
+                        {% if comment_form.content.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ comment_form.content.errors }}
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="boton-enviar"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="comentarios-usuarios">
+            <!-- comentario principal -->
+            <div class="comentario-principal-usuario">
+                <div class="comentario">
+    
+                    <!-- contenedor sub comentarios -->
+                    <div class="contenedor-sub-comentarios">
+                        {% for comentario in post.comments.all %}
+                            <div class="comentario-principal-usuario">
+                                <div class="avatar">
+                                    <img src="{{ comentario.user.profile.image.url }}" alt="img">
+                                </div>
+                                <div class="comentario">
+                                    <div class="usuario-comentario">
+                                        <div class="texto">
+                                            <a href="{% url 'profile' comentario.user %}" title="" class="nombre-usuario">{{ comentario.user.username }}</a> {{ comentario.content }}
+                                            {% if request.user == comentario.user %}
+                                                <div class="menu-comentario">
+                                                    <i class="fas fa-pen"></i>
+                                                    <ul class="menu">
+                                                        <li><a href="{% url 'delete_comment' comentario.id %}">Eliminar</a></li>
+                                                    </ul>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="botones-comentario">
+                                            <span class="tiempo-comentario">
+                                                {{ comentario.timestamp|naturaltime }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -145,16 +228,28 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="user-amount">
-                    {% comment %}<h3>Este es tu saldo acutal en la aplicación:</h3>
-                     <p>{{ user_balance }}€</p> {% endcomment %}
-                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.boton-responder').forEach(button => {
+            button.addEventListener('click', function() {
+                var postId = this.getAttribute('data-post-id');
+                var formContainerId = 'comment-form-container-' + postId;
+                var formContainer = document.getElementById(formContainerId);
+                if (formContainer) {
+                    // Alternar la visibilidad del formulario
+                    if (formContainer.style.display === 'block') {
+                        formContainer.style.display = 'none';
+                    } else {
+                        formContainer.style.display = 'block';
+                    }
+                }
+            });
+        });
+
         const likeButtons = document.querySelectorAll('.boton-puntuar');
     
         likeButtons.forEach(button => {
@@ -192,6 +287,46 @@
                 .catch(error => console.error('Error:', error));
             });
         });
+
+        // Obtener los botones que abren los modales
+        var followersBtn = document.getElementById('myBtn1');
+        var followingBtn = document.getElementById('myBtn2');
+
+        // Obtener los modales
+        var followersModal = document.getElementById('followersModal');
+        var followingModal = document.getElementById('followingModal');
+
+        // Obtener los elementos <span> que cierran los modales
+        var span1 = document.getElementsByClassName("close1")[0];
+        var span2 = document.getElementsByClassName("close2")[0];
+
+        // Función para abrir el modal de seguidores
+        followersBtn.onclick = function() {
+            followersModal.style.display = "block";
+        }
+
+        // Función para abrir el modal de seguidos
+        followingBtn.onclick = function() {
+            followingModal.style.display = "block";
+        }
+
+        // Función para cerrar los modales
+        span1.onclick = function() {
+            followersModal.style.display = "none";
+        }
+        span2.onclick = function() {
+            followingModal.style.display = "none";
+        }
+
+        // Cierra los modales si el usuario hace clic fuera de ellos
+        window.onclick = function(event) {
+            if (event.target == followersModal) {
+                followersModal.style.display = "none";
+            }
+            if (event.target == followingModal) {
+                followingModal.style.display = "none";
+            }
+        }
     });
 </script>
 {% endblock content %}

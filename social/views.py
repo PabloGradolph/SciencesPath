@@ -1,14 +1,14 @@
 from django.http import HttpRequest, HttpResponse
 from typing import Union
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Post, Relationship, Like
-from .forms import PostForm, UserUpdateForm, ProfileUpdateForm, AddressUpdateForm
+from .models import Post, Relationship, Like, Comment
+from .forms import PostForm, UserUpdateForm, ProfileUpdateForm, AddressUpdateForm, CommentForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -30,6 +30,9 @@ def home(request: HttpRequest) -> HttpResponse:
     # Create a dictionary to track which posts the user has liked
     likes = {like.post_id: True for like in Like.objects.filter(user=request.user)}
 
+    followers = request.user.profile.followers()
+    following = request.user.profile.following()
+
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -40,10 +43,11 @@ def home(request: HttpRequest) -> HttpResponse:
     else:
         form = PostForm()
 
-    # Find the 3 users with the most publications.
-    top_users = User.objects.annotate(post_count=Count('posts')).order_by('-post_count')[:8]
+    # Find the 8 users with the most publications.
+    top_users = User.objects.exclude(username="SciencesPath").annotate(post_count=Count('posts')).order_by('-post_count')[:8]
+    comment_form = CommentForm()
 
-    context = {'posts': posts, 'form': form, 'top_users': top_users, 'likes': likes}
+    context = {'posts': posts, 'form': form, 'top_users': top_users, 'likes': likes, 'followers': followers, 'following': following, 'comment_form': comment_form,}
     return render(request, 'social/communityhome.html', context)
 
 
@@ -66,6 +70,20 @@ def delete(request: HttpRequest, post_id: int) -> HttpResponse:
         return redirect(profile_url)
     else:
         return redirect('community_home')
+
+
+@login_required(login_url='login')
+def delete_comment(request: HttpRequest, comment_id: int) -> HttpResponse:
+    """
+    Deletes a comment by its ID and redirects to the previous page or community home.
+    
+    The function retrieves the comment by its ID and deletes it. Then redirect to the community_home.
+    """
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.user == request.user or request.user.is_staff:
+        comment.delete()
+
+    return redirect('community_home')
 
 
 @login_required(login_url='login')
@@ -100,6 +118,7 @@ def edit(request: HttpRequest) -> HttpResponse:
         
     context = {'u_form': u_form, 'p_form': p_form, 'a_form': a_form}
     return render(request, 'social/edit.html', context)
+
 
 @login_required(login_url='login')
 def follow(request: HttpRequest, username: str) -> HttpResponse:
@@ -149,3 +168,20 @@ def post_like(request):
         except Post.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Post not found.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+
+@login_required(login_url='login')
+def add_comment_to_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('community_home') # Asume que tienes una vista llamada 'community_home' donde se muestran los posts.
+    else:
+        form = CommentForm()
+    # Si no es POST, puedes redirigir al usuario donde estaban o mostrar una página de error.
+    return redirect('community_home')

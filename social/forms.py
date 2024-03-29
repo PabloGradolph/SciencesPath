@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Post, Profile, Address
+from .models import Post, Profile, Address, Comment
 from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from django_countries.widgets import CountrySelectWidget
@@ -36,6 +36,16 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['content', 'image']
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.TextInput(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Escribe un comentario...'}),
+        }
+
 
 class UserUpdateForm(forms.ModelForm):
     """
