@@ -766,12 +766,12 @@
                             const subjectCode = subjectNameAndCode[1].replace(')', '').trim();
                             const degreeName = subjectDetails[1];
                         
-                            searchInput.value = `${subjectName} (${subjectCode}) - ${degreeName}`;
-                            searchInput.setAttribute('data-selected-id', subjectId);
-                            searchInput.setAttribute('data-name', subjectName);
-                            searchInput.setAttribute('data-code', subjectCode);
-                            searchInput.setAttribute('data-degree-name', degreeName);
-                            searchResults.innerHTML = '';
+                            searchInput2.value = `${subjectName} (${subjectCode}) - ${degreeName}`;
+                            searchInput2.setAttribute('data-selected-id', subjectId);
+                            searchInput2.setAttribute('data-name', subjectName);
+                            searchInput2.setAttribute('data-code', subjectCode);
+                            searchInput2.setAttribute('data-degree-name', degreeName);
+                            searchResults2.innerHTML = '';
                         });
                     });
                 })
