@@ -48,6 +48,10 @@ button:hover {
     background-color: #4cae4c; 
 }
 
+.delete-material-btn{
+    margin-top: 10px;
+}
+
 .materials-container {
     margin-top: 20px;
 }

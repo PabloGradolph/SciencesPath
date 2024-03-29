@@ -23,7 +23,13 @@ class Command(BaseCommand):
 def main_function():
 
     # Main variables initialized.
-    schedule_info = {}
+    json_filename = 'subjects\\Data\\schedule_UC3M.json'
+    if os.path.exists(json_filename):
+        with open(json_filename, 'r') as json_file:
+            schedule_info = json.load(json_file)
+    else:
+        schedule_info = {}
+
     subjects_uc3m = list(Subject.objects.filter(university__name='UC3M'))
     chrome_options = Options()
     # chrome_options.add_argument("--headless")
@@ -217,9 +223,6 @@ def main_function():
 
             driver.quit()
 
-    filename = 'subjects\\Data\\schedule_UC3M.json'
-    with open(filename, 'w') as json_file:
-        for subject in subjects_uc3m:
-            schedule_info[subject.subject_key] = f"{str(subject.subject_key)}_UC3M_calendario.ics"
-        json_data = json.dumps(schedule_info)
+    with open(json_filename, 'w') as json_file:
+        json_data = json.dumps(schedule_info, indent=4)
         json_file.write(json_data)

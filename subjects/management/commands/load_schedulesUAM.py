@@ -20,7 +20,13 @@ class Command(BaseCommand):
 def main_function() -> None:
 
     # Main variables initialized.
-    schedule_info = {}
+    json_filename = 'subjects\\Data\\schedule_UAM.json'
+    if os.path.exists(json_filename):
+        with open(json_filename, 'r') as json_file:
+            schedule_info = json.load(json_file)
+    else:
+        schedule_info = {}
+
     downloads_path = "C:\\Users\\Pablo\\OneDrive\\Documentos\\1Programacion\\TFG\\media\\UAM"
     subjects_uam = list(Subject.objects.filter(university__name='UAM'))
     
@@ -111,15 +117,9 @@ def main_function() -> None:
             schedule_instance = TimeTable(subject=subject_instance, schedule_file_uam=new_file_name)
             schedule_instance.save()
         driver.quit()
+        schedule_info[subject.subject_key] = new_file_name
     
     # When everything is executed we create a json file with all the information.
-    filename = 'subjects\\Data\\schedule_UAM.json'
-    with open(filename, 'w') as json_file:
-        for subject in subjects_uam:
-            if subject.subject_key in schedule_info.keys():
-                schedule_info[f"{subject.subject_key}_2"] = f"{str(subject.subject_key)}_2_UAM_calendario.ics"
-            else:
-                
-                schedule_info[subject.subject_key] = f"{str(subject.subject_key)}_UAM_calendario.ics"
-        json_data = json.dumps(schedule_info)
+    with open(json_filename, 'w') as json_file:
+        json_data = json.dumps(schedule_info, indent=4)
         json_file.write(json_data)

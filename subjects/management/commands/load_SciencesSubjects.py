@@ -26,7 +26,6 @@ def main_function():
     url = "https://www.uc3m.es/grado/ciencias"
 
     # Mutable variables where we store different data.
-    interesting_subjects = []
     subjects_info = {}
     subjects_urls = {}
     subjects_links = []
@@ -58,7 +57,7 @@ def main_function():
         link = a['href']
         subject = a.text
         subject = re.sub(r'^(.*?) \([A-Z]\)$', r'\1', subject)
-        if "(UC3M)" in subject or "(B1)" in subject or "(B2)" in subject or "(UAM)" in subject or "(UAB)" in subject:
+        if "(UC3M)" in subject or "(B1)" in subject or "(B2)" in subject or "(UAM)" in subject or "(UAB)" in subject or "Prácticas Externas" in subject or "Practicas Externas" in subject:
             subjects_links.append(link)
             subjects_names.append(subject)
         else:
