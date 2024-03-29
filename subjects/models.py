@@ -103,9 +103,10 @@ class Dossier(models.Model):
 
     def calculate_average_grade(self):
         subjects_in_dossier = self.subjectindossier_set.exclude(grade__isnull=True)
-        total_grades = sum(item.grade for item in subjects_in_dossier)
-        num_subjects = subjects_in_dossier.count()
-        return round(total_grades / num_subjects, 2) if num_subjects > 0 else 0
+        total_weighted_grades = sum(item.grade * int(item.subject.credits) for item in subjects_in_dossier)
+        total_credits = int(sum(item.subject.credits for item in subjects_in_dossier))
+        average_grade = total_weighted_grades / total_credits if total_credits > 0 else 0
+        return round(average_grade, 2)
 
     def calculate_extra_curricular_credits(self):
         return int(sum(extra_credits.credits for extra_credits in self.extra_curricular_credits.all()))

@@ -721,14 +721,17 @@
                         // Evento de clic para cada resultado
                         resultDiv.addEventListener('click', function() {
                             const subjectId = this.getAttribute('data-id');
-                            const subjectDetails = this.textContent.split('(');
-                            const subjectName = subjectDetails[0].trim();
-                            const subjectCode = subjectDetails[1].slice(0, -1);
+                            const subjectDetails = this.textContent.split(' - ');
+                            const subjectNameAndCode = subjectDetails[0].split('(');
+                            const subjectName = subjectNameAndCode[0].trim();
+                            const subjectCode = subjectNameAndCode[1].replace(')', '').trim();
+                            const degreeName = subjectDetails[1];
                         
-                            searchInput.value = `${subjectName} (${subjectCode})`;
+                            searchInput.value = `${subjectName} (${subjectCode}) - ${degreeName}`;
                             searchInput.setAttribute('data-selected-id', subjectId);
                             searchInput.setAttribute('data-name', subjectName);
                             searchInput.setAttribute('data-code', subjectCode);
+                            searchInput.setAttribute('data-degree-name', degreeName);
                             searchResults.innerHTML = '';
                         });
                     });
@@ -757,15 +760,18 @@
                         // Evento de clic para cada resultado
                         resultDiv.addEventListener('click', function() {
                             const subjectId = this.getAttribute('data-id');
-                            const subjectDetails = this.textContent.split('(');
-                            const subjectName = subjectDetails[0].trim();
-                            const subjectCode = subjectDetails[1].slice(0, -1);
+                            const subjectDetails = this.textContent.split(' - ');
+                            const subjectNameAndCode = subjectDetails[0].split('(');
+                            const subjectName = subjectNameAndCode[0].trim();
+                            const subjectCode = subjectNameAndCode[1].replace(')', '').trim();
+                            const degreeName = subjectDetails[1];
                         
-                            searchInput2.value = `${subjectName} (${subjectCode})`;
-                            searchInput2.setAttribute('data-selected-id', subjectId);
-                            searchInput2.setAttribute('data-name', subjectName);
-                            searchInput2.setAttribute('data-code', subjectCode);
-                            searchResults2.innerHTML = '';
+                            searchInput.value = `${subjectName} (${subjectCode}) - ${degreeName}`;
+                            searchInput.setAttribute('data-selected-id', subjectId);
+                            searchInput.setAttribute('data-name', subjectName);
+                            searchInput.setAttribute('data-code', subjectCode);
+                            searchInput.setAttribute('data-degree-name', degreeName);
+                            searchResults.innerHTML = '';
                         });
                     });
                 })
