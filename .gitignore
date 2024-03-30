@@ -3,7 +3,7 @@ env
 __pychache__
 todo.txt
 .env
-/media
+# /media
 # */migrations/**
 # !*/migrations
 # !*/migrations/__init__.py
