@@ -479,19 +479,6 @@ footer .group-2 a:hover{
         font-size: 1.5em;
     }
 
-    #about .container {
-        padding: 170px 5em;
-    }
-
-    #about h2 {
-        font-size: 3em;
-    }
-
-    #about .about {
-        display: flex;
-        justify-content: center;
-    }
-
     #history:hover::before,
     #mission:hover::before {
         opacity: 0;
