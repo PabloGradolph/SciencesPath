@@ -281,18 +281,12 @@
             <div class="redes-sociales">
                 {% if user.profile.linkedin_url %}
                     <a href="{{ user.profile.linkedin_url }}" target="blank_" class="boton-redes linkedin fab fa-linkedin"><i class="icon-linkedin"></i></a>
-                {% else %}
-                    <a href="" class="boton-redes linkedin fab fa-linkedin"><i class="icon-linkedin"></i></a>
                 {% endif %}
                 {% if user.profile.twitter_url %}
                     <a href="{{ user.profile.twitter_url }}" target="blank_" class="boton-redes twitter fab fa-twitter"><i class="icon-twitter"></i></a>
-                {% else %}
-                    <a href="" class="boton-redes twitter fab fa-twitter"><i class="icon-twitter"></i></a>
                 {% endif %}
                 {% if user.profile.instagram_url %}
                     <a href="{{ user.profile.instagram_url }}" target="blank_" class="boton-redes instagram fab fa-instagram"><i class="icon-instagram"></i></a>
-                {% else %}
-                    <a href="" class="boton-redes instagram fab fa-instagram"><i class="icon-instagram"></i></a>
                 {% endif %}
                 
             </div>
@@ -841,6 +835,13 @@
                     searchResults2.innerHTML = '';
                 } else if (error.status === 400) {
                     Swal.fire('El usuario ya tiene esta asignatura en su horario.');
+                    // Limpia el input y el atributo data-selected-id
+                    searchInput2.value = '';
+                    searchInput2.removeAttribute('data-selected-id');
+                    // Limpia los resultados de búsqueda si es necesario
+                    searchResults2.innerHTML = '';
+                } else if (error.status === 401) {
+                    Swal.fire('No puedes tener más de 12 asignaturas en tu horario.');
                     // Limpia el input y el atributo data-selected-id
                     searchInput2.value = '';
                     searchInput2.removeAttribute('data-selected-id');

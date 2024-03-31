@@ -235,6 +235,10 @@ def parse_ics_to_json(request, subject_id):
  
     try:
 
+        # Verificar si el usuario ya tiene 14 asignaturas en su horario
+        if SubjectSchedule.objects.filter(user=request.user).count() >= 12:
+            return JsonResponse({'error': 'No puedes tener más de 12 asignaturas en tu horario.'}, status=401)
+    
         if SubjectSchedule.objects.filter(user=request.user, subject=subject).exists():
             return JsonResponse({'error': 'El usuario ya tiene esta asignatura en su horario.'}, status=400)
 

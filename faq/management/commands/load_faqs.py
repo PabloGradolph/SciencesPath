@@ -19,8 +19,8 @@ class Command(BaseCommand):
             None
         """
         questions = [
-            {'question': '¿A qué universidad voy después del segundo cuatrimestre de 2º?', 
-            'answer': 'Una vez terminado el segundo cuatrimestre de 2º, cada alumno continuará sus estudios en la universidad en la que fue aceptado. Sin embargo, existe la posibilidad de solicitar un traslado de universidad.'},
+            {'question': '¿A qué universidad voy después del segundo cuatrimestre de 2&ordm?', 
+            'answer': 'Una vez terminado el segundo cuatrimestre de 2&ordm, cada alumno continuará sus estudios en la universidad en la que fue aceptado. Sin embargo, existe la posibilidad de solicitar un traslado de universidad.'},
             {'question': "¿Puedo cursar cualquier asignatura de la universidad?",
             'answer': "Podrás cursar únicamente las asignaturas de la facultad/campus al que pertenezcas:\n\t- UAM: Cualquier asignatura de las facultades de Ciencias y/o Biología.\n\t- UAB: Cualquier asignatura de las facultades de Ciencias y/o Biociencias.\n\t- UC3M: Cualquier asignatura del campus de Leganés."},
             {'question': "¿Cuántos créditos externos a asignaturas me puedo convalidar?",

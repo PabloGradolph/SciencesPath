@@ -62,13 +62,13 @@
             {% for faq in faqs %}
                 <div class="faq">
                     <div class="question">
-                        <h3>{{ faq.question }}</h3>
+                        <h3>{{ faq.question|safe }}</h3>
                         <svg width="15" height="10" viewBox="0 0 42 25">
                             <path d="M3 3L21 21L39 3" stroke="white" stroke-width="7" stroke-linecap="round"/>
                         </svg>
                     </div>
                     <div class="answer">
-                        <p>{{ faq.answer|linebreaksbr }}</p>
+                        <p>{{ faq.answer|safe|linebreaksbr }}</p>
                     </div>
                 </div>
             {% endfor %}
