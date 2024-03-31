@@ -135,7 +135,7 @@ ul {
 .form-container p {
     text-align: center;
     margin-top: 10px;
-    color: #000;
+    color: #f10a06;
 }
 
 /* Enlace a la página de registro */
@@ -156,6 +156,7 @@ ul {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #000;
 }
 
 .form-container .register-text a {

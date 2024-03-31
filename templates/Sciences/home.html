@@ -37,10 +37,12 @@
     <div class="row">
         {% if messages %}
             {% for message in messages %}
-                <div class="{{ message.tags }}-alert alert-dismissible">
-                    <span class="close-alert">&times;</span>
-                    {{ message|safe|escape }}
-                </div>
+                {% if forloop.last %}
+                    <div class="{{ message.tags }}-alert alert-dismissible">
+                        <span class="close-alert">&times;</span>
+                        {{ message|safe|escape }}
+                    </div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>

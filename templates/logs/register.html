@@ -36,17 +36,19 @@
     <div class="row">
         {% if messages %}
             {% for message in messages %}
-                <div class="{{ message.tags }}-alert alert-dismissible">
-                    <span class="close-alert">&times;</span>
-                    {{ message|safe|escape }}
-                </div>
+                {% if forloop.last %}
+                    <div class="{{ message.tags }}-alert alert-dismissible">
+                        <span class="close-alert">&times;</span>
+                        {{ message|safe|escape }}
+                    </div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </div>
     <div class="form-container">
         <h2>Registro de Usuario</h2>
         <form method="POST" id="registration-form">
-            <p>{{ error }}</p>
+            <p class="error">{{ error }}</p>
             {% csrf_token %}
             <div>
                 {{ form.as_p }}

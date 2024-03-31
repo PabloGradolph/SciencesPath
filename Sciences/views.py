@@ -205,6 +205,12 @@ def register(request: HttpRequest) -> HttpResponse:
                 if User.objects.filter(email=email).exists():
                     return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El email ya está registrado.'})
                 
+                # Check if the password is longer than 8 chars and no completly numeric
+                if len(password1) < 8:
+                    return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'La contraseña debe contener al menos 8 caracteres.'})
+                elif re.fullmatch(r'\d+', password1):
+                    return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'La contraseña no puede ser solamente numérica.'})
+                
                 # We try to create a user but an IntegrityError could be thrown -> User already exists.
                 try:
                     user = User.objects.create_user(username=username, email=email, password=password1)

@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from django import forms
 from typing import Any
@@ -21,7 +22,13 @@ class CustomUserCreationForm(UserCreationForm):
         """
         super().__init__(*args, **kwargs)
         self.fields['username'].help_text = 'Introduce solo letras y no más de 35 caracteres.'
-        self.fields['username'].validators = []
+        self.fields['username'].validators = [
+            RegexValidator(
+                regex='^[a-zA-Z]*$',
+                message='Introduce solo letras.',
+                code='invalid_username'
+            ),
+        ]
         self.fields['password1'].help_text = "Su contraseña debe contener al menos 8 caracteres y no puede ser completamente numérica."
         self.fields['password2'].help_text = ""
     
