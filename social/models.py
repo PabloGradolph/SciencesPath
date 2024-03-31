@@ -1,14 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django_countries.fields import CountryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from phonenumber_field.modelfields import PhoneNumberField
-from django_countries.fields import CountryField
 from subjects.models import Subject
 
 
 class Address(models.Model):
+    """
+    Represents a physical address with optional details such as floor and door.
+    """
     street = models.CharField(max_length=255, verbose_name="Calle", blank=True, null=True)
     number = models.PositiveIntegerField(verbose_name="Número", blank=True, null=True)
     floor = models.PositiveIntegerField(blank=True, null=True, verbose_name="Piso")
@@ -17,6 +21,9 @@ class Address(models.Model):
     country = CountryField(blank_label='(Seleccionar país)', verbose_name="País")
 
     def __str__(self):
+        """
+        Returns a string representation of the address, combining available fields into a single string.
+        """
         address_str = f"{self.street} {self.number}"
         if self.floor and self.door:
             address_str += f", Piso {self.floor}, Puerta {self.door}"
@@ -99,6 +106,9 @@ class Event(models.Model):
         ordering = ['start_time']
 
     def __str__(self):
+        """
+        Returns a string representation of the event, combining the title and timing.
+        """
         return f'{self.title} ({self.start_time.strftime("%Y-%m-%d %H:%M")} - {self.end_time.strftime("%Y-%m-%d %H:%M")})'
     
 
@@ -138,6 +148,9 @@ class Relationship(models.Model):
 
 
 class Like(models.Model):
+    """
+    Represents a 'like' on a post by a user.
+    """
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked_posts')
     timestamp = models.DateTimeField(default=timezone.now)
@@ -146,10 +159,16 @@ class Like(models.Model):
         unique_together = ('post', 'user')
 
     def __str__(self) -> str:
+        """
+        Returns a string representation of the Like model, showing which user liked which post.
+        """
         return f'{self.user} likes {self.post}'
 
 
 class Comment(models.Model):
+    """
+    Represents a comment made by a user on a post.
+    """
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments_made')
     content = models.TextField()
@@ -159,4 +178,7 @@ class Comment(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self) -> str:
+        """
+        Provides a string representation of the Comment model, indicating which user commented on which post.
+        """
         return f'Comment by {self.user} on {self.post}'

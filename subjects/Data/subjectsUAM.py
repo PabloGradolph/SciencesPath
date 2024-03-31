@@ -1,10 +1,12 @@
-import requests
-import json
-import re
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
+import requests
+import json
+import re
+
 
 def clean_text(text: str) -> str:
     '''

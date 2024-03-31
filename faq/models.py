@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class FAQ(models.Model):
     """
     Model representing a Frequently Asked Question (FAQ).

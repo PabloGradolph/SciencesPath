@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 from django.core.management.base import BaseCommand
+from typing import Any
 from ...models import Subject, TimeTable
 import time
 import os
@@ -12,10 +13,14 @@ import json
 
 
 class Command(BaseCommand):
+    """
+    A command to load and save schedules info from UAM university in a JSON file.
+    """
     help = 'Carga horarios UAM desde tu script'
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         main_function()
+
 
 def main_function() -> None:
 

@@ -1,8 +1,10 @@
-import requests
 from bs4 import BeautifulSoup
+from unicodedata import normalize
+
 import re
 import json
-from unicodedata import normalize
+import requests
+
 
 def clean_text(text: str) -> str:
     '''

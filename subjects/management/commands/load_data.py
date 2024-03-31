@@ -1,18 +1,30 @@
-import json
 from django.core.management.base import BaseCommand
+from typing import Any
 from ...models import Subject, Degree, University
+import json
+
 
 class Command(BaseCommand):
+    """
+    A command to load data from a JSON file into the Subject, Degree, and University models.
+    """
     help = 'Load data from JSON files into the database'
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument('file_path', type=str, help='Path to the JSON file')
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         file_path = kwargs['file_path']
         load_subjects_from_json(file_path)
 
-def load_subjects_from_json(file_path: str):
+
+def load_subjects_from_json(file_path: str) -> None:
+    """
+    Loads subjects and their related data from a JSON file into the database.
+
+    Args:
+        file_path (str): The file path to the JSON data file.
+    """
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
@@ -63,6 +75,7 @@ def load_subjects_from_json(file_path: str):
                     university=university, degree=degree, **subject_data
                 )
 
+        # # This other piece of code is for subjects that are not in Sciences Degree.
         # for key, value in data.items():
         #     university_name = key.split(' | ')[1]
         #     degree_name = key.split(' | ')[0]
@@ -101,5 +114,15 @@ def load_subjects_from_json(file_path: str):
         #                 university=university, degree=degree, **subject_data
         #             )
 
-def capitalize_words(name):
+def capitalize_words(name: str) -> str:
+    """
+    Capitalizes each word in the input string if it has more than three characters, 
+    otherwise lowercases it.
+
+    Args:
+        name (str): The input string containing words to be capitalized or lowercased.
+
+    Returns:
+        str: The modified string with each word capitalized or lowercased based on its length.
+    """
     return ' '.join(word.capitalize() if len(word) > 3 else word.lower() for word in name.split())

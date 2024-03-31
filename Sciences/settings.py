@@ -29,7 +29,6 @@ EMAIL_PORT = 587
 PASSWORD_RESET_TIMEOUT = 14400
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,8 +43,6 @@ INSTALLED_APPS = [
     'django_countries',
     'storages',
 ]
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # AWS config
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')

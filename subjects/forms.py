@@ -1,8 +1,12 @@
 from django import forms
-from .models import Degree, University, Subject, SubjectMaterial
 from django.core.validators import FileExtensionValidator
+from .models import Degree, University, Subject, SubjectMaterial
+
 
 class SubjectFilterForm(forms.Form):
+    """
+    A form for filtering Subject instances based on degree, university, credits, year, and semester.
+    """
     degree = forms.ModelChoiceField(queryset=Degree.objects.all(), required=False, empty_label="Todos", label="Grado")
     university = forms.ModelChoiceField(queryset=University.objects.all(), required=False, empty_label="Todas", label="Universidad")
     credits = forms.ChoiceField(choices=[], required=False, label="Créditos")
@@ -17,23 +21,42 @@ class SubjectFilterForm(forms.Form):
     semester = forms.ChoiceField(choices=SEMESTER_CHOICES, required=False, label="Cuatrimestre")
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the form with dynamic choices for the 'credits' and 'year' fields.
+        """
         super().__init__(*args, **kwargs)
         self.fields['credits'].choices = self.get_credits_choices()
         self.fields['year'].choices = self.get_year_choices()
     
-    def get_credits_choices(self):
+    def get_credits_choices(self) -> list:
+        """
+        Retrieves a list of distinct credit values from Subject instances to use as form choices.
+
+        Returns:
+            list: A list of tuples for the 'credits' field choices.
+        """
         credits_choices =  [(str(credits), str(credits)) for credits in Subject.objects.order_by('credits').values_list('credits', flat=True).distinct()]
         credits_choices.insert(0, ('', 'Todos'))
         return credits_choices
 
-    def get_year_choices(self):
+    def get_year_choices(self) -> list:
+        """
+        Retrieves a list of distinct year values from Subject instances to use as form choices.
+
+        Returns:
+            list: A list of tuples for the 'year' field choices.
+        """
         year_choices = [(str(year), str(year)) for year in Subject.objects.order_by('year').values_list('year', flat=True).distinct()]
         if ('', '') in year_choices:
             year_choices.remove(('', ''))
         year_choices.insert(0, ('', 'Todos'))
         return year_choices
 
+
 class SubjectMaterialForm(forms.ModelForm):
+    """
+    A form for uploading subject-related materials, specifically PDF files.
+    """
     file = forms.FileField(validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
 
     class Meta:

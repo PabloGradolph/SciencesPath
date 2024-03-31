@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django import forms
 from typing import Any
 
@@ -38,6 +38,9 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class SetPasswordForm(SetPasswordForm):
+    """
+    Custom form for setting a new password, using the active user model.
+    """
     class Meta:
         model = get_user_model()
         fields = ['new_password1', 'new_password2']

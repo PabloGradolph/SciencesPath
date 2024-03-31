@@ -1,27 +1,34 @@
 from django.core.management.base import BaseCommand
-from django.core.serializers import serialize
+from typing import Any
 from ...models import TimeTable
 import json
 
+
 class Command(BaseCommand):
+    """
+    Django management command to export timetable data to JSON files for each university.
+    """
     help = 'Export timetables to JSON files'
 
-    def handle(self, *args, **kwargs):
-        # Definir los nombres de los archivos de salida
+    def handle(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Gathers timetable data from the database and exports it to separate JSON files for each university.
+        """
+        # Define output filenames for each university
         filenames = {
             'UAM': 'schedules_uam.json',
             'UC3M': 'schedules_uc3m.json',
             'UAB': 'schedules_uab.json',
         }
         
-        # Inicializar diccionarios para almacenar la información
+        # Initialize dictionaries to store information
         data = {
             'UAM': {},
             'UC3M': {},
             'UAB': {},
         }
         
-        # Iterar sobre todos los horarios y agruparlos por universidad
+        # Iterate over all timetables and group them by university
         for timetable in TimeTable.objects.all():
             if timetable.schedule_file_uam:
                 data['UAM'][timetable.subject_id] = timetable.schedule_file_uam.url
@@ -30,7 +37,7 @@ class Command(BaseCommand):
             if timetable.schedule_file_uab:
                 data['UAB'][timetable.subject_id] = timetable.schedule_file_uab.url
         
-        # Escribir cada diccionario en su correspondiente archivo JSON
+        # Write each dictionary to its corresponding JSON file
         for university, schedule_data in data.items():
             with open(filenames[university], 'w') as outfile:
                 json.dump(schedule_data, outfile, ensure_ascii=False, indent=4)

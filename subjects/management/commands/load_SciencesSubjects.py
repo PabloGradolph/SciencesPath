@@ -1,28 +1,23 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoSuchElementException
-from icalendar import Calendar, Event
-from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
-import json
-import os
-import requests
-from unicodedata import normalize
 from django.core.management.base import BaseCommand
-from ...models import Subject, TimeTable
+from bs4 import BeautifulSoup
+from unicodedata import normalize
+from typing import Any
+import requests
+import re
+import json
 
 
 class Command(BaseCommand):
+    """
+    A command to load and save subjects info from Sciences Degree in a JSON file.
+    """
     help = 'Carga asignaturas y horarios del Grado en Ciencias'
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         main_function()
 
-def main_function():
+
+def main_function() -> None:
     url = "https://www.uc3m.es/grado/ciencias"
 
     # Mutable variables where we store different data.

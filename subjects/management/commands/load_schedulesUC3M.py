@@ -6,21 +6,27 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from icalendar import Calendar, Event
 from bs4 import BeautifulSoup
-import re
+from typing import Any
 from datetime import datetime, timedelta
-import json
-import os
 from django.core.management.base import BaseCommand
 from ...models import Subject, TimeTable
 
+import re
+import json
+import os
+
 
 class Command(BaseCommand):
+    """
+    A command to load and save schedules info from UC3M university in a JSON file.
+    """
     help = 'Carga horarios UC3M desde tu script'
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         main_function()
 
-def main_function():
+
+def main_function() -> None:
 
     # Main variables initialized.
     json_filename = 'subjects\\Data\\schedule_UC3M.json'

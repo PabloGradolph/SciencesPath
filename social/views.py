@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from typing import Union
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -9,7 +9,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Post, Relationship, Like, Comment
 from .forms import PostForm, UserUpdateForm, ProfileUpdateForm, AddressUpdateForm, CommentForm
-from django.contrib.auth.decorators import login_required
 
 
 @login_required(login_url='login')
@@ -62,7 +61,7 @@ def delete(request: HttpRequest, post_id: int) -> HttpResponse:
     post = Post.objects.get(id=post_id)
     post.delete()
     
-    # Obtén la URL de la página anterior
+    # URL of the previous page.
     referer = request.META.get('HTTP_REFERER')
         
     if 'profile' in referer:
@@ -154,13 +153,23 @@ def unfollow(request: HttpRequest, username: str) -> HttpResponse:
 
 @login_required(login_url='login')
 @require_POST
-def post_like(request):
+def post_like(request: HttpRequest) -> JsonResponse:
+    """
+    Toggles a like for a post by the current user based on the action provided in the request.
+
+    Args:
+        request (HttpRequest): The request object, expecting 'id' of the post and 'action' to be performed.
+
+    Returns:
+        JsonResponse: Status 'ok' if action was successful, otherwise status 'error' with an appropriate message.
+    """
     post_id = request.POST.get('id')
     action = request.POST.get('action')
     
     if post_id and action:
         try:
             post = Post.objects.get(id=post_id)
+            # Perform action based on the 'action' POST parameter
             if action == 'like':
                 Like.objects.get_or_create(post=post, user=request.user)
             else:
@@ -173,6 +182,16 @@ def post_like(request):
 
 @login_required(login_url='login')
 def add_comment_to_post(request, post_id):
+    """
+    Allows authenticated users to add comments to a specific post identified by its `post_id`.
+    
+    Args:
+        request (HttpRequest): The incoming request object.
+        post_id (str): The ID of the post to which the comment is being added.
+
+    Returns:
+        HttpResponse: Redirects to the 'community_home' view after processing.
+    """
     post = get_object_or_404(Post, id=post_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
@@ -181,8 +200,8 @@ def add_comment_to_post(request, post_id):
             comment.post = post
             comment.user = request.user
             comment.save()
-            return redirect('community_home') # Asume que tienes una vista llamada 'community_home' donde se muestran los posts.
+            return redirect('community_home')
     else:
         form = CommentForm()
-    # Si no es POST, puedes redirigir al usuario donde estaban o mostrar una página de error.
+
     return redirect('community_home')

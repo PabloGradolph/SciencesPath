@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from ...models import FAQ
 from typing import Any
+from ...models import FAQ
+
 
 class Command(BaseCommand):
     """Loads predefined FAQ data into the database."""

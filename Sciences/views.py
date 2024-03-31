@@ -1,32 +1,35 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.core.serializers import serialize
-from django.http import JsonResponse
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.db import IntegrityError
-from datetime import datetime
-from .forms import CustomUserCreationForm, SetPasswordForm
-from django.contrib.auth.forms import PasswordResetForm
-from faq.models import FAQ
-from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
-from social.models import Event, Profile
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.serializers import serialize
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.core.mail import EmailMessage
-from django.db.models.query_utils import Q
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib import messages
+
 from .tokens import account_activation_token
+from .forms import CustomUserCreationForm, SetPasswordForm
+from faq.models import FAQ
+from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
+from social.models import Event, Profile
+
+from datetime import datetime
 import re
 import json
 
+
 # Global variable
 current_year = datetime.now().year
+
 
 def home(request: HttpRequest) -> HttpResponse:
     """
@@ -39,6 +42,7 @@ def home(request: HttpRequest) -> HttpResponse:
         HttpResponse object rendering the 'Sciences/home.html' template with the provided context.
     """
     return render(request, 'Sciences/home.html', {'current_year': current_year})
+
 
 @login_required(login_url='login')
 def main(request: HttpRequest) -> HttpResponse:
@@ -57,15 +61,29 @@ def main(request: HttpRequest) -> HttpResponse:
 
 
 @login_required(login_url='login')
-def profile(request, username):
+def profile(request: HttpRequest, username: str) -> HttpResponse:
+    """
+    Displays the profile page of a user, including their posts, scheduled events, and academic information.
+    
+    The view retrieves and processes the user's posts, events, and subject schedules for display. 
+    It also calculates academic details like average grade and credits achieved if a dossier exists.
+    
+    Args:
+        request: HttpRequest object.
+        username: Username of the user to display the profile for.
+    
+    Returns:
+        HttpResponse object rendering the 'Sciences/profile.html' template with the context containing user data and academic information.
+    """
+    # User and related entities retrieval
     user = User.objects.get(username=username)
     posts = user.posts.all()
     events = user.events.all()
     user_subjects = user.subject_schedules.all()
     subjects_colors = {subject.subject_id: subject.color for subject in user_subjects}
 
+    # Event processing
     events_json = json.loads(serialize('json', events))
-
     for event in events_json:
         if "Día festi" in event['fields']['title'] or "Dia festi" in event['fields']['title']:
             continue
@@ -83,6 +101,7 @@ def profile(request, username):
         event['fields']['color'] = event_color
         event['fields']['textColor'] = '#ffffff'
 
+        # Removing unused fields
         del event['fields']['user']
         del event['fields']['start_time']
         del event['fields']['end_time']
@@ -90,12 +109,11 @@ def profile(request, username):
 
     events_json = json.dumps([event['fields'] for event in events_json])
 
-    # Obtener los ids de las asignaturas del usuario
+    # Subject information retrieval
     subject_ids = user.subject_schedules.values_list('subject_id', flat=True)
-
-    # Usar esos ids para obtener los objetos Subject correspondientes
     subjects = Subject.objects.filter(id__in=subject_ids)
 
+    # Dossier information retrieval and processing
     try:
         dossier = Dossier.objects.get(user=user)
         average_grade = dossier.calculate_average_grade()
@@ -120,12 +138,20 @@ def profile(request, username):
 
 @login_required(login_url='login')
 @require_POST
-def delete_subject_from_schedule(request, subject_id):
-    # Asegúrate de que el usuario esté autenticado y la petición sea POST
+def delete_subject_from_schedule(request: HttpRequest, subject_id: int) -> JsonResponse:
+    """
+    Deletes a subject from the user's schedule and associated events, responding with a JSON status message.
+
+    Args:
+        request: The HttpRequest object.
+        subject_id: The ID of the subject to be deleted.
+
+    Returns:
+        JsonResponse object containing the status ('success' or 'error') and a message about the action's result.
+    """
     user = request.user
     subject = get_object_or_404(Subject, id=subject_id)
     
-    # Intenta eliminar la asignatura del horario del usuario
     try:
         subject_schedule = SubjectSchedule.objects.get(user=user, subject=subject)
         subject_schedule.delete()
@@ -137,13 +163,33 @@ def delete_subject_from_schedule(request, subject_id):
     
 
 @login_required(login_url='login')
-def documents(request):
+def documents(request: HttpRequest) -> HttpResponse:
+    """
+    Renders the documents page for the Sciences section of the site.
+
+    Args:
+        request: The HttpRequest object containing metadata about the request.
+
+    Returns:
+        HttpResponse object rendering the 'Sciences/documents.html' template.
+    """
     context = {'current_year': current_year}
     return render(request, 'Sciences/documents.html', context)
 
 
 @login_required(login_url='login')
-def password_change(request):
+def password_change(request: HttpRequest) -> HttpResponse:
+    """
+    Allows the user to change their password.
+
+    This view displays a form for password change on GET requests and processes the form on POST requests.
+
+    Args:
+        request: HttpRequest object containing metadata about the request.
+
+    Returns:
+        HttpResponse object either rendering the password change form or redirecting to the login page upon successful password change.
+    """
     user = request.user
     if request.method == 'POST':
         form = SetPasswordForm(user, request.POST)
@@ -177,7 +223,6 @@ def register(request: HttpRequest) -> HttpResponse:
         return render(request, 'logs/register.html', {'form': form})
     
     else: # POST request
-
         form = CustomUserCreationForm()
         username = request.POST['username']
         email = request.POST['email']
@@ -188,7 +233,6 @@ def register(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             is_student = form.cleaned_data.get('is_student')
         else:
-            messages.error(request, "Está ocurriendo un error con el formulario.")
             is_student = True
 
         # Check if the username is longer than 35 chars.
@@ -205,7 +249,7 @@ def register(request: HttpRequest) -> HttpResponse:
                 if User.objects.filter(email=email).exists():
                     return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'El email ya está registrado.'})
                 
-                # Check if the password is longer than 8 chars and no completly numeric
+                # Check if the password is longer than 8 chars and no completly numeric.
                 if len(password1) < 8:
                     return render(request, 'logs/register.html', {'current_year': current_year, 'form': form, 'error': 'La contraseña debe contener al menos 8 caracteres.'})
                 elif re.fullmatch(r'\d+', password1):
@@ -275,8 +319,23 @@ def logout_view(request: HttpRequest) -> HttpResponseRedirect:
     return redirect('home')
 
 
+# --------------------- COMPLEMENTARY FUNCTIONS ---------------------
 
-def activate(request, uidb64, token):
+def activate(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
+    """
+    Activates a user's account if the provided token is valid.
+
+    This view attempts to decode the user's ID from `uidb64`, retrieve the user model, and then checks the
+    provided token.
+
+    Args:
+        request: HttpRequest object containing metadata about the request.
+        uidb64: URL-safe base64-encoded string representing the user's ID.
+        token: Account activation token to be verified.
+
+    Returns:
+        HttpResponse object redirecting to either the login page upon successful activation or the main page if activation fails.
+    """
     User = get_user_model()
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
@@ -287,7 +346,6 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-
         messages.success(request, "Gracias por confirmar tu email. Ya puedes iniciar sesión.")
         return redirect('login')
     else:
@@ -296,7 +354,16 @@ def activate(request, uidb64, token):
     return redirect('main')
 
 
-def activateEmail(request, user, to_email):
+def activateEmail(request: HttpRequest, user: User, to_email: str) -> None:
+    """
+    Sends email to `to_email` with an activation link.
+
+    Args:
+        request (HttpRequest): The request object.
+        user (User): User instance to activate.
+        to_email (str): Email address to send the activation link.
+    """
+    # Email content setup
     mail_subject = "Activa tu cuenta."
     message = render_to_string("logs/template_activate_account.html", {
         'user': user.username,
@@ -305,6 +372,8 @@ def activateEmail(request, user, to_email):
         'token': account_activation_token.make_token(user),
         "protocol": 'https' if request.is_secure() else 'http'
     })
+
+    # Attempt to send email
     email = EmailMessage(mail_subject, message, to=[to_email])
     if email.send():
         messages.success(request, f'Estimado <b>{user}</b>, por favor comprueba tu email: <b>{to_email}</b> y haz click \
@@ -313,13 +382,27 @@ def activateEmail(request, user, to_email):
         messages.error(request, f'Problema enviando el email a {to_email}, comprueba que el correo es correcto.')
 
 
-def password_reset_request(request):
+def password_reset_request(request: HttpRequest) -> HttpResponse:
+    """
+    Handles the password reset request by sending an email with reset instructions.
+
+    Args:
+        request (HttpRequest): The request object.
+
+    Returns:
+        HttpResponse: Renders the password reset request form or redirects to home on successful email dispatch.
+    """
     if request.method == 'POST':
+
         form = PasswordResetForm(request.POST)
+
         if form.is_valid():
+            # Extract the email from the form and look for the associated user
             user_email = form.cleaned_data['email']
             associated_user = User.objects.filter(email=user_email).first()
+
             if associated_user:
+                # Prepare and send the password recovery email
                 subject = "Recuperar Contraseña SciencesPath!"
                 message = render_to_string("logs/template_reset_password.html", {
                     'user': associated_user,
@@ -329,7 +412,9 @@ def password_reset_request(request):
                     "protocol": 'https' if request.is_secure() else 'http'
                 }) 
                 email = EmailMessage(subject, message, to=[associated_user.email])
+                
                 if email.send():
+                    # Success message if the email is successfully sent
                     messages.success(request,
                                         """
                                         <h2>Recuperación de Contraseña enviada</h2><hr>
@@ -345,26 +430,39 @@ def password_reset_request(request):
             
             return redirect('home')
 
+        # Adds form errors to error messages
         for error in list(form.errors.values()):
             messages.error(request, error)
 
+    # If not POST, display the password recovery form
     form = PasswordResetForm()
     context = {'current_year': current_year, 'form': form}
-    return render(request=request,
-                  template_name="logs/password_reset.html",
-                  context=context
-                  )
+    return render(request,"logs/password_reset.html",context)
 
 
-def passwordResetConfirm(request, uidb64, token):
+def passwordResetConfirm(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
+    """
+    Handles the password reset confirmation process.
+
+    Validates the user's token and uidb64 from the password reset email, allowing them to set a new password if valid.
+    
+    Args:
+        request (HttpRequest): The request object containing metadata about the request.
+        uidb64 (str): The user's ID encoded in base64.
+        token (str): Token for validating the password reset request.
+
+    Returns:
+        HttpResponse: Renders the password reset form or redirects to the login page upon successful password update.
+    """
     User = get_user_model()
     try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64)) # Decode the user's ID from base64.
         user = User.objects.get(pk=uid)
     except:
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
+        # Process the form if the token is valid.
         if request.method == 'POST':
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
@@ -379,7 +477,9 @@ def passwordResetConfirm(request, uidb64, token):
         context = {'current_year': current_year, 'form': form}
         return render(request, 'logs/password_reset_confirm.html', context=context)
     else:
+        # Invalid link or expired token.
         messages.error(request, "El link ha expirado.")
 
+    # Fallback message in case something else goes wrong.
     messages.error(request, 'Algo ha ido mal, redirigiendo a la página de inicio.')
     return redirect('home')

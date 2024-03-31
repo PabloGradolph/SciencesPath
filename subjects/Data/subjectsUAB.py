@@ -1,10 +1,12 @@
-import requests
-from bs4 import BeautifulSoup
-import re
-import json
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+
+import re
+import json
+import requests
+
 
 urls_list = ['https://www.uab.cat/web/estudiar/listado-de-grados/plan-de'
     '-estudios/guias-docentes-1345467811508.html?param1=1231400870814',

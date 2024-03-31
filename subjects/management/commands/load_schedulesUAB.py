@@ -1,24 +1,33 @@
+from django.core.management.base import BaseCommand
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import pytz
 from icalendar import Calendar, Event
-import time
-import os
 from datetime import datetime
-import json
-from django.core.management.base import BaseCommand
+from typing import Any
 from ...models import Subject, TimeTable
 
+import time
+import os
+import json
+import pytz
+
+
 class Command(BaseCommand):
+    """
+    A command to load and save schedules info from UAB university in a JSON file.
+    """
     help = 'Carga horarios UAB desde tu script'
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         main_function()
 
-def main_function():
 
+def main_function() -> None:
+    """
+    Main function to load timetable data for UAB subjects and create .ics files.
+    """
     json_filename = 'subjects\\Data\\schedule_UAB.json'
     if os.path.exists(json_filename):
         with open(json_filename, 'r') as json_file:
@@ -28,6 +37,7 @@ def main_function():
 
     subjects_uab = list(Subject.objects.filter(university__name='UAB'))
 
+    # Start URL for the UAB timetable search
     url = "https://web01.uab.es:31501/pds/consultaPublica/look%5Bconpub%5DInicioPubHora?entradaPublica=true&idioma=ca&pais=ES"
     
     print(len(subjects_uab))
@@ -38,12 +48,11 @@ def main_function():
     #         print(pos)
     #         break
 
+    # Process each subject to scrape and save its timetable
     for subject in subjects_uab[pos:]:
-
         calendario = Calendar()
         print(subject.subject_key)
 
-        # Inicializa una instancia de Chrome en segundo plano con la depuración remota habilitada
         driver = webdriver.Chrome()
         driver.get(url)
         driver.find_element(By.LINK_TEXT, 'Cerca per assignatura').click()
