@@ -54,7 +54,7 @@ body {
 }
 
 .row {
-    margin-top: 90px;
+    margin-top: 0px;
     z-index: 10;
 }
 
@@ -236,7 +236,7 @@ header nav a:hover {
 
 .AboutUs__section .cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 30px;
 }
 
@@ -445,6 +445,11 @@ footer .group-2 a:hover{
 
 /* Responsive */
 @media (min-width:720px) {
+    .row {
+        margin-top: 90px;
+        z-index: 10;
+    }
+
     header {
         position: fixed;
         width: 100%;
@@ -479,17 +484,10 @@ footer .group-2 a:hover{
         font-size: 1.5em;
     }
 
-    #about .container {
-        padding: 170px 5em;
-    }
-
-    #about h2 {
-        font-size: 3em;
-    }
-
-    #about .about {
-        display: flex;
-        justify-content: center;
+    .AboutUs__section .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
     }
 
     #history:hover::before,
@@ -510,5 +508,13 @@ footer .group-2 a:hover{
 
     footer .group-2{
         width: 100%;
+    }
+}
+
+@media (min-width:1200px) {
+    .AboutUs__section .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
     }
 }

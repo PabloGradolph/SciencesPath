@@ -21,7 +21,7 @@
             </div>
             <nav>
                 <a href="{% url 'main' %}">Comenzar</a>
-                <a href="#about">Quienes Somos</a>
+                <a href="#About">Quienes Somos</a>
                 <a href="#information">Más Información</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}">Cerrar Sesión</a>
@@ -55,7 +55,7 @@
         </div>
     </section>
 
-    <section class="AboutUs__section section" id="about">
+    <section class="AboutUs__section section" id="About">
         <h1 class="section__title">🏠 ¿Quiénes somos?</h1>
         <div class="container section__border">
             <div class="about-wrapper">
