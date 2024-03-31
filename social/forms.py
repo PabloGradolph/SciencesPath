@@ -68,7 +68,8 @@ class UserUpdateForm(forms.ModelForm):
     
     def clean_first_name(self):
         first_name = self.cleaned_data['first_name']
-        if not re.match(r'^[a-zA-Z ]+$', first_name):
+        # Solo valida el patrón si first_name no está vacío
+        if first_name and not re.match(r'^[a-zA-Z ]+$', first_name):
             raise ValidationError(_('El nombre sólo puede contener letras y espacios.'))
         return first_name
 
