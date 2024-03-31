@@ -27,14 +27,24 @@ class Address(models.Model):
         address_str = ""
         if self.street:
             address_str += f"{self.street}"
-        elif self.street and self.number:
+        if self.street and self.number:
+            address_str = ""
             address_str += f"{self.street}, {self.street}"
- 
-        if self.floor and self.door:
-            address_str += f", Piso {self.floor}, Puerta {self.door}"
-        elif self.floor:
-            address_str += f", Piso {self.floor}"
-        address_str += f", {self.city}, {self.country.name}"
+        if self.street and self.number and self.floor:
+            address_str = ""
+            address_str += f"{self.street}, {self.street}, Piso {self.floor}"
+        if self.street and self.number and self.floor and self.door:
+            address_str = ""
+            address_str += f"{self.street}, {self.street}, Piso {self.floor}, Puerta {self.door}"
+        if address_str == "":
+            if self.city:
+                address_str = f"{self.city}"
+            if self.city and self.country:
+                address_str = ""
+                address_str = f"{self.city}, {self.country.name}"
+            elif self.country:
+                address_str = ""
+                address_str = f"{self.country.name}"
         return address_str
 
 
