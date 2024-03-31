@@ -89,7 +89,6 @@
 }
 
 .change-password {
-    margin-bottom: 30px;
     text-decoration: none;
     cursor: pointer;
 }
@@ -122,6 +121,11 @@ input[type="file"] {
 .accordion-button:hover, .accordion-button.active {
     background-color: #ccc;
 }
+
+.accordion-button1{
+    margin-top: 20px;
+}
+
 
 .accordion-button-text {
     flex-grow: 1;

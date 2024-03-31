@@ -38,13 +38,14 @@ def home(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
+            
             post.save()
             return redirect('community_home')
     else:
         form = PostForm()
 
     # Find the 8 users with the most publications.
-    top_users = User.objects.exclude(username="SciencesPath").annotate(post_count=Count('posts')).order_by('-post_count')[:8]
+    top_users = User.objects.exclude(username="SciencesPath").filter(is_active=True).annotate(post_count=Count('posts')).order_by('-post_count')[:8]
     comment_form = CommentForm()
 
     context = {'posts': posts, 'form': form, 'top_users': top_users, 'likes': likes, 'followers': followers, 'following': following, 'comment_form': comment_form,}

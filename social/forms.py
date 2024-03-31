@@ -6,6 +6,7 @@ from phonenumber_field.widgets import PhoneNumberPrefixWidget
 from django_countries.widgets import CountrySelectWidget
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+import re
 
 
 class PostForm(forms.ModelForm):
@@ -56,6 +57,20 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'username', 'email']
+    
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if not re.match(r'^[a-zA-Z]+$', username):
+            raise ValidationError(_('El nombre de usuario sólo puede contener letras.'))
+        if len(username) > 35:
+            raise ValidationError(_('El nombre de usuario no puede tener más de 35 caracteres.'))
+        return username
+    
+    def clean_first_name(self):
+        first_name = self.cleaned_data['first_name']
+        if not re.match(r'^[a-zA-Z ]+$', first_name):
+            raise ValidationError(_('El nombre sólo puede contener letras y espacios.'))
+        return first_name
 
 
 class ProfileUpdateForm(forms.ModelForm):

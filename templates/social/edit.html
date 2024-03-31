@@ -54,7 +54,7 @@
             <div class="accordion">
                 <div class="accordion-item">
                     <a href="{% url 'password_change' %}" class="change-password">¿Cambiar contraseña?</a>
-                    <button class="accordion-button" type="button">
+                    <button class="accordion-button accordion-button1" type="button">
                         <span class="accordion-button-text">Información Personal</span>
                         <i class="fas fa-chevron-down accordion-icon"></i>
                     </button>
@@ -66,10 +66,6 @@
                         <div class="input-wrapper">
                             <label for="user-name-id">Username</label>
                             {{ u_form.username }}
-                        </div>
-                        <div class="input-wrapper">
-                            <label>Email</label>
-                            {{ u_form.email }}
                         </div>
                         <div class="input-wrapper">
                             <label>Fecha de Nacimiento</label>
@@ -158,6 +154,7 @@
                         </div>
                         <div class="input-wrapper student-field">
                             <label>¿Expediente público?</label>
+                            <p><small>Cuando eres estudiante, tienes la funcionalidad de crear tu expediente. Esto lo hará público para el resto de usuarios</small></p>
                             {{ p_form.is_expediente_public }}
                         </div>
                     </div>
