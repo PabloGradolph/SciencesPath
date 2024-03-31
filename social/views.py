@@ -103,10 +103,9 @@ def edit(request: HttpRequest) -> HttpResponse:
             u_form.save()
             p_form.save()
             address = a_form.save(commit=False)
-            if not address.pk:
-                address.save()
-                request.user.profile.address = address
-                request.user.profile.save()
+            address = a_form.save()
+            request.user.profile.address = address
+            request.user.profile.save()
             username = request.user.username
             profile_url = reverse('profile', kwargs={'username': username})
             return redirect(profile_url)
