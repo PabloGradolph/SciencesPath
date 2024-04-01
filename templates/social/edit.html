@@ -210,6 +210,12 @@
                 avatar.src = src;
             }
         };
+
+        var birthDateValue = "{{ birth_date|date:'Y-m-d' }}";
+        var birthDateInput = document.querySelector('#id_birth_date');
+        if (birthDateInput && birthDateValue) {
+            birthDateInput.value = birthDateValue;
+        }
     });
 </script>
 {% endblock %}

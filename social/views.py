@@ -112,11 +112,11 @@ def edit(request: HttpRequest) -> HttpResponse:
 
     else:
         u_form = UserUpdateForm(instance=request.user)
-        birth_date = request.user.profile.birth_date.strftime('%d/%m/%Y') if request.user.profile.birth_date else ''
-        p_form = ProfileUpdateForm(instance=request.user.profile, initial={'birth_date': birth_date})
+        birth_date = request.user.profile.birth_date
+        p_form = ProfileUpdateForm(instance=request.user.profile)
         a_form = AddressUpdateForm(instance=request.user.profile.address if hasattr(request.user.profile, 'address') else None)
         
-    context = {'u_form': u_form, 'p_form': p_form, 'a_form': a_form}
+    context = {'u_form': u_form, 'p_form': p_form, 'a_form': a_form, 'birth_date': birth_date}
     return render(request, 'social/edit.html', context)
 
 

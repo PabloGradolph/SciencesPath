@@ -105,7 +105,7 @@ class ProfileUpdateForm(forms.ModelForm):
     linkedin_url = forms.URLField(required=False)
     instagram_url = forms.URLField(required=False)
     twitter_url = forms.URLField(required=False)
-    birth_date = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date'}), required=False)
+    birth_date = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date', 'id': 'id_birth_date'}), required=False)
     is_student = forms.BooleanField(required=False)
     university = forms.ChoiceField(choices=Profile.UNIVERISITY_CHOICES, required=False)
     year = forms.ChoiceField(choices=Profile.YEAR_CHOICES, required=False)
