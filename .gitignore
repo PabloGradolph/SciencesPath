@@ -3,7 +3,4 @@ env
 __pycache__
 todo.txt
 .env
-# /media
-# */migrations/**
-# !*/migrations
-# !*/migrations/__init__.py
+settings2.py

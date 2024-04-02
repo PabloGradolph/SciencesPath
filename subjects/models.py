@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 from datetime import datetime
 from .storages import UABStorage, UAMStorage, UC3MStorage
+from django.conf import settings
 
 
 class University(models.Model):
@@ -147,6 +148,10 @@ class TimeTable(models.Model):
     schedule_file_uab = models.FileField(storage=UABStorage(), null=True)
     schedule_file_uam = models.FileField(storage=UAMStorage(), null=True)
     schedule_file_uc3m = models.FileField(storage=UC3MStorage(), null=True)
+    # For local development:
+    # schedule_file_uab = models.FileField(storage=settings.ICAL_STORAGE_UAB, null=True)
+    # schedule_file_uam = models.FileField(storage=settings.ICAL_STORAGE_UAM, null=True)
+    # schedule_file_uc3m = models.FileField(storage=settings.ICAL_STORAGE_UC3M, null=True)
 
 
 class SubjectMaterial(models.Model):
