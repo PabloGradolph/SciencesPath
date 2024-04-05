@@ -9,7 +9,6 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.core.mail import EmailMessage
@@ -17,7 +16,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib import messages
 
 from .tokens import account_activation_token
-from .forms import CustomUserCreationForm, SetPasswordForm
+from .forms import CustomUserCreationForm, SetPasswordForm, CustomAuthenticationForm
 from faq.models import FAQ
 from subjects.models import Subject, SubjectSchedule, Dossier, SubjectInDossier
 from social.models import Event, Profile
@@ -286,16 +285,26 @@ def login_view(request: HttpRequest) -> HttpResponse:
         For POST requests with successful authentication: HttpResponseRedirect object redirecting to the 'main' view.
     """
     if request.method == 'GET': # GET request
-        return render(request, 'logs/login.html', {'form': AuthenticationForm})
+        return render(request, 'logs/login.html', {'form': CustomAuthenticationForm})
     
     else: # POST request
 
-        user = authenticate(request, username=request.POST['username'],
-            password=request.POST['password'])
+        username_or_email = request.POST['username_or_email']
+        password = request.POST['password2']
+
+        # Check if the input contains "@" symbol to determine if it's an email
+        if "@" in username_or_email:
+            # If it's an email, try to authenticate using email
+            user = User.objects.get(email=username_or_email)
+            username = user.username
+            user = authenticate(request, username=username, password=password)
+        else:
+            # Otherwise, try to authenticate using username
+            user = authenticate(request, username=username_or_email, password=password)
 
         if user is None:
             # Authentication failed, return to login page with an error
-            return render(request, 'logs/login.html', {'current_year': current_year, 'form': AuthenticationForm,
+            return render(request, 'logs/login.html', {'current_year': current_year, 'form': CustomAuthenticationForm,
                 'error': 'Usuario o contraseña incorrectos'}
             )
         

@@ -19,7 +19,8 @@ class Command(BaseCommand):
             with open(json_file, 'r') as infile:
                 timetables_data = json.load(infile)
                 university_field = self.get_university_field(json_file)
-
+                if "uab" in university_field:
+                    self.stdout.write(self.style.WARNING(f'UAB'))
                 for subject_id, file_path in timetables_data.items():
                     try:
                         if "uab" in university_field:

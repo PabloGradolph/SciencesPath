@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django import forms
 from typing import Any
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -36,6 +38,21 @@ class CustomUserCreationForm(UserCreationForm):
         model = User # The model associated with this form.
         fields = ['username', 'email', 'password1', 'password2', 'is_student'] # Fields included in the form.
 
+
+class CustomAuthenticationForm(AuthenticationForm):
+    """ 
+    Customized authentication form that accepts email or username.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Eliminar el campo 'username'
+        self.fields.pop('username')
+        self.fields.pop('password')
+
+    username_or_email = forms.CharField(label='Usuario o email')
+    password2 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+
+    
 
 class SetPasswordForm(SetPasswordForm):
     """
