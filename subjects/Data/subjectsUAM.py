@@ -142,6 +142,7 @@ for url in urls_list:
         # We solved the names with which we have had problems.
         name = re.sub(r'\s+', ' ', name)
         if name in science_subjects or name in similar_subjects:
+            final_subjects.pop(0)
             continue
         
         # We obtain the html of each button (teaching guide) and get the 
