@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
                 for subject_id, file_path in timetables_data.items():
                     try:
-                        if university_field == "uab":
+                        if "uab" in university_field:
                             modified_subject_id = int(subject_id) + 2
                             subject = Subject.objects.get(id=modified_subject_id)
                         else:
