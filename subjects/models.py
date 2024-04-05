@@ -145,13 +145,13 @@ class TimeTable(models.Model):
         schedule_file_uc3m (FileField): The timetable file for UC3M university.
     """
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    # schedule_file_uab = models.FileField(storage=UABStorage(), null=True)
-    # schedule_file_uam = models.FileField(storage=UAMStorage(), null=True)
-    # schedule_file_uc3m = models.FileField(storage=UC3MStorage(), null=True)
+    schedule_file_uab = models.FileField(storage=UABStorage(), null=True)
+    schedule_file_uam = models.FileField(storage=UAMStorage(), null=True)
+    schedule_file_uc3m = models.FileField(storage=UC3MStorage(), null=True)
     # For local development:
-    schedule_file_uab = models.FileField(storage=settings.ICAL_STORAGE_UAB, null=True)
-    schedule_file_uam = models.FileField(storage=settings.ICAL_STORAGE_UAM, null=True)
-    schedule_file_uc3m = models.FileField(storage=settings.ICAL_STORAGE_UC3M, null=True)
+    # schedule_file_uab = models.FileField(storage=settings.ICAL_STORAGE_UAB, null=True)
+    # schedule_file_uam = models.FileField(storage=settings.ICAL_STORAGE_UAM, null=True)
+    # schedule_file_uc3m = models.FileField(storage=settings.ICAL_STORAGE_UC3M, null=True)
 
 
 class SubjectMaterial(models.Model):
