@@ -22,7 +22,11 @@ class Command(BaseCommand):
 
                 for subject_id, file_path in timetables_data.items():
                     try:
-                        subject = Subject.objects.get(id=subject_id)
+                        if university_field == "uab":
+                            modified_subject_id = int(subject_id) + 2
+                            subject = Subject.objects.get(id=modified_subject_id)
+                        else:
+                            subject = Subject.objects.get(id=subject_id)
                         with open(file_path, 'rb') as file:
                             # Create a new TimeTable instance and associate the file
                             timetable, created = TimeTable.objects.get_or_create(
