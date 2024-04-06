@@ -38,7 +38,7 @@
         <h1>{{ subject.name }}</h1>
         <div class="buttons">
             <a class="btn-primary" href="{{ subject.subject_url }}" target="_blank">Ver Guía Docente</a>
-            <a class="btn-primary" href="{% url 'horario' subject.id %}" target="_blank">Ver Horario</a>
+            <a class="btn-primary" href="{% url 'horario' subject.id %}">Ver Horario</a>
         </div>
     </div>
     <div class="columns-container">
