@@ -7,6 +7,7 @@
 
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/detail.css' %}">
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block header %}
@@ -39,6 +40,7 @@
         <div class="buttons">
             <a class="btn-primary" href="{{ subject.subject_url }}" target="_blank">Ver Guía Docente</a>
             <a class="btn-primary" href="{% url 'horario' subject.id %}">Ver Horario</a>
+            <button class="btn-primary" id="addSubjectToCalendarButton" style="margin-left: 5px;">Añadir a mi Horario</button>
         </div>
     </div>
     <div class="columns-container">
@@ -201,6 +203,46 @@
         showReviewButton.addEventListener("click", function () {
             // Muestra el formulario cuando se hace clic en el botón
             reviewForm.style.display = "block";
+        });
+
+        const addSubjectToCalendarButton = document.getElementById('addSubjectToCalendarButton');
+        addSubjectToCalendarButton.addEventListener('click', function() {
+            const selectedSubjectId = {{ subject.id }}
+
+            if (!selectedSubjectId) {
+                Swal.fire('Por favor, selecciona una asignatura.');
+                return;
+            }
+
+            // Llamar a tu endpoint con la ID de la asignatura para obtener el horario
+            fetch(`/subjects/parse-ics/${selectedSubjectId}/`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw response;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.events && Array.isArray(data.events)) {
+                    Swal.fire('Asignatura añadida con éxito.');
+                }
+            })
+            .catch(error => {
+                if (error.status === 404) {
+                    Swal.fire('Horario no encontrado para la asignatura seleccionada.');
+                } else if (error.status === 400) {
+                    Swal.fire('El usuario ya tiene esta asignatura en su horario.');
+                } else if (error.status === 401) {
+                    Swal.fire('No puedes tener más de 12 asignaturas en tu horario.');
+                }
+                else {
+                    Swal.fire('Error al añadir asignatura al calendario.');
+                }
+            });
         });
     });
 </script>
