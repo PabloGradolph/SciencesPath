@@ -1,10 +1,10 @@
 :root {
-    --font-main: Fruta;
+    --font-main: Cafe;
 }
 
 @font-face {
     font-family: Fruta;
-    src: url(../fonts/FRESHFRUITPERSONALUSE-SVG.otf);
+    src: url(../fonts/LouisGeorgeCafe.ttf);
 }
 
 /* Estilos generales */
