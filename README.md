@@ -2,7 +2,7 @@
 
 Empower your academic journey with SciencesPath, a dynamic platform designed to guide students through the 'Grado en Ciencias' program. 🚀
 
-![SciencesPath Banner](link_to_banner_image)
+![SciencesPath Banner](photos/banner.png)
 
 ## Features ✨
 
@@ -24,6 +24,7 @@ Empower your academic journey with SciencesPath, a dynamic platform designed to 
 
 ![Screenshot 1](photos/login.png)
 ![Screenshot 2](photos/subjects.png)
+![Screenshot 3](photos/profile.png)
 
 ## Getting Started 🚀
 
