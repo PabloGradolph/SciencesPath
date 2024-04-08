@@ -285,17 +285,14 @@ def horario(request:HttpRequest, subject_id: int) -> HttpResponse:
         events = []
         if c is not None:
         
-            local_timezone = pytz.timezone('Europe/Madrid')
             for event in c.walk('vevent'):
                 dtstart_utc = event.decoded('dtstart')
                 dtend_utc = event.decoded('dtend')
-                dtstart_local = dtstart_utc.astimezone(local_timezone)
-                dtend_local = dtend_utc.astimezone(local_timezone)
 
                 formatted_event = {
                     'title': html.unescape(event.get('summary')),
-                    'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
-                    'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'start': dtstart_utc.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'end': dtend_utc.strftime('%Y-%m-%dT%H:%M:%S'),
                     'location': html.unescape(event.get('location', 'Ubicación no especificada')),
                 }
                 events.append(formatted_event)
@@ -381,7 +378,6 @@ def parse_ics_to_json(request: HttpRequest, subject_id: int) -> JsonResponse:
 
         if c:
             # Convert event times to local timezone and add events to the schedule
-            local_timezone = pytz.timezone('Europe/Madrid')
             subject_schedule = SubjectSchedule.objects.create(
                 user=request.user,
                 subject=subject,
@@ -394,15 +390,13 @@ def parse_ics_to_json(request: HttpRequest, subject_id: int) -> JsonResponse:
 
                 dtstart_utc = event.decoded('dtstart')
                 dtend_utc = event.decoded('dtend')
-                dtstart_local = dtstart_utc.astimezone(local_timezone)
-                dtend_local = dtend_utc.astimezone(local_timezone)
 
                 # Create an Event object for each event in the schedule
                 created_event = Event.objects.create(
                     user=request.user,
                     title=html.unescape(event.get('summary')),
-                    start_time=dtstart_local,
-                    end_time=dtend_local,
+                    start_time=dtstart_utc,
+                    end_time=dtend_utc,
                     location=html.unescape(event.get('location', 'Ubicación no especificada')),
                     description=html.unescape(event.get('description', '')),
                     is_all_day=False,
@@ -413,8 +407,8 @@ def parse_ics_to_json(request: HttpRequest, subject_id: int) -> JsonResponse:
                 formatted_event = {
                     'id': created_event.id,
                     'title': title,
-                    'start': dtstart_local.strftime('%Y-%m-%dT%H:%M:%S'),
-                    'end': dtend_local.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'start': dtstart_utc.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'end': dtend_utc.strftime('%Y-%m-%dT%H:%M:%S'),
                     'location': html.unescape(event.get('location', 'Ubicación no especificada')),
                     'color': color,
                     'subject': subject_id
