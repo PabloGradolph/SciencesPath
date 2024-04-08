@@ -6,19 +6,19 @@ Empower your academic journey with SciencesPath, a dynamic platform designed to 
 
 ## Features ✨
 
-- Discover personalized study pathways within the realm of sciences.
-- Access comprehensive information about various subjects, including course details, credits, and prerequisites.
-- Connect with fellow students, collaborate, and build professional networks.
-- Plan your academic schedule with the built-in timetable creator.
-- Get recommendations tailored to your interests and preferences.
-- Explore FAQs, scholarship information, and career guidance.
+- Create your personalized study paths in the Bachelor of Science degree.
+- Access comprehensive information on a variety of subjects, including course details, credits and prerequisites.
+- Connect with other students, collaborate and create professional networks.
+- Plan your academic calendar with the integrated schedule builder.
+- View frequently asked questions and access the most relevant degree documents.
 
 ## Technologies Used 🛠️
 
-- Django Framework
-- HTML5, CSS3, JavaScript
-- PostgreSQL Database
-- Heroku for deployment: coming soon.
+- Django Framework.
+- HTML5, CSS3, JavaScript and Python.
+- PostgreSQL Database.
+- Heroku for deployment.
+- AWS S3 for storage.
 
 ## Screenshots 📷
 
@@ -43,6 +43,6 @@ This project is licensed under the [MIT License](https://github.com/PabloGradolp
 
 ---
 
-Created as a Thesis Project by [Pablo Gradolph Oliva](https://github.com/PabloGradolph) | © 2023
+Created as a Thesis Project by [Pablo Gradolph Oliva](https://github.com/PabloGradolph) | © 2024
 
 
