@@ -141,7 +141,6 @@ textarea::placeholder {
     position: sticky;
     top: 100px;
     overflow-y: auto;
-    z-index: 2;
 }
 
 .top-users h3 {
