@@ -22,7 +22,6 @@ Empower your academic journey with SciencesPath, a dynamic platform designed to 
 
 ## Screenshots 📷
 
-![Screenshot 1](photos/login.png)
 ![Screenshot 2](photos/subjects.png)
 ![Screenshot 3](photos/profile.png)
 
